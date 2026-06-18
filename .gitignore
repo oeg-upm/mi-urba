@@ -17,6 +17,9 @@ data/raw/
 data/annotated/
 data/merged/
 
+# Config with local endpoints
+config.local.yaml
+
 # Secrets
 .env
 *.key
