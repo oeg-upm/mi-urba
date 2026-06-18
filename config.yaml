@@ -37,6 +37,13 @@ annotation:
   model: kimi-k2.6
   temperature: 0.2
 
+paths:
+  raw_subdir: raw
+  annotated_subdir: annotated
+  complaints_file: complaints.jsonl
+  scenarios_file: scenarios.jsonl
+  extractions_file: extractions.jsonl
+
 categories:
   fontanería:
   - fugas

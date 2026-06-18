@@ -96,3 +96,15 @@ def get_communities(cfg: dict | None = None) -> list[dict]:
 def get_weights(cfg: dict | None = None) -> dict[str, Any]:
     cfg = cfg or get_config()
     return cfg["weights"]
+
+
+def get_paths(cfg: dict | None = None) -> dict[str, str]:
+    """Return path configuration with sensible defaults."""
+    cfg = cfg or get_config()
+    return cfg.get("paths", {
+        "raw_subdir": "raw",
+        "annotated_subdir": "annotated",
+        "complaints_file": "complaints.jsonl",
+        "scenarios_file": "scenarios.jsonl",
+        "extractions_file": "extractions.jsonl",
+    })

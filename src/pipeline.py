@@ -135,17 +135,20 @@ def generate_dataset(
     num_records: int,
     start_id: int = 1,
     output_dir: str = "data",
+    raw_subdir: str = "raw",
+    complaints_file: str = "complaints.jsonl",
+    scenarios_file: str = "scenarios.jsonl",
     resume: bool = True,
 ) -> dict:
     """
     Generate raw complaint dataset.
 
     Produces:
-      - <output_dir>/raw/complaints.jsonl
-      - <output_dir>/raw/scenarios.jsonl
+      - <output_dir>/<raw_subdir>/<complaints_file>
+      - <output_dir>/<raw_subdir>/<scenarios_file>
     """
-    raw_path = Path(output_dir) / "raw" / "complaints.jsonl"
-    scenario_path = Path(output_dir) / "raw" / "scenarios.jsonl"
+    raw_path = Path(output_dir) / raw_subdir / complaints_file
+    scenario_path = Path(output_dir) / raw_subdir / scenarios_file
 
     raw_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -255,17 +258,20 @@ def annotate_dataset(
     client: LLMClient,
     raw_dir: str = "data/raw",
     output_dir: str = "data/annotated",
+    raw_complaints_file: str = "complaints.jsonl",
+    raw_scenarios_file: str = "scenarios.jsonl",
+    extractions_file: str = "extractions.jsonl",
     resume: bool = True,
 ) -> dict:
     """
     Annotate all raw complaints.
 
-    Reads from <raw_dir>/complaints.jsonl and <raw_dir>/scenarios.jsonl,
-    produces <output_dir>/extractions.jsonl.
+    Reads from <raw_dir>/<raw_complaints_file> and <raw_dir>/<raw_scenarios_file>,
+    produces <output_dir>/<extractions_file>.
     """
-    raw_path = Path(raw_dir) / "complaints.jsonl"
-    scenario_path = Path(raw_dir) / "scenarios.jsonl"
-    output_path = Path(output_dir) / "extractions.jsonl"
+    raw_path = Path(raw_dir) / raw_complaints_file
+    scenario_path = Path(raw_dir) / raw_scenarios_file
+    output_path = Path(output_dir) / extractions_file
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -349,36 +355,42 @@ def annotate_dataset(
 def merge_outputs(
     output_dir: str = "data",
     batch_dirs: list[str] | None = None,
+    raw_subdir: str = "raw",
+    complaints_file: str = "complaints.jsonl",
+    scenarios_file: str = "scenarios.jsonl",
 ) -> dict:
     """
-    Merge per-model output directories into final data/raw/.
+    Merge per-model output directories into final <output_dir>/<raw_subdir>/.
 
     Args:
         output_dir: Base data directory.
         batch_dirs: List of subdirectory names (one per model batch).
+        raw_subdir: Subdirectory name for raw output.
+        complaints_file: Name of complaints file.
+        scenarios_file: Name of scenarios file.
 
     Returns:
         Dict with counts.
     """
-    raw_out = Path(output_dir) / "raw"
+    raw_out = Path(output_dir) / raw_subdir
     raw_out.mkdir(parents=True, exist_ok=True)
 
     merged_complaints = []
     merged_scenarios = []
 
     for model_dir in (batch_dirs or []):
-        model_path = Path(output_dir) / model_dir / "raw"
-        complaints_file = model_path / "complaints.jsonl"
-        scenarios_file = model_path / "scenarios.jsonl"
+        model_path = Path(output_dir) / model_dir / raw_subdir
+        complaints_file_path = model_path / complaints_file
+        scenarios_file_path = model_path / scenarios_file
 
-        if complaints_file.exists():
-            with open(complaints_file, encoding="utf-8") as f:
+        if complaints_file_path.exists():
+            with open(complaints_file_path, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         merged_complaints.append(json.loads(line))
 
-        if scenarios_file.exists():
-            with open(scenarios_file, encoding="utf-8") as f:
+        if scenarios_file_path.exists():
+            with open(scenarios_file_path, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         merged_scenarios.append(json.loads(line))
@@ -387,8 +399,8 @@ def merge_outputs(
     merged_complaints.sort(key=lambda x: x["id"])
     merged_scenarios.sort(key=lambda x: x["id"])
 
-    complaints_path = raw_out / "complaints.jsonl"
-    scenarios_path = raw_out / "scenarios.jsonl"
+    complaints_path = raw_out / complaints_file
+    scenarios_path = raw_out / scenarios_file
 
     with open(complaints_path, "w", encoding="utf-8") as f:
         for c in merged_complaints:

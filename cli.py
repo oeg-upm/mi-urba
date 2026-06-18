@@ -16,20 +16,34 @@ All configuration comes from config.yaml — no hardcoded values.
 import argparse
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_model_params
+from src.config import get_config, get_model_params, get_paths
 from src.llm import LLMClient
 from src.pipeline import annotate_dataset, generate_dataset, merge_outputs
+
+
+def _get_path_args(args, config):
+    """Build path kwargs from CLI overrides or config defaults."""
+    paths = get_paths(config)
+    return {
+        "raw_subdir": args.raw_subdir or paths.get("raw_subdir", "raw"),
+        "annotated_subdir": args.annotated_subdir or paths.get("annotated_subdir", "annotated"),
+        "complaints_file": args.complaints_file or paths.get("complaints_file", "complaints.jsonl"),
+        "scenarios_file": args.scenarios_file or paths.get("scenarios_file", "scenarios.jsonl"),
+        "extractions_file": args.extractions_file or paths.get("extractions_file", "extractions.jsonl"),
+    }
 
 
 def cmd_generate(args):
     """Generate synthetic raw complaints with a single model."""
     config = get_config(args.config)
+    paths = _get_path_args(args, config)
     model_name = args.model
     model_cfg = get_model_params(model_name, config)
 
@@ -40,13 +54,14 @@ def cmd_generate(args):
         timeout=args.timeout,
     )
 
+    raw_subdir = paths["raw_subdir"]
     print(f"miUrba — Generation (single model)")
     print(f"{'=' * 55}")
     print(f"  Model:      {model_name} ({model_cfg['model']})")
     print(f"  Endpoint:   {model_cfg['base_url']}")
     print(f"  Records:    {args.num_records}")
     print(f"  IDs:        Q{args.start_id:04d} — Q{args.start_id + args.num_records - 1:04d}")
-    print(f"  Output:     {args.output_dir}/raw/")
+    print(f"  Output:     {args.output_dir}/{raw_subdir}/")
     print(f"  Resume:     {not args.no_resume}")
     print(f"{'=' * 55}")
 
@@ -55,6 +70,9 @@ def cmd_generate(args):
         num_records=args.num_records,
         start_id=args.start_id,
         output_dir=args.output_dir,
+        raw_subdir=raw_subdir,
+        complaints_file=paths["complaints_file"],
+        scenarios_file=paths["scenarios_file"],
         resume=not args.no_resume,
     )
 
@@ -71,9 +89,11 @@ def cmd_generate(args):
 def cmd_generate_multi(args):
     """Generate with multiple models as configured in config.yaml."""
     config = get_config(args.config)
+    paths = _get_path_args(args, config)
     gen_cfg = config["generation"]
     batches = gen_cfg["batches"]
     output_dir = args.output_dir or gen_cfg["default_output_dir"]
+    raw_subdir = paths["raw_subdir"]
 
     print("miUrba — Multi-model generation")
     print("=" * 60)
@@ -107,6 +127,9 @@ def cmd_generate_multi(args):
             num_records=count,
             start_id=id_offset + 1,
             output_dir=model_dir,
+            raw_subdir=raw_subdir,
+            complaints_file=paths["complaints_file"],
+            scenarios_file=paths["scenarios_file"],
             resume=not args.no_resume,
         )
 
@@ -123,7 +146,13 @@ def cmd_generate_multi(args):
     print(f"\n{'=' * 60}")
     print("Merging outputs...")
     batch_dirs = [b["model"] for b in batches]
-    merge_stats = merge_outputs(output_dir, batch_dirs)
+    merge_stats = merge_outputs(
+        output_dir,
+        batch_dirs,
+        raw_subdir=raw_subdir,
+        complaints_file=paths["complaints_file"],
+        scenarios_file=paths["scenarios_file"],
+    )
 
     print(f"  Merged: {merge_stats['complaints']} complaints → {merge_stats['complaints_path']}")
     print(f"  Merged: {merge_stats['scenarios']} scenarios → {merge_stats['scenarios_path']}")
@@ -140,11 +169,18 @@ def cmd_generate_multi(args):
 def cmd_annotate(args):
     """Annotate raw complaints with structured extractions."""
     config = get_config(args.config)
+    paths = _get_path_args(args, config)
+    gen_cfg = config.get("generation", {})
     ann_cfg = config.get("annotation", {})
     model_name = args.model or ann_cfg.get("model", "kimi-k2.6")
     model_cfg = get_model_params(model_name, config)
 
     temperature = args.temperature or ann_cfg.get("temperature", 0.2)
+
+    # Resolve directories: CLI override > explicit paths config > default
+    default_output = args.output_dir or gen_cfg.get("default_output_dir", "data")
+    raw_dir = args.raw_dir or os.path.join(default_output, paths["raw_subdir"])
+    annotated_dir = args.annotated_dir or os.path.join(default_output, paths["annotated_subdir"])
 
     client = LLMClient(
         base_url=model_cfg["base_url"],
@@ -157,15 +193,18 @@ def cmd_annotate(args):
     print(f"{'=' * 55}")
     print(f"  Model:      {model_name} ({model_cfg['model']})")
     print(f"  Endpoint:   {model_cfg['base_url']}")
-    print(f"  Source:     {args.raw_dir}/complaints.jsonl")
-    print(f"  Output:     {args.output_dir}/annotated/extractions.jsonl")
+    print(f"  Source:     {raw_dir}/{paths['complaints_file']}")
+    print(f"  Output:     {annotated_dir}/{paths['extractions_file']}")
     print(f"  Resume:     {not args.no_resume}")
     print(f"{'=' * 55}")
 
     stats = annotate_dataset(
         client=client,
-        raw_dir=args.raw_dir,
-        output_dir=args.output_dir,
+        raw_dir=raw_dir,
+        output_dir=annotated_dir,
+        raw_complaints_file=paths["complaints_file"],
+        raw_scenarios_file=paths["scenarios_file"],
+        extractions_file=paths["extractions_file"],
         resume=not args.no_resume,
     )
 
@@ -183,11 +222,18 @@ def cmd_annotate(args):
 def cmd_merge(args):
     """Merge per-model outputs into data/raw/."""
     config = get_config(args.config)
+    paths = _get_path_args(args, config)
     gen_cfg = config["generation"]
     output_dir = args.output_dir or gen_cfg["default_output_dir"]
     batch_dirs = [b["model"] for b in gen_cfg["batches"]]
 
-    merge_stats = merge_outputs(output_dir, batch_dirs)
+    merge_stats = merge_outputs(
+        output_dir,
+        batch_dirs,
+        raw_subdir=paths["raw_subdir"],
+        complaints_file=paths["complaints_file"],
+        scenarios_file=paths["scenarios_file"],
+    )
 
     print(f"Merged {merge_stats['complaints']} complaints → {merge_stats['complaints_path']}")
     print(f"Merged {merge_stats['scenarios']} scenarios → {merge_stats['scenarios_path']}")
@@ -203,6 +249,13 @@ def main():
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--config", default="config.yaml", help="Path to config.yaml")
     common.add_argument("--output-dir", default=None, help="Output directory (default: from config)")
+    common.add_argument("--raw-subdir", default=None, help="Raw subdirectory name (default: from config)")
+    common.add_argument("--annotated-subdir", default=None, help="Annotated subdirectory name (default: from config)")
+    common.add_argument("--raw-dir", default=None, help="Raw directory path (default: <output_dir>/<raw_subdir>)")
+    common.add_argument("--annotated-dir", default=None, help="Annotated directory path (default: <output_dir>/<annotated_subdir>)")
+    common.add_argument("--complaints-file", default=None, help="Complaints filename (default: from config)")
+    common.add_argument("--scenarios-file", default=None, help="Scenarios filename (default: from config)")
+    common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
@@ -224,8 +277,6 @@ def main():
     # ── Annotate ────────────────────────────────────────────
     ann_parser = subparsers.add_parser("annotate", parents=[common],
                                         help="Annotate raw complaints")
-    ann_parser.add_argument("--raw-dir", default="data/raw",
-                             help="Directory with raw complaints")
     ann_parser.add_argument("--model", default=None,
                              help="Model for annotation (default: from config)")
     ann_parser.add_argument("--temperature", type=float, default=None,
