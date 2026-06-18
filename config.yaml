@@ -1,0 +1,803 @@
+endpoints:
+  ollama_cloud:
+    base_url: http://localhost:11434
+    description: Ollama cloud models
+
+models:
+  kimi-k2.6:
+    endpoint: ollama_cloud
+    model: kimi-k2.6:cloud
+    temperature: 0.85
+  minimax-m3:
+    endpoint: ollama_cloud
+    model: minimax-m3:cloud
+    temperature: 0.85
+  glm-5.1:
+    endpoint: ollama_cloud
+    model: glm-5.1:cloud
+    temperature: 0.85
+  gemma4-31b:
+    endpoint: ollama_cloud
+    model: gemma4:31b-cloud
+    temperature: 0.85
+
+generation:
+  default_output_dir: data
+  batches:
+  - model: kimi-k2.6
+    count: 25
+  - model: minimax-m3
+    count: 25
+  - model: glm-5.1
+    count: 25
+  - model: gemma4-31b
+    count: 25
+
+annotation:
+  model: kimi-k2.6
+  temperature: 0.2
+
+paths:
+  raw_subdir: raw
+  annotated_subdir: annotated
+  complaints_file: complaints.jsonl
+  scenarios_file: scenarios.jsonl
+  extractions_file: extractions.jsonl
+
+categories:
+  fontanería:
+  - fugas
+  - atascos
+  - rotura_tubería
+  - presión_agua
+  - desagües
+  - grifos_cisternas
+  - agua_caliente
+  electricidad:
+  - iluminación_común
+  - cuadro_eléctrico
+  - enchufes
+  - cableado
+  - timbres_porteros
+  - cortes_suministro
+  cubierta:
+  - goteras
+  - tejas
+  - canalones
+  - impermeabilización
+  - sumideros_cubierta
+  fachada:
+  - grietas
+  - pintura
+  - revoco
+  - baldosas_exterior
+  - juntas_dilatación
+  carpintería:
+  - ventanas
+  - persianas
+  - puertas
+  - cerrajería
+  - cristales
+  jardinería:
+  - riego
+  - árboles
+  - setos
+  - césped
+  - drenaje_parcela
+  limpieza:
+  - basuras
+  - barredura
+  - desinfección
+  - cristales_comunes
+  - residuos_voluminosos
+  ascensor:
+  - avería
+  - mantenimiento
+  - accesibilidad
+  - puertas_cabina
+  climatización:
+  - calefacción_común
+  - ACS
+  - aire_acondicionado
+  - caldera
+  piscina:
+  - agua
+  - infraestructura_vaso
+  - seguridad_piscina
+  - purificación
+  garaje:
+  - pavimento
+  - ventilación
+  - puertas_garaje
+  - iluminación_garaje
+  - desagüe_garaje
+  plagas:
+  - insectos
+  - roedores
+  - termitas
+  - palomas
+  - mosquitos
+  mobiliario:
+  - bancos
+  - papeleras
+  - columpios
+  - vallas
+  - buzones
+  seguridad:
+  - alumbrado_exterior
+  - cámaras
+  - portero_automático
+  - valla_perimetral
+  ruido:
+  - obra
+  - vecinos
+  - vibraciones
+  - maquinaria_común
+  varios: []
+
+affected_elements:
+  tubería:
+  - vertical
+  - horizontal
+  - desagüe
+  - presión
+  - saneamiento
+  - riego
+  muro:
+  - carga
+  - tabique
+  - medianero
+  - cortafuegos
+  - pantalla
+  cubierta:
+  - losa
+  - teja
+  - terrazo_cubierta
+  - impermeabilizante
+  - canalón
+  suelo:
+  - pavimento_duro
+  - solería
+  - cimentación
+  - solera_garaje
+  - parquet
+  puerta:
+  - acceso_portal
+  - garaje
+  - cortafuegos
+  - ascensor
+  - trastero
+  ventana:
+  - cristal
+  - marco
+  - persiana
+  - cerrajería_ventana
+  instalación_eléctrica:
+  - cableado
+  - cuadro
+  - punto_luz
+  - enchufe
+  - detector_humo
+  instalación_sanitaria:
+  - desagüe
+  - alimentación
+  - contra_incendios
+  - suministro_general
+  revestimiento:
+  - pintura
+  - azulejo
+  - revoco
+  - mortero
+  - panel
+  jardín:
+  - césped
+  - seto
+  - árbol
+  - macizo_floral
+  - riego_automático
+  mobiliario_común:
+  - banco
+  - papelera
+  - buzón
+  - columpio
+  - mesa
+  equipamiento:
+  - ascensor
+  - bomba_presión
+  - caldera
+  - portero
+  - cámara
+  estructura:
+  - viga
+  - pilar
+  - forjado
+  - zapata
+  - cimientos
+  cerramiento:
+  - valla
+  - reja
+  - muro_perimetral
+  - portón
+  - verja
+
+location_zones:
+  garaje:
+  - plaza 23
+  - rampa de acceso
+  - nivel -1
+  - nivel -2
+  - cuarto de contadores
+  - entrada de garaje
+  portal:
+  - hall de entrada
+  - escalera
+  - rellano planta 1ª
+  - ascensor
+  - portería
+  - zona de buzones
+  exterior:
+  - fachada norte
+  - fachada sur
+  - cubierta
+  - terraza comunitaria
+  - patio de luces
+  - patio de entrada
+  - acera perimetral
+  zonas_verdes:
+  - jardín delantero
+  - parque interior
+  - césped central
+  - zona arbolada
+  - macizos junto a portal
+  piscina:
+  - vaso principal
+  - solarium
+  - vestuarios
+  - duchas
+  - cuarto de maquinaria
+  trasteros:
+  - pasillo de trasteros
+  - trastero 14-B
+  azotea:
+  - cubierta transitable
+  - terraza de áticos
+  - cuarto de máquinas
+  locales:
+  - local bajo planta
+  - sótano local comercial
+
+risks:
+- eléctrico
+- estructural
+- sanitario
+- incendio
+- inundación
+- caída
+- accesibilidad
+- seguridad_persona
+- ninguno
+
+urgency_levels:
+- inmediata
+- urgente
+- alta
+- media
+- baja
+- planificable
+
+channels:
+  whatsapp:
+    style: >-
+      Informal, conversacional, con posibles abreviaturas y emojis.
+      El vecino escribe rápido desde el móvil.
+      Puede haber faltas de ortografía o expresiones coloquiales.
+      Mensaje corto-medio.
+  email:
+    style: >-
+      Más formal y estructurado. Saludo y despedida.
+      El vecino describe el problema con más detalle y contexto.
+      Puede adjuntar fotos. Pide una respuesta formal.
+  app:
+    style: >-
+      Directo y conciso. Formulario con campos predefinidos.
+      El vecino selecciona tipo y escribe una descripción breve.
+      Puede incluir localización automática. Tono neutro.
+  presencial:
+    style: >-
+      Transcripción de una conversación hablada en la oficina del administrador.
+      El vecino cuenta el problema de viva voz, con interrupciones, dudas y aclaraciones.
+      Lenguaje oral, frases incompletas, muletillas.
+  telefono:
+    style: >-
+      Transcripción breve de una llamada telefónica.
+      El vecino llama y explica el problema de forma directa y hablada.
+      Más corto que el presencial. Puede ser urgente.
+  buzon_sugerencias:
+    style: >-
+      Nota escrita a mano, depositada en un buzón físico.
+      Breve, a veces anónima.
+      Puede ser una sugerencia o una queja. Tono variable: desde amable hasta quejoso.
+
+communities:
+- id: C001
+  name: Residencial Las Acacias
+  type: bloque_pisos
+  num_viviendas: 48
+  year: 1985
+  has_elevator: true
+  has_pool: false
+  has_garage: true
+- id: C002
+  name: Urbanización El Roble
+  type: urbanizacion
+  num_viviendas: 120
+  year: 2005
+  has_elevator: false
+  has_pool: true
+  has_garage: true
+- id: C003
+  name: Edificio Mirador
+  type: bloque_pisos
+  num_viviendas: 24
+  year: 1972
+  has_elevator: true
+  has_pool: false
+  has_garage: false
+- id: C004
+  name: Complejo Los Pinos
+  type: complejo_residencial
+  num_viviendas: 86
+  year: 1998
+  has_elevator: true
+  has_pool: true
+  has_garage: true
+- id: C005
+  name: Adosados La Dehesa
+  type: adosados
+  num_viviendas: 32
+  year: 2015
+  has_elevator: false
+  has_pool: true
+  has_garage: true
+- id: C006
+  name: Residencia Mayor
+  type: bloque_pisos
+  num_viviendas: 60
+  year: 1965
+  has_elevator: true
+  has_pool: false
+  has_garage: true
+
+personas:
+  abuela_veterana:
+    profile: >-
+      Mujer mayor de 75, viuda, más de 30 años en la comunidad.
+      Conoce a todos los vecinos. Autoridad moral.
+    style: >-
+      Formal pero cercano. "Mire usted, señor administrador", "llevo toda la vida aquí".
+      Detalla todo con referencias al pasado. Mensajes largos y pausados.
+    weight: 8
+  abuelo_ajetreado:
+    profile: >-
+      Hombre mayor de 70, con movilidad reducida. Vive solo.
+      Depende del ascensor y las zonas accesibles.
+    style: >-
+      Tono quejumbroso pero resignado. "Ya estoy mayor para estas cosas", "no puedo subir las escaleras".
+      Enfatiza cómo le afecta personalmente. Pide que lo tengan en cuenta.
+    weight: 5
+  joven_profesional:
+    profile: >-
+      Hombre de 28-35, profesional urbano, vive solo. Poco tiempo, mucha tecnología.
+      Primera vez que contacta.
+    style: >-
+      Directo, conciso, coloquial joven. "tío", "va mal", "da la sensación".
+      Mensajes cortos. Emojis en WhatsApp. No conoce procedimientos.
+    weight: 6
+  chica_millennial:
+    profile: >-
+      Mujer de 30-38, trabaja desde casa. Observa todo porque está mucho en el edificio.
+      Algo ansiosa.
+    style: >-
+      Escribe rápido, muchos detalles. "Oye que he visto...", "es que me pasa justo debajo".
+      Algo dramática pero amable. Emojis moderados.
+    weight: 5
+  madre_preocupada:
+    profile: >-
+      Mujer de 35-45, madre de niños pequeños. Hipervigilante con la seguridad.
+      3-5 años en la comunidad.
+    style: >-
+      Tono preocupado, enfatiza riesgos infantiles. "Mi hijo podría caer", "los niños juegan ahí".
+      Exclamaciones. Pide urgencia a veces desproporcionada.
+    weight: 7
+  padre_activo:
+    profile: >-
+      Padre de 40-50, implicación media-alta. Lleva a los niños al parque de la comunidad.
+      Práctico y resolutivo.
+    style: >-
+      Tono práctico y directo. "Mira, el tema es este", "lo que hay que hacer es...".
+      Sugiere soluciones más que quejarse. Mensajes estructurados.
+    weight: 5
+  estudiante_universitario:
+    profile: >-
+      Chico de 20-25, estudiante, comparte piso. Poca idea de cómo funciona la comunidad.
+      Solo quiere que funcionen las cosas básicas.
+    style: >-
+      Muy informal, casi desinterés. "oe se ha roto la ducha esa", "el ascensor no va".
+      Minimalista. Faltas de ortografía. Mensajes muy cortos.
+    weight: 4
+  pareja_mayor:
+    profile: >-
+      Matrimonio jubilado de 65-75. Ella escribe, pero cuenta lo que dice su marido.
+      Muy implicados.
+    style: >-
+      Tono formal conyugal. "Mi marido dice que...", "nosotros creemos que...".
+      Corregible y cortés. Mensajes largos y detallistas.
+    weight: 4
+  vecino_conflictivo:
+    profile: >-
+      Quejica reincidente. Ya ha llamado varias veces. Se frustra porque siente que no le hacen caso.
+    style: >-
+      Agresivo y exigente. "Otra vez", "es una vergüenza", "si no lo arreglan me planto".
+      MAYÚSCULAS. Amenazas legales. Reacción desproporcionada al problema.
+    weight: 4
+  vecina_pasivo_agresiva:
+    profile: >-
+      No quiere parecer conflictiva pero está molesta. Indirectas, tercera persona.
+      "No es por mí, pero...".
+    style: >-
+      Aparentemente amable, cargada de indirectas. "No sé si alguien más lo habrá notado...",
+      "supongo que no es para tanto". "Por si acaso". Va subiendo de tono.
+    weight: 5
+  vecino_ansioso:
+    profile: >-
+      Preocupada por todo. Exagera la gravedad. Necesita respuesta inmediata.
+      Poco tiempo en la comunidad.
+    style: >-
+      Muchos !! y ??. Exagera: "esto es peligrosísimo", "no se puede vivir así".
+      Pide que vengan "ya". Repite el mismo problema varias veces.
+    weight: 5
+  vecino_formal:
+    profile: >-
+      Mediana edad, profesional liberal o funcionario. Educado, correcto, puntuoso.
+      Valora las formas.
+    style: >-
+      Cortés y comedido. "Estimado señor administrador", "Sin otro particular, cordial saludo".
+      Párrafos. Sin abreviaturas. Cita fechas y referencias concretas.
+    weight: 6
+  vecino_informal_amable:
+    profile: >-
+      Simpático y colaborativo. Buena relación con el administrador. Aporta soluciones.
+      Lleva tiempo.
+    style: >-
+      Cercano y positivo. "Hola, ¿qué tal?", "Muchas gracias como siempre".
+      Sin dramatismo. Sugiere soluciones. Coloquial amable.
+    weight: 6
+  vecino_primerizo:
+    profile: >-
+      Primera vez que contacta al administrador. Tiene vergüenza. No sabe si merece la pena.
+    style: >-
+      Dubitativo y disculpador. "No sé si esto te toca", "perdona si no es el sitio",
+      "quizás no sea gran cosa". Con reparos. Pregunta si es el canal correcto.
+    weight: 4
+  vecino_tecnico:
+    profile: >-
+      Ingeniero o profesional técnico. Preciso, terminología específica. No especula.
+    style: >-
+      Preciso y técnico. "Fisura de retracción de 2mm", "PVC Ø110 con pérdida".
+      Estructurado. No emocional. Sugiere soluciones técnicas.
+    weight: 3
+  vecino_conspiranoico:
+    profile: >-
+      Desconfía de todo. Cree que la comunidad le oculta cosas, que las obras son innecesarias,
+      que hay enchufismo.
+    style: >-
+      Sospecha en todo. "Seguro que ya lo sabíais", "no me extraña que no se haya hecho nada".
+      Teorías sobre por qué no arreglan. Cita "otras veces que". Desconfianza.
+    weight: 3
+  vecino_egoista:
+    profile: >-
+      Solo se preocupa si le afecta directamente. Si es en otra zona, ni caso.
+      Exige que lo suyo sea prioritario.
+    style: >-
+      Directo y egocéntrico. "A MÍ me afecta", "quiero que me lo arreglen a mí primero".
+      Minimiza problemas ajenos. "Lo del tercero no es tan urgente".
+    weight: 4
+  vecino_cotilla:
+    profile: >-
+      Sabe todo lo que pasa. Reporta problemas de otros vecinos. "Me ha dicho la del 3ºB que...".
+      Se implica en todo.
+    style: >-
+      Informativo pero entrometido. "Oye, que la señora Carmen me ha dicho que...",
+      "he visto que en el portal del 2 hay...". Cuenta lo de otros como propio. Chismorreo.
+    weight: 4
+  vecino_voluntarioso:
+    profile: >-
+      Siempre se ofrece para todo. Pertenece a la comisión de fiestas, de jardines, de lo que haga falta.
+      A veces se mete donde no le llaman.
+    style: >-
+      Entusiasta y colaborativo. "Yo puedo echar una mano", "si necesitáis algo avisadme".
+      A veces impositivo: "yo ya le he dicho al fontanero que...". Mensajes largos con propuestas.
+    weight: 3
+  vecino_racional:
+    profile: >-
+      Analítico y frío. No se emociona. Causa-efecto. Prioriza por coste-beneficio.
+      Piensa en el presupuesto de la comunidad.
+    style: >-
+      Objetivo y económico. "Si lo arreglamos ahora sale más barato", "es mejor invertir en prevención".
+      Sin emociones. Referencias al dinero. Propone priorizar.
+    weight: 3
+  vecino_hipocondriaco:
+    profile: >-
+      Cualquier problema físico le parece un riesgo sanitario grave. Humedad = asma,
+      insectos = enfermedad, ruido = estrés.
+    style: >-
+      Alarma sanitaria. "Esta humedad nos va a provocar asma", "las cucarachas transmiten enfermedades".
+      Exagera riesgos para la salud. Pide desinfección inmediata.
+    weight: 3
+  vecino_sumiso:
+    profile: >-
+      Se queja lo mínimo. Se disculpa por molestar. Acepta cualquier respuesta.
+      Tarda en reportar porque "no quiere dar la lata".
+    style: >-
+      Excesivamente comedido. "Perdona, no quería molestar", "si no es mucha molestia...",
+      "solo era por si acaso". Minimiza su propio problema. Se disculpa al final.
+    weight: 4
+  presidente_comunidad:
+    profile: >-
+      Presidente de la comunidad de propietarios. Conoce estatutos, presupuestos, historial.
+      Habla en nombre de otros.
+    style: >-
+      Institucional. "Como presidente", "en la última junta se acordó".
+      Cita normativas. Estructura: problema, urgencia, propuesta. Adjunta fotos de otros vecinos.
+    weight: 4
+  portero_encargado:
+    profile: >-
+      Conserje o portero del edificio. Conoce mejor que nadie el estado de las zonas comunes.
+      Reporta lo que ve en su ronda.
+    style: >-
+      Tono práctico y coloquial de trabajador. "Don Pepe, que me he dao cuenta que...",
+      "esta mañana al hacer la ronda he visto que...". Conoce nombres de vecinos y zonas.
+      Usa términos de mantenimiento.
+    weight: 3
+  propietario_ausente:
+    profile: >-
+      Propietario que no reside, alquila el piso. Conoce la comunidad por lo que le dice el inquilino.
+    style: >-
+      Informa de segunda mano. "Me comenta mi inquilino que...". Formal.
+      Pide información adicional. Referencia responsabilidades de la comunidad.
+    weight: 4
+  propietario_tacaño:
+    profile: >-
+      Propietario que vive ahí pero se opone a cualquier gasto. Cuestiona todas las derramas.
+      Cree que todo es un timo.
+    style: >-
+      Económico y receloso. "¿Cuánto va a costar esto?", "otra derrama más",
+      "seguro que se puede arreglar más barato". Cuestiona la necesidad. Compara precios.
+    weight: 3
+  inquilino_reciente:
+    profile: >-
+      Se acaba de mudar (2-6 meses). No conoce zonas comunes ni procedimientos.
+    style: >-
+      Inseguro, pregunta más que afirma. "¿A quién le doy parte?", "no sé si esto es competencia de la comunidad".
+      Nombres vagos de zonas. Mensajes breves.
+    weight: 5
+  inquilino_transeunte:
+    profile: >-
+      Estudiante o joven temporal. No se implica. Reporta lo mínimo. Se muda en meses.
+    style: >-
+      Despreocupado. "Se ha roto X", sin más contexto. No pide seguimiento. "Si pueden mirarlo".
+      Tono de quien no se siente parte de la comunidad.
+    weight: 3
+  vecino_nocturno:
+    profile: >-
+      Trabaja de noche o tiene insomnio. Reporta problemas que ve a las 3am.
+      Ruidos, luces, cosas que los demás no notan.
+    style: >-
+      Menciona la hora: "a las 3 de la mañana", "anoche a las 4".
+      Observaciones que otros no hacen. "He visto que la luz del garaje parpadea de noche".
+      Tono de quien vigila.
+    weight: 2
+  vecino_nuevo_dinero:
+    profile: >-
+      Acaba de comprar un piso caro. Expectativas altísimas. No tolera imperfecciones.
+      Recién llegada de chalet.
+    style: >-
+      Exigente y con expectativas de servicio premium. "Acabo de comprar y ya tengo problemas",
+      "en mi anterior comunidad esto no pasaba". Comparaciones con estándares altos. Tono indignado.
+    weight: 2
+  vecino_ecologista:
+    profile: >-
+      Muy consciente del medio ambiente. Se preocupa por productos químicos, consumos,
+      residuos, eficiencia energética.
+    style: >-
+      Preocupación verde. "¿Qué productos usan para desinfectar?", "esos LEDs consumen mucho",
+      "el riego debería ser por goteo". Cuestiona métodos. Propone alternativas ecológicas.
+    weight: 2
+  vecino_inmobiliaria:
+    profile: >-
+      Agente inmobiliario que gestiona varios pisos en la comunidad.
+      Reporta por encargo de propietarios. Profesional pero con prisa.
+    style: >-
+      Profesional y expeditivo. "Le escribo en representación del propietario del 3ºB",
+      "necesito que se regularice cuanto antes para la visita de esta semana".
+      Cita pisos con puerta. Pide plazos concretos.
+    weight: 2
+  vecino_retirado_vocacional:
+    profile: >-
+      Jubilado que se ha metido a hobbies. Jardinería, bricolaje...
+      Arregla cosas él mismo, a veces mal.
+    style: >-
+      Práctico y auto-suficiente. "Yo ya le he echado un ojo, creo que es la junta de dilatación",
+      "le he puesto cinta aislante de momento". Confía en su criterio.
+      A veces informa de arreglos "provisionales" que hizo él.
+    weight: 2
+
+weights:
+  category:
+    fontanería: 30
+    electricidad: 15
+    cubierta: 10
+    fachada: 8
+    carpintería: 8
+    jardinería: 8
+    limpieza: 5
+    ascensor: 5
+    climatización: 3
+    piscina: 3
+    garaje: 4
+    plagas: 3
+    mobiliario: 2
+    seguridad: 3
+    ruido: 2
+    varios: 1
+  channel:
+    whatsapp: 35
+    email: 20
+    app: 15
+    telefono: 15
+    presencial: 10
+    buzon_sugerencias: 5
+  community:
+    C001: 1
+    C002: 1
+    C003: 1
+    C004: 1
+    C005: 1
+    C006: 1
+  multi_problem: 0.15
+  photo_prob: 0.55
+  photo_count:
+    1: 0.5
+    2: 0.35
+    3: 0.15
+
+modifiers:
+  semianalfabeto:
+    description: Escribe como habla, sin ortografía ni puntuación. faltas constantes.
+    style_override: >-
+      Escribe con faltas de ortografía graves: hache mudas (ojo por hojo), b/v mezcladas,
+      g/j, s/c/z, sin puntuación o puntuación aleatoria. Frases larguísimas sin punto.
+      Todo seguido o todo en minúscula. "k" por "qu", abreviaciones SMS.
+      Ejemplo: "k se a roto la tuberia y ai agua x todos ldao".
+    prob: 0.08
+  dictado_voz:
+    description: Usa dictado por voz del móvil. Errores de transcripción.
+    style_override: >-
+      Incluye errores típicos de transcripción voz a texto: palabras mal reconocidas
+      ("gabete" por "gaveta"), puntuación ausente o aleatoria, frases que se cortan y recomienzan,
+      repeticiones por fallo del dictado.
+      Ejemplo: "Hola oye que el ascensor no funciona bueno sí funciona pero se queda parado
+      en el segundo piso no sé si me explico".
+    prob: 0.06
+  solo_mayusculas:
+    description: Escribe todo en mayúsculas porque le cuesta leer la pantalla.
+    style_override: >-
+      TODO EN MAYÚSCULAS. No es agresión, es su forma de escribir. Puntuación básica.
+      Frases cortas y directas.
+      Ejemplo: "SE HA ROTO EL ASCENSOR OTRA VEZ POR FAVOR ARREGLADLO".
+    prob: 0.04
+  exceso_emojis:
+    description: Acompaña cada frase con emojis excesivos.
+    style_override: >-
+      Emojis por todas partes. Cada frase va acompañada de 2-4 emojis.
+      Emojis que refuerzan la emoción.
+      Ejemplo: "el ascensor está roto otra vez 😡🤦‍♀️ es que ya no puedo más 😫😫
+      subir 4 pisos 🧗‍♀️🔥 por favor arregladlo ya 🙏🙏🆘".
+    prob: 0.05
+  ultra_conciso:
+    description: Escribe lo mínimo imprescindible. Telegráfico.
+    style_override: >-
+      Extremadamente breve. 2-5 palabras. Sin saludo, sin despedida, sin contexto.
+      "Ascensor roto", "fuga garaje", "persiana portal 2 caída".
+      A veces solo un sustantivo y un adjetivo.
+    prob: 0.04
+  redundante:
+    description: No sabe resumir. Dice lo mismo tres veces con palabras distintas.
+    style_override: >-
+      Repetitivo y prolijo. Dice lo mismo de tres formas distintas.
+      "Es que hay una fuga, o sea que sale agua, o sea que pierde agua la tubería".
+      Mensajes muy largos. Rodea antes de llegar al punto. Añade detalles innecesarios.
+    prob: 0.04
+  habla_andaluza:
+    description: 'Andaluz: ceceo/seseo, aspiración, contracciones.'
+    style_override: >-
+      Andaluz escrito: "na má" por "nada más", "usté" por "usted", "pohía" por "podía",
+      "to esto" por "todo esto". Ceceo: "grasia" por "gracia". Contracciones: "pa'l", "na de na".
+      Tono cálido. "Mire usté, que se ha desprendío too el revoco de la fachá y náide dice ná".
+    prob: 0.06
+  habla_catalana:
+    description: Bilingüe catalán/castellano con interferencias.
+    style_override: >-
+      Castellano con interferencias catalanas: calcos sintácticos ("a la hora de hacer" por "al hacer"),
+      "home" como muletilla, "adéu" de cierre, posesivos "mi llave" por "la llave".
+      Correcto pero con giros propios.
+    prob: 0.04
+  habla_gallega:
+    description: Gallego con giros y estructuras propias.
+    style_override: >-
+      Castellano con gallegadas: "¿qué se le ofrece?", uso del condicional por subjuntivo,
+      "cando" por "cuando", "véña" por "venga". Tono amable y algo arcaizante.
+      "Pois mire, que cho digo que a tubería está rota desde faismos tempo".
+    prob: 0.03
+  habla_canaria:
+    description: Canario con suavidad y modismos propios.
+    style_override: >-
+      Canario: "mire usted mi llave" (posesivo), "hay mucho agua pa'l piso",
+      "¿qué es lo que hay?". Seseo. Tono tranquilo y pausado.
+      "Mire, mi llave, que el agua viene pa'bajo y no para".
+    prob: 0.03
+  origen_latinoamericano:
+    description: Latinoamericano con vocabulario y expresiones propias.
+    style_override: >-
+      Español con expresiones latinoamericanas: "che", "óyeme", "parcero".
+      Vocabulario diferente: "apartamento" no "piso", "edificio" no "bloque", "carro" no "coche".
+      Tono amable. "Óyeme, el ascensor está dañado, hay que arreglarlo ya mismo".
+    prob: 0.05
+  origen_arabe:
+    description: Árabe-hablante con español funcional y errores típicos.
+    style_override: >-
+      Español con errores de hablante de árabe: artículos ("el agua está roto"),
+      orden calco del árabe, omisiones de pronombres. "Yo quiere hablar con administrador".
+      Tono respetuoso. Puede cerrar con "inshallah" o "gracias por todo".
+    prob: 0.04
+  origen_chino:
+    description: Hablante de chino con español funcional, errores sistemáticos.
+    style_override: >-
+      Español con errores sistemáticos: confusión r/l ("lobo" por "robo"), omisión de artículos,
+      orden SVO rígido. "Yo tiene tienda bajo, agua viene de arriba".
+      Tono comercial y directo. Cuida mucho su propiedad.
+    prob: 0.03
+  origen_este_europa:
+    description: Europeo del este con español intermedio.
+    style_override: >-
+      Español con errores de casos y preposiciones. "Vengo de Ucrania y vivo aquí 3 años",
+      "la puerta está rompido". Vocabulario bueno pero gramática inconsistente. Tono serio y directo.
+    prob: 0.03
+  origen_extranjero:
+    description: Extranjero con español básico, usa traductor.
+    style_override: >-
+      Español de traductor o muy básico. Frases simples. A veces mezcla inglés.
+      "The elevator is broken", "el ascensor no funciona por 3 dias".
+      Tono educado pero confundido con los procedimientos españoles.
+    prob: 0.03
+  urgente:
+    description: 'Estado de urgencia: necesita respuesta inmediata.'
+    style_override: >-
+      Tono de emergencia real. Indica que es urgente sin ser agresivo.
+      "Por favor es urgente", "necesito que vengan hoy".
+      Más excusa que exigencia. Prioriza la petición de acción rápida.
+    prob: 0.08
+  enfado_acumulado:
+    description: Ya ha reclamado antes y no le hicieron caso. Acumula frustración.
+    style_override: >-
+      Frustración acumulada. "Ya lo dije la semana pasada y NADA", "es la tercera vez que llamo".
+      Referencia a reclamaciones previas sin respuesta. Tono entre resignado e indignado.
+    prob: 0.06
+  culpable_oculto:
+    description: Sabe que él mismo causó el problema y se siente culpable.
+    style_override: >-
+      Tono de disculpa implícita. Se nota que oculta algo. "Me parece que... se ha roto una tubería",
+      evita explicar el cómo. Minimiza su responsabilidad. "No sé cómo pasó, pero...".
+    prob: 0.03
+
+modifier_prob: 0.3
