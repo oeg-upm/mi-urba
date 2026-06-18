@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://miurba.es/schemas/extraction",
+  "title": "Extraction",
+  "description": "Structured extraction ground truth for a complaint. A single complaint may yield multiple extractions (one per distinct problem identified).",
+  "type": "object",
+  "required": ["complaint_id", "extractions"],
+  "properties": {
+    "complaint_id": {
+      "type": "string",
+      "description": "References the complaint this extraction belongs to"
+    },
+    "image_descriptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Textual descriptions of each attached photo, as produced by a VLM. One entry per photo in user_pics. Empty if no photos.",
+      "default": []
+    },
+    "extractions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/problemExtraction"
+      },
+      "description": "One extraction per distinct problem identified in the complaint"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "problemExtraction": {
+      "type": "object",
+      "required": ["category", "affected_elements", "location", "risks", "urgency"],
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/classification",
+          "description": "What type of problem this is"
+        },
+        "affected_elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/classification"
+          },
+          "description": "Physical elements affected by the problem, each with its own category/subcategory"
+        },
+        "location": {
+          "$ref": "#/$defs/location",
+          "description": "Where in the community the problem is located"
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/risk"
+          },
+          "description": "Risks associated with the problem",
+          "default": []
+        },
+        "urgency": {
+          "$ref": "#/$defs/urgency",
+          "description": "How urgently the problem needs attention"
+        }
+      },
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "object",
+      "description": "A principal/subcategory pair. Both taxonomies are extensible.",
+      "required": ["principal", "subcategory"],
+      "properties": {
+        "principal": {
+          "type": "string",
+          "description": "Top-level category"
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "Second-level category"
+        }
+      },
+      "additionalProperties": false
+    },
+    "location": {
+      "type": "object",
+      "required": ["zone"],
+      "properties": {
+        "zone": {
+          "type": "string",
+          "enum": [
+            "garaje",
+            "portal",
+            "exterior",
+            "zonas_verdes",
+            "piscina",
+            "trasteros",
+            "azotea",
+            "locales"
+          ],
+          "description": "General area within the community"
+        },
+        "detail": {
+          "type": "string",
+          "description": "More specific location detail (free-form)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "eléctrico",
+        "estructural",
+        "sanitario",
+        "incendio",
+        "inundación",
+        "caída",
+        "accesibilidad",
+        "seguridad_persona",
+        "ninguno"
+      ],
+      "description": "Type of risk associated with the problem"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": [
+        "inmediata",
+        "urgente",
+        "alta",
+        "media",
+        "baja",
+        "planificable"
+      ],
+      "description": "Urgency level: inmediata (hours), urgente (1-2 days), alta (week), media (2-4 weeks), baja (when possible), planificable (preventive)"
+    }
+  }
+}
