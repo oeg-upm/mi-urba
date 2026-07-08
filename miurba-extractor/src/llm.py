@@ -27,6 +27,7 @@ class LLMClient:
         timeout: int = 300,
         max_retries: int = 3,
         retry_delay: float = 5.0,
+        api_key: str | None = None,
     ):
         # Normalize: strip trailing slash and /v1 suffix
         base = base_url.rstrip("/")
@@ -38,6 +39,7 @@ class LLMClient:
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_delay = retry_delay
+        self.api_key = api_key
         self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0, "errors": 0}
 
     @property
@@ -66,10 +68,14 @@ class LLMClient:
             "temperature": temperature or self.temperature,
         }
 
+        headers = {"Content-Type": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+
         last_error: Exception | None = None
         for attempt in range(1, self.max_retries + 1):
             try:
-                resp = requests.post(self.api_url, json=payload, timeout=self.timeout)
+                resp = requests.post(self.api_url, json=payload, headers=headers, timeout=self.timeout)
                 resp.raise_for_status()
                 data = resp.json()
 

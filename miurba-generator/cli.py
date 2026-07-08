@@ -1,31 +1,37 @@
 #!/usr/bin/env python3
 """
-miUrba — Synthetic complaint dataset generator and annotator.
+miUrba — Generador de datasets sintéticos de quejas vecinales.
 
-Usage:
-  python cli.py generate                   # Generate with config defaults
-  python cli.py generate -n 100             # Generate 100 records
-  python cli.py generate --model glm-5.1    # Use a different model
-  python cli.py generate-multi              # Multi-model batch generation
-  python cli.py annotate                    # Annotate raw complaints
-  python cli.py merge                       # Merge per-model outputs
+Genera quejas/incidencias sintéticas reportadas por vecinos de una
+comunidad de vecinos. Produce dos ficheros JSONL por cada ejecución:
+  - complaints.jsonl  (el texto del vecino, canal, timestamp, pics)
+  - scenarios.jsonl    (metadatos del escenario + image_descriptions)
 
-All configuration comes from config.yaml — no hardcoded values.
+La extracción estructurada de estas quejas es una tarea independiente
+que corresponde al proyecto `miurba-extractor`.
+
+Uso:
+  python cli.py generate                   # Generar con config por defecto
+  python cli.py generate -n 100            # Generar 100 registros
+  python cli.py generate --model glm-5.1   # Usar otro modelo
+  python cli.py generate-multi             # Generación por lotes multi-modelo
+  python cli.py merge                      # Fusionar salidas por modelo
+
+Toda la configuración se lee de la config COMPARTIDA en la raíz del
+repositorio (../config.yaml por defecto, o la indicada con --config).
 """
 
 import argparse
-import json
 import logging
-import os
 import sys
 from pathlib import Path
 
-# Add project root to path
+# Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_model_params, get_paths
+from src.config import get_config, get_model_params, get_paths, get_image_generation_config
 from src.llm import LLMClient
-from src.pipeline import annotate_dataset, generate_dataset, merge_outputs
+from src.pipeline import generate_dataset, merge_outputs
 
 
 def _get_path_args(args, config):
@@ -52,9 +58,12 @@ def cmd_generate(args):
         model=model_cfg["model"],
         temperature=model_cfg["temperature"],
         timeout=args.timeout,
+        api_key=model_cfg.get("api_key"),
     )
 
     raw_subdir = paths["raw_subdir"]
+    ig_config = get_image_generation_config(config)
+    enable_images = bool(ig_config.get("enabled", False)) and not args.no_images
     print(f"miUrba — Generation (single model)")
     print(f"{'=' * 55}")
     print(f"  Model:      {model_name} ({model_cfg['model']})")
@@ -62,6 +71,7 @@ def cmd_generate(args):
     print(f"  Records:    {args.num_records}")
     print(f"  IDs:        Q{args.start_id:04d} — Q{args.start_id + args.num_records - 1:04d}")
     print(f"  Output:     {args.output_dir}/{raw_subdir}/")
+    print(f"  Images:     {'enabled (FLUX.2)' if enable_images else 'disabled'}")
     print(f"  Resume:     {not args.no_resume}")
     print(f"{'=' * 55}")
 
@@ -71,9 +81,12 @@ def cmd_generate(args):
         start_id=args.start_id,
         output_dir=args.output_dir,
         raw_subdir=raw_subdir,
+        images_subdir=paths.get("images_subdir", "images"),
         complaints_file=paths["complaints_file"],
         scenarios_file=paths["scenarios_file"],
         resume=not args.no_resume,
+        enable_images=enable_images,
+        ig_config=ig_config,
     )
 
     print(f"\n{'=' * 55}")
@@ -84,6 +97,7 @@ def cmd_generate(args):
     print(f"  Tokens out: {stats['total_tokens_out']:,}")
     print(f"  Raw:        {stats['raw_path']}")
     print(f"  Scenarios:  {stats['scenario_path']}")
+    print(f"  Images dir: {stats.get('images_dir')}")
 
 
 def cmd_generate_multi(args):
@@ -94,6 +108,8 @@ def cmd_generate_multi(args):
     batches = gen_cfg["batches"]
     output_dir = args.output_dir or gen_cfg["default_output_dir"]
     raw_subdir = paths["raw_subdir"]
+    ig_config = get_image_generation_config(config)
+    enable_images = bool(ig_config.get("enabled", False)) and not args.no_images
 
     print("miUrba — Multi-model generation")
     print("=" * 60)
@@ -118,6 +134,7 @@ def cmd_generate_multi(args):
             model=model_cfg["model"],
             temperature=model_cfg["temperature"],
             timeout=args.timeout,
+            api_key=model_cfg.get("api_key"),
         )
 
         model_dir = f"{output_dir}/{model_name}"
@@ -128,9 +145,12 @@ def cmd_generate_multi(args):
             start_id=id_offset + 1,
             output_dir=model_dir,
             raw_subdir=raw_subdir,
+            images_subdir=paths.get("images_subdir", "images"),
             complaints_file=paths["complaints_file"],
             scenarios_file=paths["scenarios_file"],
             resume=not args.no_resume,
+            enable_images=enable_images,
+            ig_config=ig_config,
         )
 
         stats["model"] = model_name
@@ -166,59 +186,6 @@ def cmd_generate_multi(args):
     print(f"Total merged: {merge_stats['complaints']} complaints")
 
 
-def cmd_annotate(args):
-    """Annotate raw complaints with structured extractions."""
-    config = get_config(args.config)
-    paths = _get_path_args(args, config)
-    gen_cfg = config.get("generation", {})
-    ann_cfg = config.get("annotation", {})
-    model_name = args.model or ann_cfg.get("model", "kimi-k2.6")
-    model_cfg = get_model_params(model_name, config)
-
-    temperature = args.temperature or ann_cfg.get("temperature", 0.2)
-
-    # Resolve directories: CLI override > explicit paths config > default
-    default_output = args.output_dir or gen_cfg.get("default_output_dir", "data")
-    raw_dir = args.raw_dir or os.path.join(default_output, paths["raw_subdir"])
-    annotated_dir = args.annotated_dir or os.path.join(default_output, paths["annotated_subdir"])
-
-    client = LLMClient(
-        base_url=model_cfg["base_url"],
-        model=model_cfg["model"],
-        temperature=temperature,
-        timeout=args.timeout,
-    )
-
-    print(f"miUrba — Annotation (raw → structured)")
-    print(f"{'=' * 55}")
-    print(f"  Model:      {model_name} ({model_cfg['model']})")
-    print(f"  Endpoint:   {model_cfg['base_url']}")
-    print(f"  Source:     {raw_dir}/{paths['complaints_file']}")
-    print(f"  Output:     {annotated_dir}/{paths['extractions_file']}")
-    print(f"  Resume:     {not args.no_resume}")
-    print(f"{'=' * 55}")
-
-    stats = annotate_dataset(
-        client=client,
-        raw_dir=raw_dir,
-        output_dir=annotated_dir,
-        raw_complaints_file=paths["complaints_file"],
-        raw_scenarios_file=paths["scenarios_file"],
-        extractions_file=paths["extractions_file"],
-        resume=not args.no_resume,
-    )
-
-    print(f"\n{'=' * 55}")
-    print(f"Annotation complete!")
-    print(f"  Annotated:  {stats['annotated']}")
-    print(f"  Failed:     {stats['failed']}")
-    print(f"  Skipped:    {stats['skipped']}")
-    print(f"  Total:      {stats['total']}")
-    print(f"  Tokens in:  {stats['total_tokens_in']:,}")
-    print(f"  Tokens out: {stats['total_tokens_out']:,}")
-    print(f"  Output:     {stats['output_path']}")
-
-
 def cmd_merge(args):
     """Merge per-model outputs into data/raw/."""
     config = get_config(args.config)
@@ -241,13 +208,14 @@ def cmd_merge(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="miUrba — Synthetic complaint dataset generator and annotator"
+        description="miUrba — Generador de datasets sintéticos de quejas vecinales"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── Shared arguments ───────────────────────────────────
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument("--config", default="config.yaml", help="Path to config.yaml")
+    common.add_argument("--config", default=None,
+                        help="Path to shared config.yaml (default: ../config.yaml at repo root)")
     common.add_argument("--output-dir", default=None, help="Output directory (default: from config)")
     common.add_argument("--raw-subdir", default=None, help="Raw subdirectory name (default: from config)")
     common.add_argument("--annotated-subdir", default=None, help="Annotated subdirectory name (default: from config)")
@@ -258,6 +226,8 @@ def main():
     common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
+    common.add_argument("--no-images", action="store_true",
+                        help="Disable image generation even if enabled in config")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     # ── Generate ────────────────────────────────────────────
@@ -274,14 +244,6 @@ def main():
     multi_parser = subparsers.add_parser("generate-multi", parents=[common],
                                           help="Multi-model batch generation")
 
-    # ── Annotate ────────────────────────────────────────────
-    ann_parser = subparsers.add_parser("annotate", parents=[common],
-                                        help="Annotate raw complaints")
-    ann_parser.add_argument("--model", default=None,
-                             help="Model for annotation (default: from config)")
-    ann_parser.add_argument("--temperature", type=float, default=None,
-                             help="Temperature for annotation")
-
     # ── Merge ───────────────────────────────────────────────
     merge_parser = subparsers.add_parser("merge", parents=[common],
                                           help="Merge per-model outputs")
@@ -297,7 +259,6 @@ def main():
     commands = {
         "generate": cmd_generate,
         "generate-multi": cmd_generate_multi,
-        "annotate": cmd_annotate,
         "merge": cmd_merge,
     }
 
