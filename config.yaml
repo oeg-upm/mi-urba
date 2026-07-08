@@ -36,13 +36,32 @@ generation:
 annotation:
   model: kimi-k2.6
   temperature: 0.2
+  # Modelo vision (VLM) para que el extractor vea las fotos.
+  # Si es null, se usa annotation.model (que DEBE ser multimodal).
+  vision_model: null
 
 paths:
   raw_subdir: raw
   annotated_subdir: annotated
+  images_subdir: images
   complaints_file: complaints.jsonl
   scenarios_file: scenarios.jsonl
   extractions_file: extractions.jsonl
+
+# Generación de imágenes (opcional) — generador.
+# Desactivada por defecto (requiere GPU + FLUX.2).
+# Activar solo en un host con GPUs y las deps de requirements-images.txt.
+image_generation:
+  enabled: false
+  backend: flux2
+  cache: diffusers/FLUX.2-dev-bnb-4bit
+  output_subdir: images
+  size: 1024
+  steps: 28
+  guidance: 4.0
+  device0: cuda:0
+  device1: cuda:1
+  seed_base: 42
 
 categories:
   fontanería:

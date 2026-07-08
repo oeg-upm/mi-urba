@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.so
 .venv/
+.venv*/
 venv/
 env/
 *.egg-info/
@@ -16,9 +17,13 @@ build/
 data/raw/
 data/annotated/
 data/merged/
+**/data/raw/
+**/data/annotated/
+**/data/merged/
 
-# Config with local endpoints
+# Config with local endpoints / secrets
 config.local.yaml
+config.neuralwatt.yaml
 
 # Secrets
 .env
@@ -35,3 +40,9 @@ config.local.yaml
 # OS
 .DS_Store
 Thumbs.db
+
+# Agent scratch
+.tmp/
+
+# Generated test output
+test_results.json
