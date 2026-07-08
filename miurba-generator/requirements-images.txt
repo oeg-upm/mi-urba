@@ -1,0 +1,8 @@
+# Extra dependencies for OPTIONAL image generation (FLUX.2-dev, multi-GPU).
+# Only needed if image_generation.enabled is true in the shared config.
+# The base generator (text only) only needs PyYAML + requests (see requirements.txt).
+torch>=2.5
+diffusers>=0.32
+transformers>=4.45
+huggingface_hub>=0.26
+accelerate>=1.0

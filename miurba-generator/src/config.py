@@ -1,8 +1,17 @@
 """
-Configuration loader — reads config.yaml and provides typed access.
+Configuration loader — reads the SHARED config.yaml at the repo root
+and provides typed access.
 
-All configuration lives in config.yaml. This module loads it once
-and exposes the parsed data. No hardcoded values elsewhere.
+The generator and the extractor share a single config.yaml located at
+the repository root (one level above this project folder). All
+configuration lives there; this module loads it once and exposes the
+parsed data. No hardcoded values elsewhere.
+
+Default path resolution (miurba-generator/src/config.py):
+    __file__          -> .../miurba-generator/src/config.py
+    parent            -> .../miurba-generator/src
+    parent.parent     -> .../miurba-generator
+    parent.parent.parent -> .../mi-urba  (repo root, where config.yaml lives)
 """
 
 from __future__ import annotations
@@ -14,7 +23,8 @@ import yaml
 
 _CONFIG: dict | None = None
 
-DEFAULT_CONFIG_PATH = Path(__file__).parent.parent / "config.yaml"
+# Shared config lives at the repo root, two levels up from this file.
+DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.yaml"
 
 
 def load_config(path: str | Path | None = None) -> dict[str, Any]:
@@ -46,13 +56,16 @@ def get_endpoint_url(name: str, cfg: dict | None = None) -> str:
 
 
 def get_model_params(name: str, cfg: dict | None = None) -> dict[str, Any]:
-    """Return (base_url, model_id, temperature) for a named model."""
+    """Return (base_url, model_id, temperature, api_key) for a named model."""
     cfg = cfg or get_config()
     m = cfg["models"][name]
+    endpoint_name = m["endpoint"]
+    endpoint = cfg["endpoints"][endpoint_name]
     return {
-        "base_url": get_endpoint_url(m["endpoint"], cfg),
+        "base_url": get_endpoint_url(endpoint_name, cfg),
         "model": m["model"],
         "temperature": m.get("temperature", 0.85),
+        "api_key": endpoint.get("api_key"),
     }
 
 
@@ -104,7 +117,32 @@ def get_paths(cfg: dict | None = None) -> dict[str, str]:
     return cfg.get("paths", {
         "raw_subdir": "raw",
         "annotated_subdir": "annotated",
+        "images_subdir": "images",
         "complaints_file": "complaints.jsonl",
         "scenarios_file": "scenarios.jsonl",
         "extractions_file": "extractions.jsonl",
     })
+
+
+# ── Image generation config (optional) ──────────────────────────
+
+_DEFAULT_IMAGE_GEN = {
+    "enabled": False,
+    "backend": "flux2",
+    "cache": "diffusers/FLUX.2-dev-bnb-4bit",
+    "output_subdir": "images",
+    "size": 1024,
+    "steps": 28,
+    "guidance": 4.0,
+    "device0": "cuda:0",
+    "device1": "cuda:1",
+    "seed_base": 42,
+}
+
+
+def get_image_generation_config(cfg: dict | None = None) -> dict[str, Any]:
+    """Return the image-generation config (disabled by default)."""
+    cfg = cfg or get_config()
+    ig = dict(_DEFAULT_IMAGE_GEN)
+    ig.update(cfg.get("image_generation", {}))
+    return ig
