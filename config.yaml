@@ -693,3 +693,268 @@ modifiers:
       "No sé cómo pasó, pero...".
     prob: 0.03
 modifier_prob: 0.3
+category_elements:
+  fontanería:
+  - tubería
+  - instalación_sanitaria
+  - revestimiento
+  - suelo
+  electricidad:
+  - instalación_eléctrica
+  - equipamiento
+  cubierta:
+  - cubierta
+  - revestimiento
+  - muro
+  fachada:
+  - muro
+  - revestimiento
+  carpintería:
+  - ventana
+  - puerta
+  jardinería:
+  - jardín
+  - cerramiento
+  limpieza:
+  - suelo
+  - mobiliario_común
+  ascensor:
+  - equipamiento
+  - puerta
+  climatización:
+  - equipamiento
+  - instalación_sanitaria
+  - tubería
+  piscina:
+  - equipamiento
+  - instalación_sanitaria
+  garaje:
+  - suelo
+  - puerta
+  - instalación_eléctrica
+  - instalación_sanitaria
+  plagas:
+  - muro
+  - revestimiento
+  - jardín
+  mobiliario:
+  - mobiliario_común
+  seguridad:
+  - cerramiento
+  - equipamiento
+  - instalación_eléctrica
+  ruido:
+  - muro
+  - estructura
+category_zones:
+  fontanería:
+  - garaje
+  - portal
+  - exterior
+  - azotea
+  - locales
+  electricidad:
+  - portal
+  - garaje
+  - exterior
+  - azotea
+  cubierta:
+  - exterior
+  - azotea
+  fachada:
+  - exterior
+  carpintería:
+  - portal
+  - exterior
+  jardinería:
+  - zonas_verdes
+  limpieza:
+  - portal
+  - garaje
+  - zonas_verdes
+  - piscina
+  ascensor:
+  - portal
+  climatización:
+  - azotea
+  - locales
+  - portal
+  piscina:
+  - piscina
+  garaje:
+  - garaje
+  plagas:
+  - portal
+  - garaje
+  - zonas_verdes
+  - exterior
+  mobiliario:
+  - zonas_verdes
+  - portal
+  - piscina
+  seguridad:
+  - exterior
+  - portal
+  - garaje
+  ruido:
+  - portal
+  - garaje
+  - locales
+category_risks:
+  fontanería:
+  - inundación
+  - eléctrico
+  - sanitario
+  electricidad:
+  - eléctrico
+  - incendio
+  cubierta:
+  - caída
+  - inundación
+  fachada:
+  - caída
+  - estructural
+  carpintería:
+  - seguridad_persona
+  - accesibilidad
+  jardinería:
+  - ninguno
+  limpieza:
+  - sanitario
+  - ninguno
+  ascensor:
+  - accesibilidad
+  - seguridad_persona
+  climatización:
+  - ninguno
+  - sanitario
+  piscina:
+  - sanitario
+  - seguridad_persona
+  garaje:
+  - ninguno
+  - seguridad_persona
+  plagas:
+  - sanitario
+  mobiliario:
+  - caída
+  - ninguno
+  seguridad:
+  - seguridad_persona
+  ruido:
+  - ninguno
+  varios:
+  - ninguno
+urgency_weights:
+  fontanería:
+    inmediata: 5
+    urgente: 20
+    alta: 30
+    media: 30
+    baja: 10
+    planificable: 5
+  electricidad:
+    inmediata: 10
+    urgente: 25
+    alta: 30
+    media: 25
+    baja: 5
+    planificable: 5
+  cubierta:
+    inmediata: 5
+    urgente: 20
+    alta: 35
+    media: 25
+    baja: 10
+    planificable: 5
+  fachada:
+    inmediata: 5
+    urgente: 10
+    alta: 20
+    media: 35
+    baja: 20
+    planificable: 10
+  carpintería:
+    inmediata: 2
+    urgente: 8
+    alta: 20
+    media: 40
+    baja: 20
+    planificable: 10
+  jardinería:
+    inmediata: 2
+    urgente: 5
+    alta: 10
+    media: 30
+    baja: 35
+    planificable: 18
+  limpieza:
+    inmediata: 2
+    urgente: 5
+    alta: 15
+    media: 35
+    baja: 30
+    planificable: 13
+  ascensor:
+    inmediata: 15
+    urgente: 30
+    alta: 30
+    media: 15
+    baja: 5
+    planificable: 5
+  climatización:
+    inmediata: 5
+    urgente: 10
+    alta: 20
+    media: 35
+    baja: 20
+    planificable: 10
+  piscina:
+    inmediata: 5
+    urgente: 10
+    alta: 20
+    media: 35
+    baja: 20
+    planificable: 10
+  garaje:
+    inmediata: 5
+    urgente: 10
+    alta: 25
+    media: 35
+    baja: 15
+    planificable: 10
+  plagas:
+    inmediata: 5
+    urgente: 15
+    alta: 25
+    media: 30
+    baja: 15
+    planificable: 10
+  mobiliario:
+    inmediata: 1
+    urgente: 4
+    alta: 10
+    media: 30
+    baja: 35
+    planificable: 20
+  seguridad:
+    inmediata: 10
+    urgente: 25
+    alta: 30
+    media: 20
+    baja: 10
+    planificable: 5
+  ruido:
+    inmediata: 5
+    urgente: 15
+    alta: 25
+    media: 35
+    baja: 15
+    planificable: 5
+  varios:
+    inmediata: 2
+    urgente: 8
+    alta: 15
+    media: 35
+    baja: 25
+    planificable: 15
