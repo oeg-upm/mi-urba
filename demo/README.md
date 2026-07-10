@@ -19,7 +19,7 @@ FASE 1: miurba-generator                     FASE 2: miurba-extractor
 - Python 3.10+
 - Acceso a `https://api.neuralwatt.com/v1` (API key en `config.demo.yaml`)
 
-## Uso
+## Uso rápido (script)
 
 ```bash
 # Ejecutar el pipeline completo (llamadas reales al LLM, ~2 min)
@@ -27,6 +27,102 @@ bash demo/run_demo.sh
 
 # Ver la salida pre-generada sin ejecutar el LLM
 bash demo/run_demo.sh --show
+```
+
+## Uso manual (comandos python)
+
+### Setup
+
+```bash
+# Crear virtualenvs e instalar dependencias
+cd miurba-generator
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cd ../miurba-extractor
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Fase 1 — Generador
+
+```bash
+cd miurba-generator
+source .venv/bin/activate
+
+# Generar 3 quejas sintéticas (LLM: kimi-k2.6 via NeuralWatt)
+python cli.py generate -n 3 --config ../demo/config.demo.yaml --output-dir ../demo/output
+
+# Generar con otro modelo
+python cli.py generate -n 10 --config ../demo/config.demo.yaml --model glm-5.1
+
+# Generar por lotes multi-modelo (usa generation.batches del config)
+python cli.py generate-multi --config ../demo/config.demo.yaml
+
+# Fusionar salidas de generate-multi en data/raw/
+python cli.py merge --config ../demo/config.demo.yaml
+
+# Generar con imágenes (requiere GPU + FLUX.2)
+#   1. Activar en config: image_generation.enabled: true
+#   2. pip install -r requirements-images.txt
+python cli.py generate -n 10 --config ../demo/config.demo.yaml
+
+# CLI standalone de imágenes FLUX.2
+python flux2_imagegen.py --test                          # test rápido (1 imagen)
+python flux2_imagegen.py --scenarios data/raw/scenarios.jsonl --limit 10  # desde scenarios
+python flux2_imagegen.py                                # 12 incidencias demo
+```
+
+**Salida del generador:**
+- `data/raw/complaints.jsonl` — `{id, user_text, user_pics, channel, timestamp, community_ref, persona}`
+- `data/raw/scenarios.jsonl` — `{id, problems, community, channel, persona, modifier, num_pics, image_prompts}`
+- `data/images/*.png` — fotos reales (solo si FLUX activado)
+
+### Fase 2 — Extractor
+
+```bash
+cd miurba-extractor
+source .venv/bin/activate
+
+# Copiar datos del generador
+mkdir -p data/raw data/images
+cp ../miurba-generator/data/raw/{complaints,scenarios}.jsonl data/raw/
+cp -r ../miurba-generator/data/images/* data/images/   # si hay imágenes
+
+# Extraer estructura + descripciones de imágenes (VLM: kimi-k2.6 multimodal)
+python cli.py extract --config ../demo/config.demo.yaml
+
+# Especificar rutas explícitas
+python cli.py extract --config ../demo/config.demo.yaml \
+  --raw-dir data/raw \
+  --images-dir data/images \
+  --annotated-dir data/annotated
+
+# Usar otro modelo VLM
+python cli.py extract --config ../demo/config.demo.yaml --model glm-5.1
+
+# Sin resume (empezar de cero)
+python cli.py extract --config ../demo/config.demo.yaml --no-resume
+```
+
+**Salida del extractor:**
+- `data/annotated/extractions.jsonl` — `{complaint_id, image_descriptions, extractions}`
+  - `image_descriptions`: descripción de cada foto por el VLM (vacío si no hay fotos)
+  - `extractions[]`: `{category, affected_elements, location, risks, urgency}` por cada problema
+
+### Flujo completo manual
+
+```bash
+# 1. Generar
+cd miurba-generator && source .venv/bin/activate
+python cli.py generate -n 3 --config ../demo/config.demo.yaml --output-dir /tmp/miurba-demo
+
+# 2. Extraer
+cd ../miurba-extractor && source .venv/bin/activate
+mkdir -p data/raw && cp /tmp/miurba-demo/raw/complaints.jsonl data/raw/
+python cli.py extract --config ../demo/config.demo.yaml --raw-dir data/raw --annotated-dir /tmp/miurba-demo/annotated
+
+# 3. Ver resultados
+python -c "import json; [print(json.dumps(json.loads(l), indent=2, ensure_ascii=False)) for l in open('/tmp/miurba-demo/annotated/extractions.jsonl') if l.strip()]"
 ```
 
 ## Salida
