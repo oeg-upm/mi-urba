@@ -323,7 +323,7 @@ def merge_outputs(
                         merged_scenarios.append(json.loads(line))
 
     merged_complaints.sort(key=lambda x: x["id"])
-    merged_scenarios.sort(key=lambda x: x["id"])
+    merged_scenarios.sort(key=lambda x: x["complaint_id"])
 
     complaints_path = raw_out / complaints_file
     scenarios_path = raw_out / scenarios_file
