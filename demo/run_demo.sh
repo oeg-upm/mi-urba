@@ -2,13 +2,14 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # miUrba — Demo REAL del pipeline completo
 #
-# Ejecuta las dos fases con llamadas reales a un LLM (NeuralWatt / kimi-k2.6):
-#   1. miurba-generator: genera 3 quejas sintéticas (texto + metadatos)
+# Ejecuta las dos fases con llamadas reales a un LLM:
+#   1. miurba-generator: genera quejas sintéticas (kimi-k2.6 + qwen3_local)
 #   2. miurba-extractor: extrae estructura + describe imágenes con VLM
 #
 # Requisitos:
 #   - Python 3.10+
-#   - Acceso a https://api.neuralwatt.com/v1 (API key incluida en config.demo.yaml)
+#   - Acceso a https://api.neuralwatt.com/v1 (API key en config.demo.yaml)
+#   - Acceso a http://192.168.10.11:9292 (llama-swap local para qwen3_local)
 #
 # Uso:
 #   bash demo/run_demo.sh             # ejecuta generador + extractor
@@ -60,8 +61,8 @@ fi
 
 # ── Run real pipeline ───────────────────────────────────────────────────────
 banner "miUrba — Demo REAL (pipeline end-to-end)"
-echo -e "  LLM: kimi-k2.6 via NeuralWatt"
-echo -e "  3 quejas · sin imágenes (FLUX desactivado)"
+echo -e "  LLMs: kimi-k2.6 (NeuralWatt) + qwen3_local (llama-swap)"
+echo -e "  6 quejas · sin imágenes (FLUX desactivado)"
 echo ""
 
 rm -rf "$OUT"
@@ -112,7 +113,7 @@ show_jsonl "$OUT/annotated/extractions.jsonl" "extractions.jsonl"
 # ── Done ────────────────────────────────────────────────────────────────────
 banner "Demo completada"
 echo -e "  Salida: $OUT/"
-echo -e "  ${DIM}raw/complaints.jsonl    — texto del vecino (3 quejas)${R}"
+echo -e "  ${DIM}raw/complaints.jsonl    — texto del vecino (6 quejas)${R}"
 echo -e "  ${DIM}raw/scenarios.jsonl     — ground truth (3 escenarios)${R}"
 echo -e "  ${DIM}annotated/extractions.jsonl — estructura extraída (VLM)${R}"
 echo ""
