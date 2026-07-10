@@ -63,7 +63,6 @@ def _en(map_: dict, key: str) -> str:
 def build_generation_prompt(
     record_id: str,
     problems: list[dict],
-    channel: str,
     community: dict,
     num_pics: int,
     persona: dict | None = None,
@@ -89,10 +88,6 @@ def build_generation_prompt(
         desc += f" (urgencia: {p['urgency']})"
         problem_descs.append(desc)
     problems_text = "\n".join(problem_descs)
-
-    # Channel style
-    channels = cfg.get_channels()
-    channel_style = channels[channel]["style"]
 
     # Community description
     comm = community
@@ -123,7 +118,7 @@ def build_generation_prompt(
     # JSON template — only user_text and timestamp
     json_template = {
         "user_text": "<lo que escribe/dice el vecino>",
-        "timestamp": "<ISO8601, realista para el canal>",
+        "timestamp": "<ISO8601 realista>",
     }
 
     # Persona conditioning
@@ -163,15 +158,13 @@ def build_generation_prompt(
         f"{problems_text}\n\n"
         f"CONTEXTO:\n"
         f"- Comunidad: {comm_desc}\n"
-        f"- Canal: {channel}\n"
-        f"- Estilo del texto: {channel_style}\n"
         f"{persona_block}"
         f"- {photo_text}\n"
         f"- ID: {record_id}\n\n"
         f"INSTRUCCIONES:\n"
         f"1. Escribe el user_text como lo expresaría este vecino REAL "
-        f"por ese canal. Sé creativo: varía tono, extensión, "
-        f"nivel de detalle. A veces enfadado, a veces casual, "
+        f"a través de una app de gestión de comunidades. Sé creativo: varía tono, "
+        f"extensión, nivel de detalle. A veces enfadado, a veces casual, "
         f"a veces muy específico, a veces vago."
         f" Si el vecino se identifica, inventa un nombre y apellidos "
         f"realistas en español. NUNCA uses placeholders como "
@@ -180,8 +173,7 @@ def build_generation_prompt(
         f" No mezcles palabras sueltas de otros idiomas"
         f" (como 'many', 'this', etc.) dentro del texto en español."
         f" Revisa la ortografía antes de finalizar.\n"
-        f"2. El timestamp debe ser realista para el canal "
-        f"(WhatsApp a cualquier hora, email en horario laboral...).\n\n"
+        f"2. El timestamp debe ser realista.\n\n"
         f"RESPONDE SOLO con JSON en este formato:\n"
         f"{json.dumps(json_template, indent=2, ensure_ascii=False)}"
     )

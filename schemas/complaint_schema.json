@@ -4,7 +4,7 @@
   "title": "Complaint",
   "description": "Unstructured input from a user reporting issues or suggestions about their residential community maintenance.",
   "type": "object",
-  "required": ["id", "user_text", "channel", "timestamp"],
+  "required": ["id", "user_text", "timestamp"],
   "properties": {
     "id": {
       "type": "string",
@@ -21,6 +21,11 @@
       },
       "description": "List of image filenames referenced by this complaint",
       "default": []
+    },
+    "channel": {
+      "type": "string",
+      "description": "Channel through which the complaint was received",
+      "enum": ["whatsapp", "email", "presencial", "app", "telefono", "buzon_sugerencias"]
     },
     "channel": {
       "type": "string",

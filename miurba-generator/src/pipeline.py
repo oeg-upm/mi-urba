@@ -22,7 +22,6 @@ from . import config as cfg
 from .llm import LLMClient
 from .prompts import build_generation_prompt, build_image_prompts
 from .sampling import (
-    sample_channel,
     sample_community,
     sample_photo_count,
     sample_persona,
@@ -64,7 +63,6 @@ def generate_complaint(
         scenario = sample_scenario()
 
     community = sample_community()
-    channel = sample_channel()
     persona = sample_persona()
     modifier = sample_modifier()
 
@@ -84,7 +82,6 @@ def generate_complaint(
     messages = build_generation_prompt(
         record_id=record_id,
         problems=problems,
-        channel=channel,
         community=community,
         num_pics=num_pics,
         persona=persona,
@@ -142,24 +139,34 @@ def generate_complaint(
         "id": record_id,
         "user_text": user_text,
         "user_pics": pic_names,
-        "channel": channel,
         "timestamp": timestamp,
-        "community_ref": community["id"],
-        "persona": persona["id"] if persona else None,
     }
 
-    scenario_ref = {
-        "id": record_id,
-        "problems": problems,
-        "community": community,
-        "channel": channel,
+    # Ground truth: aligned with extraction_schema.json
+    extractions = [
+        {
+            "category": {"principal": p["category"], "subcategory": p["subcategory"]},
+            "affected_elements": p["affected_elements"],
+            "location": {"zone": p["location_zone"], "detail": p.get("location_detail", "")},
+            "risks": p["risks"],
+            "urgency": p["urgency"],
+        }
+        for p in problems
+    ]
+
+    ground_truth = {
+        "complaint_id": record_id,
+        "extractions": extractions,
+        "image_descriptions": [],  # filled by extractor (VLM), not by generator
+        # generation metadata (not part of the extraction schema):
         "persona": persona["id"] if persona else None,
         "modifier": modifier["id"] if modifier else None,
+        "community": community,
         "num_pics": num_pics,
         "image_prompts": image_prompts,
     }
 
-    return complaint, scenario_ref
+    return complaint, ground_truth
 
 
 def generate_dataset(
@@ -250,13 +257,13 @@ def generate_dataset(
             logger.warning(f"[{record_id}] Generation failed")
             continue
 
-        complaint, scenario_ref = result
+        complaint, ground_truth = result
 
         with open(raw_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
 
         with open(scenario_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(scenario_ref, ensure_ascii=False) + "\n")
+            f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
 
         generated += 1
 

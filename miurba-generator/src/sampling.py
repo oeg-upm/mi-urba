@@ -176,11 +176,6 @@ def sample_scenario() -> dict:
     }
 
 
-def sample_channel() -> str:
-    """Sample a communication channel."""
-    return weighted_sample(cfg.get_weights()["channel"])
-
-
 def sample_community() -> dict:
     """Sample a community uniformly."""
     communities = cfg.get_communities()
