@@ -1,0 +1,14 @@
+.venv/
+.venv*/
+__pycache__/
+*.pyc
+.git/
+.tmp/
+data/
+miurba-generator/data/
+miurba-extractor/data/
+miurba-generator/test_results.json
+demo/output/
+*.egg-info/
+dist/
+build/
