@@ -29,11 +29,6 @@ def _build_text_part(complaint: dict) -> str:
         n = len(complaint["user_pics"])
         context_parts.append(f"FOTOS ADJUNTAS: {n} foto(s) que se muestran a continuación.")
 
-    context_parts.append(f"CANAL: {complaint['channel']}")
-
-    if complaint.get("community_ref"):
-        context_parts.append(f"COMUNIDAD: {complaint['community_ref']}")
-
     input_text = "\n\n".join(context_parts)
 
     # Extraction schema — now includes image_descriptions
@@ -112,7 +107,7 @@ def build_extraction_prompt(
     URLs in OpenAI-compatible image_url parts).
 
     Args:
-        complaint: dict with at least id, user_text, user_pics, channel.
+        complaint: dict with at least id, user_text, user_pics.
         image_paths: list of paths to the photo files (one per user_pic, in
             order). Missing files are skipped (the model is told a photo was
             expected but not provided).
