@@ -89,7 +89,8 @@ class GenerationResponse(BaseModel):
     id: str
     model: str
     complaints: list[dict[str, Any]]
-    scenarios: list[dict[str, Any]]
+    ground_truth: list[dict[str, Any]]
+    metadata: list[dict[str, Any]]
     stats: dict[str, Any]
 
 
@@ -106,7 +107,8 @@ class PipelineResponse(BaseModel):
     generate_model: str
     extract_model: str
     complaints: list[dict[str, Any]]
-    scenarios: list[dict[str, Any]]
+    ground_truth: list[dict[str, Any]]
+    metadata: list[dict[str, Any]]
     extractions: list[dict[str, Any]]
 
 
@@ -132,7 +134,7 @@ class HealthResponse(BaseModel):
 # ── Subprocess helpers ───────────────────────────────────────────────────────
 
 def run_generator(model: str, n: int, config_path: str, output_dir: str) -> tuple[dict, list, list]:
-    """Run the generator CLI as subprocess, return (stats, complaints, scenarios)."""
+    """Run the generator CLI as subprocess, return (stats, complaints, ground_truth, metadata)."""
     cmd = [
         sys.executable, str(GENERATOR_DIR / "cli.py"),
         "generate",
@@ -148,20 +150,26 @@ def run_generator(model: str, n: int, config_path: str, output_dir: str) -> tupl
         raise HTTPException(status_code=502, detail=f"Generator failed: {result.stderr[-500:]}")
 
     complaints = []
-    scenarios = []
     raw_dir = Path(output_dir) / "raw"
     cfile = raw_dir / "complaints.jsonl"
-    sfile = raw_dir / "scenarios.jsonl"
+    gfile = raw_dir / "ground_truth.jsonl"
+    mfile = raw_dir / "metadata.jsonl"
+    complaints = []
+    ground_truth = []
+    metadata = []
     if cfile.exists():
         with open(cfile) as f:
             complaints = [json.loads(l) for l in f if l.strip()]
-    if sfile.exists():
-        with open(sfile) as f:
-            scenarios = [json.loads(l) for l in f if l.strip()]
+    if gfile.exists():
+        with open(gfile) as f:
+            ground_truth = [json.loads(l) for l in f if l.strip()]
+    if mfile.exists():
+        with open(mfile) as f:
+            metadata = [json.loads(l) for l in f if l.strip()]
 
     # Parse stats from stdout
     stats = {"generated": len(complaints)}
-    return stats, complaints, scenarios
+    return stats, complaints, ground_truth, metadata
 
 
 def run_extractor(
@@ -267,7 +275,7 @@ async def generate(req: GenerateRequest):
     Generate synthetic complaints using an LLM.
 
     Calls the miurba-generator pipeline to produce `n` complaint records
-    with the specified model. Returns complaints + scenarios (ground truth).
+    with the specified model. Returns complaints + ground_truth + metadata.
     """
     config_path = resolve_config(req.config)
     cfg = load_config(config_path)
@@ -276,7 +284,7 @@ async def generate(req: GenerateRequest):
 
     gen_id = f"gen_{uuid.uuid4().hex[:12]}"
     with tempfile.TemporaryDirectory() as tmpdir:
-        stats, complaints, scenarios = run_generator(
+        stats, complaints, ground_truth, metadata = run_generator(
             model=req.model,
             n=req.n,
             config_path=config_path,
@@ -286,7 +294,8 @@ async def generate(req: GenerateRequest):
             id=gen_id,
             model=req.model,
             complaints=complaints,
-            scenarios=scenarios,
+            ground_truth=ground_truth,
+            metadata=metadata,
             stats=stats,
         )
 
@@ -345,7 +354,7 @@ async def pipeline(req: PipelineRequest):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         # Phase 1: Generate
-        stats, complaints, scenarios = run_generator(
+        stats, complaints, ground_truth, metadata = run_generator(
             model=req.generate_model,
             n=req.n,
             config_path=config_path,
@@ -367,7 +376,8 @@ async def pipeline(req: PipelineRequest):
             generate_model=req.generate_model,
             extract_model=extract_model or cfg.get("annotation", {}).get("vision_model") or cfg.get("annotation", {}).get("model", "unknown"),
             complaints=complaints,
-            scenarios=scenarios,
+            ground_truth=ground_truth,
+            metadata=metadata,
             extractions=extractions,
         )
 

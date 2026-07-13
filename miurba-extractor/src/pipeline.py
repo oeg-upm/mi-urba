@@ -92,7 +92,6 @@ def extract_dataset(
     images_dir: str | None = None,
     output_dir: str = "data/annotated",
     raw_complaints_file: str = "complaints.jsonl",
-    raw_scenarios_file: str = "scenarios.jsonl",
     extractions_file: str = "extractions.jsonl",
     resume: bool = True,
 ) -> dict:

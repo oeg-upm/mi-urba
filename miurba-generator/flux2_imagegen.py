@@ -9,7 +9,7 @@ prompts (`src.prompts.build_image_prompts`), derivados del scenario.
 
 Modos:
   --test                 una imagen de prueba con prompt fijo
-  --scenarios <file>     genera imágenes para cada registro de scenarios.jsonl
+  --metadata <file>      genera imágenes para cada registro de metadata.jsonl
                          (usa los `image_prompts` guardados por el generador,
                           o los reconstruye a partir del scenario)
   (sin flags)            12 incidencias de demostración con prompts fijos
@@ -33,7 +33,7 @@ from src.prompts import build_image_prompts
 def main():
     parser = argparse.ArgumentParser(description="miUrba FLUX.2 image generator (multi-GPU)")
     parser.add_argument("--test", action="store_true", help="Test rápido")
-    parser.add_argument("--scenarios", type=str, help="Path a scenarios.jsonl")
+    parser.add_argument("--metadata", type=str, help="Path a metadata.jsonl")
     parser.add_argument("--output", type=str, default="data/images", help="Directorio salida")
     parser.add_argument("--steps", type=int, default=28, help="Inference steps")
     parser.add_argument("--guidance", type=float, default=4.0, help="Guidance scale")
@@ -56,11 +56,11 @@ def main():
         print(f"Generada en {time.time()-t0:.1f}s -> {args.output}/test_flux2_dev.png")
         return
 
-    if args.scenarios:
-        print(f"=== Generando desde {args.scenarios} ===")
+    if args.metadata:
+        print(f"=== Generando desde {args.metadata} ===")
         os.makedirs(args.output, exist_ok=True)
         records = []
-        with open(args.scenarios) as f:
+        with open(args.metadata) as f:
             for line in f:
                 if line.strip():
                     records.append(json.loads(line))

@@ -4,8 +4,9 @@ Pipeline functions — synthetic complaint GENERATION.
 Orchestrates scenario sampling, LLM calls (text), optional image generation,
 and file I/O to produce a dataset of raw complaints:
 
-  - complaints.jsonl  (id, user_text, user_pics, channel, timestamp, ...)
-  - scenarios.jsonl    (ground truth: problems, community, ..., image_prompts)
+  - complaints.jsonl   (id, user_text, user_pics, timestamp)
+  - ground_truth.jsonl  (complaint_id, extractions, image_descriptions)
+  - metadata.jsonl      (complaint_id, persona, modifier, community, num_pics, image_prompts)
   - <images_subdir>/*.png  (actual photos, only if image generation is enabled)
 
 The LLM produces ONLY user_text + timestamp. It does NOT describe images:
@@ -158,7 +159,10 @@ def generate_complaint(
         "complaint_id": record_id,
         "extractions": extractions,
         "image_descriptions": [],  # filled by extractor (VLM), not by generator
-        # generation metadata (not part of the extraction schema):
+    }
+
+    metadata = {
+        "complaint_id": record_id,
         "persona": persona["id"] if persona else None,
         "modifier": modifier["id"] if modifier else None,
         "community": community,
@@ -166,7 +170,7 @@ def generate_complaint(
         "image_prompts": image_prompts,
     }
 
-    return complaint, ground_truth
+    return complaint, ground_truth, metadata
 
 
 def generate_dataset(
@@ -177,7 +181,8 @@ def generate_dataset(
     raw_subdir: str = "raw",
     images_subdir: str = "images",
     complaints_file: str = "complaints.jsonl",
-    scenarios_file: str = "scenarios.jsonl",
+    ground_truth_file: str = "ground_truth.jsonl",
+    metadata_file: str = "metadata.jsonl",
     resume: bool = True,
     enable_images: bool = False,
     ig_config: dict | None = None,
@@ -187,14 +192,16 @@ def generate_dataset(
 
     Produces:
       - <output_dir>/<raw_subdir>/<complaints_file>
-      - <output_dir>/<raw_subdir>/<scenarios_file>
+      - <output_dir>/<raw_subdir>/<ground_truth_file>
+      - <output_dir>/<raw_subdir>/<metadata_file>
       - <output_dir>/<images_subdir>/*.png  (only if enable_images is True)
 
     When image generation is enabled, the FLUX backend is loaded ONCE here
     and reused for every record.
     """
     raw_path = Path(output_dir) / raw_subdir / complaints_file
-    scenario_path = Path(output_dir) / raw_subdir / scenarios_file
+    ground_truth_path = Path(output_dir) / raw_subdir / ground_truth_file
+    metadata_path = Path(output_dir) / raw_subdir / metadata_file
     raw_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Optional image generation backend (loaded once)
@@ -257,13 +264,16 @@ def generate_dataset(
             logger.warning(f"[{record_id}] Generation failed")
             continue
 
-        complaint, ground_truth = result
+        complaint, ground_truth, metadata = result
 
         with open(raw_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
 
-        with open(scenario_path, "a", encoding="utf-8") as f:
+        with open(ground_truth_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
+
+        with open(metadata_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
 
         generated += 1
 
@@ -282,7 +292,8 @@ def generate_dataset(
         "total_tokens_in": client.stats["tokens_in"],
         "total_tokens_out": client.stats["tokens_out"],
         "raw_path": str(raw_path),
-        "scenario_path": str(scenario_path),
+        "ground_truth_path": str(ground_truth_path),
+        "metadata_path": str(metadata_path),
         "images_dir": str(images_dir) if image_gen is not None else None,
     }
 
@@ -294,7 +305,8 @@ def merge_outputs(
     batch_dirs: list[str] | None = None,
     raw_subdir: str = "raw",
     complaints_file: str = "complaints.jsonl",
-    scenarios_file: str = "scenarios.jsonl",
+    ground_truth_file: str = "ground_truth.jsonl",
+    metadata_file: str = "metadata.jsonl",
 ) -> dict:
     """
     Merge per-model output directories into final <output_dir>/<raw_subdir>/.
@@ -303,45 +315,53 @@ def merge_outputs(
     raw_out.mkdir(parents=True, exist_ok=True)
 
     merged_complaints = []
-    merged_scenarios = []
+    merged_ground_truth = []
+    merged_metadata = []
 
     for model_dir in (batch_dirs or []):
         model_path = Path(output_dir) / model_dir / raw_subdir
-        complaints_file_path = model_path / complaints_file
-        scenarios_file_path = model_path / scenarios_file
 
-        if complaints_file_path.exists():
-            with open(complaints_file_path, encoding="utf-8") as f:
-                for line in f:
-                    if line.strip():
-                        merged_complaints.append(json.loads(line))
-
-        if scenarios_file_path.exists():
-            with open(scenarios_file_path, encoding="utf-8") as f:
-                for line in f:
-                    if line.strip():
-                        merged_scenarios.append(json.loads(line))
+        for fname, merged in [
+            (complaints_file, merged_complaints),
+            (ground_truth_file, merged_ground_truth),
+            (metadata_file, merged_metadata),
+        ]:
+            fpath = model_path / fname
+            if fpath.exists():
+                with open(fpath, encoding="utf-8") as f:
+                    for line in f:
+                        if line.strip():
+                            merged.append(json.loads(line))
 
     merged_complaints.sort(key=lambda x: x["id"])
-    merged_scenarios.sort(key=lambda x: x["complaint_id"])
+    merged_ground_truth.sort(key=lambda x: x["complaint_id"])
+    merged_metadata.sort(key=lambda x: x["complaint_id"])
 
     complaints_path = raw_out / complaints_file
-    scenarios_path = raw_out / scenarios_file
+    ground_truth_path = raw_out / ground_truth_file
+    metadata_path = raw_out / metadata_file
 
     with open(complaints_path, "w", encoding="utf-8") as f:
         for c in merged_complaints:
             f.write(json.dumps(c, ensure_ascii=False) + "\n")
 
-    with open(scenarios_path, "w", encoding="utf-8") as f:
-        for s in merged_scenarios:
-            f.write(json.dumps(s, ensure_ascii=False) + "\n")
+    with open(ground_truth_path, "w", encoding="utf-8") as f:
+        for g in merged_ground_truth:
+            f.write(json.dumps(g, ensure_ascii=False) + "\n")
+
+    with open(metadata_path, "w", encoding="utf-8") as f:
+        for m in merged_metadata:
+            f.write(json.dumps(m, ensure_ascii=False) + "\n")
 
     logger.info(f"Merged {len(merged_complaints)} complaints → {complaints_path}")
-    logger.info(f"Merged {len(merged_scenarios)} scenarios → {scenarios_path}")
+    logger.info(f"Merged {len(merged_ground_truth)} ground_truth → {ground_truth_path}")
+    logger.info(f"Merged {len(merged_metadata)} metadata → {metadata_path}")
 
     return {
         "complaints": len(merged_complaints),
-        "scenarios": len(merged_scenarios),
+        "ground_truth": len(merged_ground_truth),
+        "metadata": len(merged_metadata),
         "complaints_path": str(complaints_path),
-        "scenarios_path": str(scenarios_path),
+        "ground_truth_path": str(ground_truth_path),
+        "metadata_path": str(metadata_path),
     }

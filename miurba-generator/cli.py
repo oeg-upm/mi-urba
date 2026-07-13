@@ -5,7 +5,8 @@ miUrba — Generador de datasets sintéticos de quejas vecinales.
 Genera quejas/incidencias sintéticas reportadas por vecinos de una
 comunidad de vecinos. Produce dos ficheros JSONL por cada ejecución:
   - complaints.jsonl  (el texto del vecino, canal, timestamp, pics)
-  - scenarios.jsonl    (metadatos del escenario + image_descriptions)
+  - ground_truth.jsonl  (extracciones esperadas)
+  - metadata.jsonl      (persona, modifier, community, image_prompts)
 
 La extracción estructurada de estas quejas es una tarea independiente
 que corresponde al proyecto `miurba-extractor`.
@@ -41,7 +42,8 @@ def _get_path_args(args, config):
         "raw_subdir": args.raw_subdir or paths.get("raw_subdir", "raw"),
         "annotated_subdir": args.annotated_subdir or paths.get("annotated_subdir", "annotated"),
         "complaints_file": args.complaints_file or paths.get("complaints_file", "complaints.jsonl"),
-        "scenarios_file": args.scenarios_file or paths.get("scenarios_file", "scenarios.jsonl"),
+        "ground_truth_file": args.ground_truth_file or paths.get("ground_truth_file", "ground_truth.jsonl"),
+        "metadata_file": args.metadata_file or paths.get("metadata_file", "metadata.jsonl"),
         "extractions_file": args.extractions_file or paths.get("extractions_file", "extractions.jsonl"),
     }
 
@@ -83,7 +85,8 @@ def cmd_generate(args):
         raw_subdir=raw_subdir,
         images_subdir=paths.get("images_subdir", "images"),
         complaints_file=paths["complaints_file"],
-        scenarios_file=paths["scenarios_file"],
+        ground_truth_file=paths["ground_truth_file"],
+        metadata_file=paths["metadata_file"],
         resume=not args.no_resume,
         enable_images=enable_images,
         ig_config=ig_config,
@@ -96,7 +99,8 @@ def cmd_generate(args):
     print(f"  Tokens in:  {stats['total_tokens_in']:,}")
     print(f"  Tokens out: {stats['total_tokens_out']:,}")
     print(f"  Raw:        {stats['raw_path']}")
-    print(f"  Scenarios:  {stats['scenario_path']}")
+    print(f"  Ground truth: {stats['ground_truth_path']}")
+    print(f"  Metadata:    {stats['metadata_path']}")
     print(f"  Images dir: {stats.get('images_dir')}")
 
 
@@ -147,7 +151,8 @@ def cmd_generate_multi(args):
             raw_subdir=raw_subdir,
             images_subdir=paths.get("images_subdir", "images"),
             complaints_file=paths["complaints_file"],
-            scenarios_file=paths["scenarios_file"],
+            ground_truth_file=paths["ground_truth_file"],
+        metadata_file=paths["metadata_file"],
             resume=not args.no_resume,
             enable_images=enable_images,
             ig_config=ig_config,
@@ -171,11 +176,13 @@ def cmd_generate_multi(args):
         batch_dirs,
         raw_subdir=raw_subdir,
         complaints_file=paths["complaints_file"],
-        scenarios_file=paths["scenarios_file"],
+        ground_truth_file=paths["ground_truth_file"],
+        metadata_file=paths["metadata_file"],
     )
 
     print(f"  Merged: {merge_stats['complaints']} complaints → {merge_stats['complaints_path']}")
-    print(f"  Merged: {merge_stats['scenarios']} scenarios → {merge_stats['scenarios_path']}")
+    print(f"  Merged: {merge_stats['ground_truth']} ground_truth → {merge_stats['ground_truth_path']}")
+    print(f"  Merged: {merge_stats['metadata']} metadata → {merge_stats['metadata_path']}")
 
     print(f"\n{'=' * 60}")
     print("Summary per model:")
@@ -199,11 +206,13 @@ def cmd_merge(args):
         batch_dirs,
         raw_subdir=paths["raw_subdir"],
         complaints_file=paths["complaints_file"],
-        scenarios_file=paths["scenarios_file"],
+        ground_truth_file=paths["ground_truth_file"],
+        metadata_file=paths["metadata_file"],
     )
 
     print(f"Merged {merge_stats['complaints']} complaints → {merge_stats['complaints_path']}")
-    print(f"Merged {merge_stats['scenarios']} scenarios → {merge_stats['scenarios_path']}")
+    print(f"Merged {merge_stats['ground_truth']} ground_truth → {merge_stats['ground_truth_path']}")
+    print(f"Merged {merge_stats['metadata']} metadata → {merge_stats['metadata_path']}")
 
 
 def main():
@@ -222,7 +231,8 @@ def main():
     common.add_argument("--raw-dir", default=None, help="Raw directory path (default: <output_dir>/<raw_subdir>)")
     common.add_argument("--annotated-dir", default=None, help="Annotated directory path (default: <output_dir>/<annotated_subdir>)")
     common.add_argument("--complaints-file", default=None, help="Complaints filename (default: from config)")
-    common.add_argument("--scenarios-file", default=None, help="Scenarios filename (default: from config)")
+    common.add_argument("--ground-truth-file", default=None, help="Ground truth filename (default: from config)")
+    common.add_argument("--metadata-file", default=None, help="Metadata filename (default: from config)")
     common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")

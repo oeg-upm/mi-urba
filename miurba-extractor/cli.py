@@ -49,7 +49,6 @@ def _get_path_args(args, config):
         "annotated_subdir": args.annotated_subdir or paths.get("annotated_subdir", "annotated"),
         "images_subdir": args.images_subdir or paths.get("images_subdir", "images"),
         "complaints_file": args.complaints_file or paths.get("complaints_file", "complaints.jsonl"),
-        "scenarios_file": args.scenarios_file or paths.get("scenarios_file", "scenarios.jsonl"),
         "extractions_file": args.extractions_file or paths.get("extractions_file", "extractions.jsonl"),
     }
 
@@ -97,7 +96,6 @@ def cmd_extract(args):
         images_dir=images_dir,
         output_dir=annotated_dir,
         raw_complaints_file=paths["complaints_file"],
-        raw_scenarios_file=paths["scenarios_file"],
         extractions_file=paths["extractions_file"],
         resume=not args.no_resume,
     )
@@ -132,7 +130,6 @@ def main():
     common.add_argument("--annotated-dir", default=None, help="Annotated directory path (default: <output_dir>/<annotated_subdir>)")
     common.add_argument("--images-dir", default=None, help="Directory with the photo files (default: <output_dir>/<images_subdir>)")
     common.add_argument("--complaints-file", default=None, help="Complaints filename (default: from config)")
-    common.add_argument("--scenarios-file", default=None, help="Scenarios filename (default: from config)")
     common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")

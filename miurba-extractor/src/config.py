@@ -119,7 +119,8 @@ def get_paths(cfg: dict | None = None) -> dict[str, str]:
         "annotated_subdir": "annotated",
         "images_subdir": "images",
         "complaints_file": "complaints.jsonl",
-        "scenarios_file": "scenarios.jsonl",
+        "ground_truth_file": "ground_truth.jsonl",
+        "metadata_file": "metadata.jsonl",
         "extractions_file": "extractions.jsonl",
     })
 

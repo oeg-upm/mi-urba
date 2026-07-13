@@ -54,7 +54,7 @@ MODE="${1:-run}"
 if [ "$MODE" = "--show" ]; then
     banner "miUrba — Salida pre-generada (sin LLM)"
     show_jsonl "$SCRIPT_DIR/sample_output/complaints.jsonl" "FASE 1 — complaints.jsonl"
-    show_jsonl "$SCRIPT_DIR/sample_output/scenarios.jsonl" "FASE 1 — scenarios.jsonl"
+    show_jsonl "$SCRIPT_DIR/sample_output/ground_truth.jsonl" "FASE 1 — ground_truth.jsonl"
     show_jsonl "$SCRIPT_DIR/sample_output/extractions.jsonl" "FASE 2 — extractions.jsonl"
     exit 0
 fi
@@ -84,7 +84,8 @@ echo -e "${G}▶ python cli.py generate -n 3 --config ../demo/config.demo.yaml${
 .venv/bin/python cli.py generate -n 3 --config "$CONFIG" --output-dir "$OUT" --no-resume
 
 show_jsonl "$OUT/raw/complaints.jsonl" "complaints.jsonl"
-show_jsonl "$OUT/raw/scenarios.jsonl" "scenarios.jsonl"
+show_jsonl "$OUT/raw/ground_truth.jsonl" "ground_truth.jsonl"
+show_jsonl "$OUT/raw/metadata.jsonl" "metadata.jsonl"
 
 # ── Fase 2: Extractor ──────────────────────────────────────────────────────
 banner "FASE 2 — miurba-extractor"
@@ -100,7 +101,7 @@ fi
 
 mkdir -p data/raw data/images
 cp "$OUT/raw/complaints.jsonl" data/raw/
-cp "$OUT/raw/scenarios.jsonl" data/raw/
+cp "$OUT/raw/ground_truth.jsonl" data/raw/  # no usada por el extractor, solo referencia
 
 echo -e "${G}▶ python cli.py extract --config ../demo/config.demo.yaml${R}\n"
 .venv/bin/python cli.py extract --config "$CONFIG" \
@@ -114,7 +115,8 @@ show_jsonl "$OUT/annotated/extractions.jsonl" "extractions.jsonl"
 banner "Demo completada"
 echo -e "  Salida: $OUT/"
 echo -e "  ${DIM}raw/complaints.jsonl    — texto del vecino (6 quejas)${R}"
-echo -e "  ${DIM}raw/scenarios.jsonl     — ground truth (3 escenarios)${R}"
+echo -e "  ${DIM}raw/ground_truth.jsonl  — ground truth (extracciones esperadas)${R}"
+echo -e "  ${DIM}raw/metadata.jsonl      — metadata de generacion${R}"
 echo -e "  ${DIM}annotated/extractions.jsonl — estructura extraída (VLM)${R}"
 echo ""
 echo -e "  Para ver sin re-ejecutar: ${C}bash demo/run_demo.sh --show${R}"
