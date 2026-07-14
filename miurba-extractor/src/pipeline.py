@@ -94,6 +94,7 @@ def extract_dataset(
     raw_complaints_file: str = "complaints.jsonl",
     extractions_file: str = "extractions.jsonl",
     resume: bool = True,
+    max_retries: int = 3,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -133,52 +134,77 @@ def extract_dataset(
                 c = json.loads(line)
                 complaints[c["id"]] = c
 
-    # Find already extracted IDs for resume
-    existing_ids = set()
-    if resume and output_path.exists():
+    total_complaints = len(complaints)
+    total_extracted = 0
+    total_failed = 0
+
+    for attempt in range(max_retries + 1):
+        # Find already extracted IDs for resume
+        existing_ids = set()
+        if output_path.exists():
+            with open(output_path) as f:
+                for line in f:
+                    if line.strip():
+                        e = json.loads(line)
+                        existing_ids.add(e.get("complaint_id", ""))
+        skipped = len(existing_ids)
+        if skipped > 0:
+            logger.info(f"Resuming: {skipped} extractions already exist")
+
+        if attempt > 0:
+            remaining = total_complaints - skipped
+            logger.info(f"=== Retry {attempt}/{max_retries}: {remaining} pending, {total_failed} failed so far ===")
+
+        extracted = 0
+        failed = 0
+
+        for cid, complaint in complaints.items():
+            if cid in existing_ids:
+                continue
+
+            logger.info(f"[{cid}] Extracting ({extracted + 1}/{total_complaints - skipped})...")
+
+            extraction = extract_complaint(client, complaint, images_dir)
+
+            if extraction is None:
+                failed += 1
+                total_failed += 1
+                logger.warning(f"[{cid}] Extraction failed")
+                continue
+
+            with open(output_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+
+            extracted += 1
+            total_extracted += 1
+
+            if (extracted + skipped) % 10 == 0:
+                logger.info(
+                    f"Progress: {extracted + skipped}/{total_complaints} done, "
+                    f"{failed} failed this pass, "
+                    f"tokens: in={client.stats['tokens_in']:,}, "
+                    f"out={client.stats['tokens_out']:,}"
+                )
+
+        if failed == 0:
+            break
+        if attempt < max_retries:
+            logger.info(f"Pass {attempt} complete: {extracted} extracted, {failed} failed. Retrying in 30s...")
+            import time
+            time.sleep(30)
+
+    final_existing = set()
+    if output_path.exists():
         with open(output_path) as f:
             for line in f:
                 if line.strip():
-                    e = json.loads(line)
-                    existing_ids.add(e.get("complaint_id", ""))
-        logger.info(f"Resuming: {len(existing_ids)} extractions already exist")
-
-    extracted = 0
-    failed = 0
-    skipped = 0
-
-    for cid, complaint in complaints.items():
-        if cid in existing_ids:
-            skipped += 1
-            continue
-
-        logger.info(f"[{cid}] Extracting ({extracted + 1}/{len(complaints) - skipped})...")
-
-        extraction = extract_complaint(client, complaint, images_dir)
-
-        if extraction is None:
-            failed += 1
-            logger.warning(f"[{cid}] Extraction failed")
-            continue
-
-        with open(output_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
-
-        extracted += 1
-
-        if extracted % 10 == 0:
-            logger.info(
-                f"Progress: {extracted} extracted, {failed} failed, "
-                f"{skipped} skipped, "
-                f"tokens: in={client.stats['tokens_in']:,}, "
-                f"out={client.stats['tokens_out']:,}"
-            )
+                    final_existing.add(json.loads(line).get("complaint_id", ""))
 
     return {
-        "extracted": extracted,
-        "failed": failed,
-        "skipped": skipped,
-        "total": len(complaints),
+        "extracted": len(final_existing),
+        "failed": total_complaints - len(final_existing),
+        "skipped": 0,
+        "total": total_complaints,
         "total_tokens_in": client.stats["tokens_in"],
         "total_tokens_out": client.stats["tokens_out"],
         "output_path": str(output_path),

@@ -98,6 +98,7 @@ def cmd_extract(args):
         raw_complaints_file=paths["complaints_file"],
         extractions_file=paths["extractions_file"],
         resume=not args.no_resume,
+        max_retries=args.max_retries,
     )
 
     print(f"\n{'=' * 55}")
@@ -133,6 +134,7 @@ def main():
     common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
+    common.add_argument("--max-retries", type=int, default=3, help="Max retries for failed extractions (default: 3)")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     # ── Extract ────────────────────────────────────────────
