@@ -49,3 +49,4 @@ test_results.json
 eval/results/extract-all.log
 eval/results/extractions/*/log.txt
 eval/results/extractions/*/raw/
+eval/results/extractions/*/retry-log.txt

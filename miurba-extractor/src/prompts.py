@@ -55,6 +55,7 @@ def _build_text_part(complaint: dict) -> str:
     zones = list(cfg.get_location_zones().keys())
     risks = cfg.get_risks()
     urgencies = cfg.get_urgency_levels()
+    affected_elements_cfg = cfg.get_affected_elements()
 
     cat_lines = []
     for cat, subs in categories.items():
@@ -62,6 +63,13 @@ def _build_text_part(complaint: dict) -> str:
             cat_lines.append(f"- {cat}: {', '.join(subs)}")
         else:
             cat_lines.append(f"- {cat}: (cualquier otro problema)")
+
+    elem_lines = []
+    for elem, subs in affected_elements_cfg.items():
+        if subs:
+            elem_lines.append(f"- {elem}: {', '.join(subs)}")
+        else:
+            elem_lines.append(f"- {elem}")
 
     system_msg = (
         "Eres un experto en mantenimiento de comunidades de vecinos con capacidad "
@@ -84,9 +92,14 @@ def _build_text_part(complaint: dict) -> str:
         f"Describe las fotos y extrae la información estructurada de la queja.\n\n"
         f"CATEGORÍAS VÁLIDAS (principal → subcategorías):\n"
         + "\n".join(cat_lines) + "\n\n"
+        f"ELEMENTOS AFECTADOS VÁLIDOS (principal → subcategorías):\n"
+        + "\n".join(elem_lines) + "\n\n"
         f"ZONAS VÁLIDAS: {', '.join(zones)}\n"
         f"RIESGOS VÁLIDOS: {', '.join(risks)}\n"
         f"URGENCIAS VÁLIDAS: {', '.join(urgencies)}\n\n"
+        f"IMPORTANTE: Usa SOLO los valores de las listas anteriores para category, "
+        f"affected_elements, location.zone, risks y urgency. No inventes valores "
+        f"fuera de la taxonomía.\n"
         f"IMPORTANTE: image_descriptions debe tener una entrada por cada foto adjunta "
         f"(en el mismo orden). Si no hay fotos, deja image_descriptions como [].\n\n"
         f"RESPONDE SOLO con JSON en este formato:\n"
