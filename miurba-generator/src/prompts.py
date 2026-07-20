@@ -86,6 +86,13 @@ def build_generation_prompt(
         if p.get("location_detail"):
             desc += f", {p['location_detail']}"
         desc += f" (urgencia: {p['urgency']})"
+        # Include affected elements so the LLM mentions them in the text
+        if p.get("affected_elements"):
+            elem_strs = [f"{e['principal']} ({e['subcategory']})" for e in p["affected_elements"]]
+            desc += f"\n     Elementos afectados: {', '.join(elem_strs)}"
+        # Include risks so the LLM can hint at them
+        if p.get("risks") and p["risks"] != ["ninguno"]:
+            desc += f"\n     Riesgos: {', '.join(p['risks'])}"
         problem_descs.append(desc)
     problems_text = "\n".join(problem_descs)
 
