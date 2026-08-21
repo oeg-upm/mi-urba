@@ -129,9 +129,11 @@ def field_accuracy(matched: list[tuple], field: str) -> dict:
             continue
         elif field == "affected_elements_precision":
             gt_elems = {(e.get("principal"), e.get("subcategory"))
-                        for e in gt.get("affected_elements", [])}
+                        for e in gt.get("affected_elements", [])
+                        if isinstance(e, dict)}
             pred_elems = {(e.get("principal"), e.get("subcategory"))
-                          for e in pred.get("affected_elements", [])}
+                          for e in pred.get("affected_elements", [])
+                          if isinstance(e, dict)}
             if not gt_elems and not pred_elems:
                 correct += 1
             elif pred_elems:
@@ -139,9 +141,11 @@ def field_accuracy(matched: list[tuple], field: str) -> dict:
             continue
         elif field == "affected_elements_recall":
             gt_elems = {(e.get("principal"), e.get("subcategory"))
-                        for e in gt.get("affected_elements", [])}
+                        for e in gt.get("affected_elements", [])
+                        if isinstance(e, dict)}
             pred_elems = {(e.get("principal"), e.get("subcategory"))
-                          for e in pred.get("affected_elements", [])}
+                          for e in pred.get("affected_elements", [])
+                          if isinstance(e, dict)}
             if not gt_elems and not pred_elems:
                 correct += 1
             elif gt_elems:

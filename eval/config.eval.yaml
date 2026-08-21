@@ -6,6 +6,12 @@ endpoints:
   ollama_cloud:
     base_url: http://localhost:11434
     description: Ollama cloud models
+  llama_swap:
+    base_url: http://192.168.10.11:9292
+    description: Local GPU cluster via llama-swap
+  vllm:
+    base_url: http://192.168.10.11:8000
+    description: vLLM local GPU
 models:
   kimi-k2.6:
     endpoint: neuralwatt
@@ -71,6 +77,86 @@ models:
     endpoint: ollama_cloud
     model: gemma4:31b-cloud
     temperature: 0.2
+  qwen3_local:
+    endpoint: llama_swap
+    model: qwen3.6-35b-awq
+    temperature: 0.85
+  gemma4_local:
+    endpoint: llama_swap
+    model: gemma4-31b-awq
+    temperature: 0.85
+  gen_qwen3_6_35b_awq:
+    endpoint: llama_swap
+    model: qwen3.6-35b-awq
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_gemma4_31b_awq:
+    endpoint: llama_swap
+    model: gemma4-31b-awq
+    temperature: 0.85
+  gen_gemma4_26b_awq:
+    endpoint: llama_swap
+    model: gemma4-26b-awq
+    temperature: 0.85
+  gen_qwen3_5_27b_awq:
+    endpoint: llama_swap
+    model: qwen3.5-27b-awq
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_gemma4_12b_awq:
+    endpoint: llama_swap
+    model: gemma4-12b-awq
+    temperature: 0.85
+  gen_qwen3_5_4b_awq:
+    endpoint: llama_swap
+    model: qwen3.5-4b-awq
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_qwen3_4b_instr_awq:
+    endpoint: llama_swap
+    model: qwen3-4b-instruct-awq
+    temperature: 0.85
+  extract_gemma4_12b:
+    endpoint: llama_swap
+    model: gemma4-12b-awq
+    temperature: 0.1
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  extract_gemma4_31b:
+    endpoint: llama_swap
+    model: gemma4-31b-awq
+    temperature: 0.1
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  extract_qwen3_6_35b:
+    endpoint: llama_swap
+    model: qwen3.6-35b-awq
+    temperature: 0.1
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  extract_qwen3_4b:
+    endpoint: llama_swap
+    model: qwen3-4b-instruct-awq
+    temperature: 0.1
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
 generation:
   default_output_dir: data
   batches:
