@@ -129,6 +129,7 @@ models:
     endpoint: llama_swap
     model: gemma4-12b-awq
     temperature: 0.1
+    structured_output: true
     extra_params:
       enable_thinking: false
       chat_template_kwargs:

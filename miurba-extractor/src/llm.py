@@ -29,6 +29,7 @@ class LLMClient:
         retry_delay: float = 5.0,
         api_key: str | None = None,
         extra_params: dict | None = None,
+        json_schema: dict | None = None,
     ):
         # Normalize: strip trailing slash and /v1 suffix
         base = base_url.rstrip("/")
@@ -42,6 +43,7 @@ class LLMClient:
         self.retry_delay = retry_delay
         self.api_key = api_key
         self.extra_params = extra_params or {}
+        self.json_schema = json_schema
         self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0, "errors": 0}
 
     @property
@@ -71,6 +73,13 @@ class LLMClient:
         }
         # Merge extra params (e.g. enable_thinking=false, chat_template_kwargs)
         payload.update(self.extra_params)
+
+        # Constrained decoding: force output to conform to a JSON schema
+        if self.json_schema:
+            payload["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {"name": "extraction", "schema": self.json_schema},
+            }
 
         headers = {"Content-Type": "application/json"}
         if self.api_key:

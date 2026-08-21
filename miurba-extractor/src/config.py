@@ -126,6 +126,38 @@ def get_paths(cfg: dict | None = None) -> dict[str, str]:
     })
 
 
+def get_extraction_json_schema(cfg: dict | None = None) -> dict[str, Any]:
+    """Load schemas/extraction_schema.json with enums synced from config.
+
+    Reads the JSON schema file at the repo root and injects the enum values
+    from config.yaml (risks, urgency_levels, location_zones) so that the
+    schema and the taxonomy never diverge. Also adds maxItems to arrays
+    to prevent generation loops in small models.
+    """
+    import json as _json
+    schema_path = DEFAULT_CONFIG_PATH.parent / "schemas" / "extraction_schema.json"
+    with open(schema_path, encoding="utf-8") as f:
+        schema = _json.load(f)
+
+    cfg = cfg or get_config()
+
+    # Sync enums from config -> schema
+    risks = get_risks(cfg)
+    urgency = get_urgency_levels(cfg)
+    zones_cfg = get_location_zones(cfg)
+    zones = list(zones_cfg.keys()) if isinstance(zones_cfg, dict) else zones_cfg
+
+    schema["$defs"]["risk"]["enum"] = risks
+    schema["$defs"]["urgency"]["enum"] = urgency
+    schema["$defs"]["location"]["properties"]["zone"]["enum"] = zones
+
+    # Add maxItems to prevent generation loops in small models
+    schema["$defs"]["problemExtraction"]["properties"]["affected_elements"]["maxItems"] = 5
+    schema["$defs"]["problemExtraction"]["properties"]["risks"]["maxItems"] = 5
+
+    return schema
+
+
 def get_vision_model_params(name: str | None = None, cfg: dict | None = None) -> dict[str, Any]:
     """Return model params for the VLM used to read images.
 

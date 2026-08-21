@@ -26,10 +26,7 @@ GEN_MODELS=(
 )
 
 EXT_MODELS=(
-    "extract_gemma4_31b|gemma4-31b-awq"
-    "extract_qwen3_6_35b|qwen3.6-35b-awq"
     "extract_gemma4_12b|gemma4-12b-awq"
-    "extract_qwen3_4b|qwen3-4b-instruct-awq"
 )
 
 BASEDIR="eval/results/iter_${ITER}"
@@ -193,7 +190,7 @@ ITER = ${ITER}
 BASEDIR = f"eval/results/iter_{ITER}"
 
 gen_keys = ["gen_gemma4_31b_awq", "gen_qwen3_6_35b_awq", "gen_gemma4_12b_awq", "gen_qwen3_4b_instr_awq"]
-ext_keys = ["extract_gemma4_31b", "extract_qwen3_6_35b", "extract_gemma4_12b", "extract_qwen3_4b"]
+ext_keys = ["extract_gemma4_12b"]
 
 results = []
 matrix = {}

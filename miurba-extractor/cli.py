@@ -33,10 +33,12 @@ import os
 import sys
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 # Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_paths, get_vision_model_params
+from src.config import get_config, get_paths, get_vision_model_params, get_extraction_json_schema
 from src.llm import LLMClient
 from src.pipeline import extract_dataset
 
@@ -72,6 +74,19 @@ def cmd_extract(args):
     annotated_dir = args.annotated_dir or os.path.join(default_output, paths["annotated_subdir"])
     images_dir = args.images_dir or os.path.join(default_output, paths["images_subdir"])
 
+    # Constrained decoding: if the model config has structured_output: true,
+    # load the extraction JSON schema and pass it to the LLM client so vLLM
+    # forces the output to conform (eliminates JSON parse errors and format
+    # issues like affected_elements as strings).
+    structured_output = False
+    json_schema = None
+    if args.model:
+        model_entry = config.get("models", {}).get(args.model, {})
+        structured_output = model_entry.get("structured_output", False)
+    if structured_output:
+        json_schema = get_extraction_json_schema(config)
+        logger.info("Constrained decoding enabled (structured_output=true)")
+
     client = LLMClient(
         base_url=model_cfg["base_url"],
         model=model_cfg["model"],
@@ -79,6 +94,7 @@ def cmd_extract(args):
         timeout=args.timeout,
         api_key=model_cfg.get("api_key"),
         extra_params=model_cfg.get("extra_params", {}),
+        json_schema=json_schema,
     )
 
     print(f"miUrba — Extraction (raw + images → structured, VLM)")
@@ -88,6 +104,7 @@ def cmd_extract(args):
     print(f"  Source:     {raw_dir}/{paths['complaints_file']}")
     print(f"  Images:     {images_dir}")
     print(f"  Output:     {annotated_dir}/{paths['extractions_file']}")
+    print(f"  Constrained: {structured_output}")
     print(f"  Resume:     {not args.no_resume}")
     print(f"{'=' * 55}")
 
