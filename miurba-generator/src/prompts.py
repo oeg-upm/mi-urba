@@ -90,9 +90,20 @@ def build_generation_prompt(
         if p.get("affected_elements"):
             elem_strs = [f"{e['principal']} ({e['subcategory']})" for e in p["affected_elements"]]
             desc += f"\n     Elementos afectados: {', '.join(elem_strs)}"
-        # Include risks so the LLM can hint at them
+        # Include risks so the LLM can hint at them (with natural-language mapping)
         if p.get("risks") and p["risks"] != ["ninguno"]:
-            desc += f"\n     Riesgos: {', '.join(p['risks'])}"
+            risk_expr = {
+                "caída": "peligro de caída",
+                "eléctrico": "riesgo eléctrico",
+                "inundación": "riesgo de inundación",
+                "derrumbe": "riesgo de derrumbe",
+                "incendio": "riesgo de incendio",
+                "sanitario": "riesgo sanitario",
+                "seguridad": "riesgo de seguridad",
+                "contaminación": "riesgo de contaminación",
+            }
+            risk_strs = [risk_expr.get(r, r) for r in p["risks"]]
+            desc += f"\n     Riesgos: {', '.join(p['risks'])} (el texto debe mencionar: {', '.join(risk_strs)})"
         problem_descs.append(desc)
     problems_text = "\n".join(problem_descs)
 
@@ -170,16 +181,40 @@ def build_generation_prompt(
         f"- ID: {record_id}\n\n"
         f"INSTRUCCIONES:\n"
         f"1. Escribe el user_text como lo expresaría este vecino REAL "
-        f"a través de una app de gestión de comunidades. Sé creativo: varía tono, "
-        f"extensión, nivel de detalle. A veces enfadado, a veces casual, "
-        f"a veces muy específico, a veces vago."
-        f" Si el vecino se identifica, inventa un nombre y apellidos "
-        f"realistas en español. NUNCA uses placeholders como "
-        f"[Nombre del vecino], [sin especificar] o similares."
-        f" Escribe EXCLUSIVAMENTE en español."
-        f" No mezcles palabras sueltas de otros idiomas"
-        f" (como 'many', 'this', etc.) dentro del texto en español."
-        f" Revisa la ortografía antes de finalizar.\n"
+        f"a través de una app de gestión de comunidades.\n\n"
+        f"CONTENIDO ESTRICTO (debe aparecer en el texto, sin excepción):\n"
+        f"   - Categoría y subcategoría: el problema descrito debe corresponder EXACTAMENTE con la categoría y subcategoría indicadas. No describas un problema distinto.\n"
+        f"   - Elementos afectados: menciona EXPLÍCITAMENTE cada elemento afectado indicado, usando lenguaje natural (un vecino no diría 'instalación_eléctrica' pero sí 'la instalación eléctrica' o 'los cables').\n"
+        f"     IMPORTANTE: Los elementos afectados son CONSECUENCIAS o PARTES del problema principal, NO problemas independientes.\n"
+        f"     Por ejemplo: si el problema es 'cubierta/tejas' y los elementos son 'canalón' y 'muro cortafuegos', el vecino debe describirlos como parte del problema de la cubierta,\n"
+        f"     no como averías independientes. Usa frases como 'además se ha afectado el canalón', 'también está dañado el muro cortafuegos', que indican que son consecuencias.\n"
+        f"   - Subcategoría: el texto debe mencionar EXPLÍCITAMENTE la subcategoría indicada con palabras reconocibles de la taxonomía. Por ejemplo, si la subcategoría es 'cristales', el vecino debe escribir 'cristales' o 'vidrios' (no solo 'ventana'); si es 'tejas', debe decir 'tejas' o 'tejado' (no solo 'cubierta'); si es 'bajante', debe decir 'bajante' o 'tubería del bajante'.\n"
+        f"   - Ubicación: la zona y el detalle deben coincidir con lo indicado.\n"
+f"   - Urgencia: el tono y las palabras deben reflejar EL nivel asignado. Incluye OBLIGATORIAMENTE alguna de las expresiones del nivel correspondiente, sin excepción:\n"
+        f"     * inmediata: debe incluir alguna de \"es una emergencia\", \"peligro inminente\", \"necesito que vengan ya mismo\"\n"
+        f"     * urgente: debe incluir alguna de \"es urgente\", \"no puede esperar\", \"por favor vengan cuanto antes\"\n"
+        f"     * alta: debe incluir alguna de \"es importante\", \"me preocupa\", \"deberían revisarlo pronto\"\n"
+        f"     * media: debe incluir alguna de \"cuando puedan\", \"no tiene prisa pero\"\n"
+        f"     * baja: debe incluir alguna de \"es una sugerencia\", \"para cuando haya tiempo\"\n"
+        f"     * planificable: debe incluir alguna de \"mantenimiento preventivo\", \"para revisar a largo plazo\"\n"
+        f"   - Riesgos: si hay riesgos indicados (no 'ninguno'), el texto debe mencionarlos EXPLÍCITAMENTE con las expresiones indicadas (peligro de caída, riesgo eléctrico, riesgo de inundación, riesgo de derrumbe, riesgo de incendio, riesgo sanitario, riesgo de seguridad, riesgo de contaminación). Usa esas palabras exactas o muy cercanas.\n\n"
+        f"CONTENIDO PROHIBIDO:\n"
+        f"   - NO describas problemas, averías o incidencias que NO estén en la lista de problemas indicados arriba.\n"
+        f"   - Las menciones a elementos afectados deben enmarcarse como síntomas del problema, no como averías separadas.\n"
+        f"   - Si el vecino menciona algo colateral ('por cierto', 'también'), debe ser contexto, no una nueva incidencia.\n\n"
+        f"ESTRUCTURA GUIADA DEL TEXTO (flexible pero recomendada para que el vecino sea claro):\n"
+        f"   - Saludo inicial + ubicación: el texto debería empezar mencionando DÓNDE está el problema (zona + detalle) antes de describirlo. Ej: 'Hola, os escribo por lo del garaje, en la plaza 12...'.\n"
+        f"   - Descripción del problema: nombra la subcategoría con palabras reconocibles al introducir el problema.\n"
+        f"   - Elementos afectados: después del problema principal, menciona los elementos como consecuencias ('además...', 'también se ha...').\n"
+        f"   - Urgencia al cierre: cierra el texto con la expresión de urgencia correspondiente al nivel asignado.\n"
+        f"   - Esta estructura es una GUÍA, no una plantilla rígida: el vecino puede variarla según su personalidad, pero debe incluir todos los elementos obligatorios.\n\n"
+        f"ESTILO FLEXIBLE (libertad creativa):\n"
+        f"   - Nombre del vecino: invéntalo, realista en español. NUNCA uses placeholders como [Nombre del vecino].\n"
+        f"   - Tono y extensión: varía. A veces enfadado, a veces casual, a veces muy específico, a veces vago.\n"
+        f"   - Contexto adicional: el vecino puede añadir detalles sobre su vida, la comunidad, el historial del problema, etc.\n"
+        f"   - Cómo enmarca el problema: depende de la persona y el modificador de estilo.\n\n"
+        f"   Escribe EXCLUSIVAMENTE en español. No mezcles palabras sueltas de otros idiomas.\n"
+        f"   Revisa la ortografía antes de finalizar.\n"
         f"2. El timestamp debe ser realista.\n\n"
         f"RESPONDE SOLO con JSON en este formato:\n"
         f"{json.dumps(json_template, indent=2, ensure_ascii=False)}"
