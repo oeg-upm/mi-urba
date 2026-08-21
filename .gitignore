@@ -64,9 +64,13 @@ eval/results/iterations_*.log
 eval/results/wait_and_run_67.log
 eval/results/iter_567_nohup.log
 eval/results/dataset/log.txt
+eval/results/dataset/raw/
+eval/results/metrics.json
+eval/results/report.md
 eval/results/extractions/minimax-m3-a/
 eval/results/extractions/minimax-m3-b/
 eval/results/extractions/qwen3_local/
+eval/results/extractions/minimax-m3/
 
 # Extractor stray output dir
 miurba-extractor/eval/
