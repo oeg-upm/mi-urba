@@ -25,9 +25,10 @@ class LLMClient:
         model: str = "kimi-k2.6:cloud",
         temperature: float = 0.85,
         timeout: int = 300,
-        max_retries: int = 3,
+        max_retries: int = 8,
         retry_delay: float = 5.0,
         api_key: str | None = None,
+        extra_params: dict | None = None,
     ):
         # Normalize: strip trailing slash and /v1 suffix
         base = base_url.rstrip("/")
@@ -40,6 +41,7 @@ class LLMClient:
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         self.api_key = api_key
+        self.extra_params = extra_params or {}
         self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0, "errors": 0}
 
     @property
@@ -67,6 +69,8 @@ class LLMClient:
             "messages": messages,
             "temperature": temperature or self.temperature,
         }
+        # Merge extra params (e.g. enable_thinking=false, chat_template_kwargs)
+        payload.update(self.extra_params)
 
         headers = {"Content-Type": "application/json"}
         if self.api_key:
@@ -89,11 +93,23 @@ class LLMClient:
             except (requests.RequestException, json.JSONDecodeError) as e:
                 last_error = e
                 self._stats["errors"] += 1
+                # Connection errors (server down/unreachable) get generous backoff
+                # to survive inference-server crashes that take minutes to recover.
+                is_conn_error = isinstance(e, (
+                    requests.ConnectionError,
+                    requests.Timeout,
+                ))
                 logger.warning(
                     f"API call failed (attempt {attempt}/{self.max_retries}): {e}"
                 )
                 if attempt < self.max_retries:
-                    wait = self.retry_delay * attempt
+                    if is_conn_error:
+                        # Generous exponential backoff for server crashes:
+                        # 5s, 10s, 20s, 40s, 80s, 120s, 240s  (~10 min total)
+                        wait = min(self.retry_delay * (2 ** (attempt - 1)), 240)
+                    else:
+                        # Linear backoff for HTTP errors / bad JSON
+                        wait = self.retry_delay * attempt
                     logger.info(f"Retrying in {wait:.1f}s...")
                     time.sleep(wait)
 
