@@ -17,6 +17,8 @@ the photos are generated from text-to-image prompts derived from the scenario.
 import json
 import logging
 import random
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from . import config as cfg
@@ -33,6 +35,67 @@ from .sampling import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ── Validation ─────────────────────────────────────────────────
+
+def _build_validation_prompt(user_text: str, problems: list[dict]) -> list[dict]:
+    """Build a prompt to validate that user_text faithfully describes the scenario."""
+    problem_descs = []
+    for i, p in enumerate(problems, 1):
+        desc = f"  {i}. {p['category']}/{p['subcategory']} en {p['location_zone']}"
+        if p.get("location_detail"):
+            desc += f", {p['location_detail']}"
+        desc += f" (urgencia: {p['urgency']})"
+        if p.get("affected_elements"):
+            elem_strs = [f"{e['principal']} ({e['subcategory']})" for e in p["affected_elements"]]
+            desc += f"\n     Elementos: {', '.join(elem_strs)}"
+        if p.get("risks") and p["risks"] != ["ninguno"]:
+            desc += f"\n     Riesgos: {', '.join(p['risks'])}"
+        problem_descs.append(desc)
+    problems_text = "\n".join(problem_descs)
+
+    system_msg = (
+        "Eres un validador de calidad de quejas sinteticas. Recibes un texto "
+        "generado por un vecino y el escenario que se le pidio que describiera. "
+        "Tu tarea es verificar que el texto ALIGINE con el escenario en todos sus campos."
+    )
+
+    user_msg = (
+        f"ESCENARIO QUE SE LE PIDIO DESCRIBIR:\n{problems_text}\n\n"
+        f"TEXTO GENERADO POR EL VECINO:\n{user_text}\n\n"
+        f"Verifica si el texto alinea con el escenario en estos campos:\n"
+        f"1. category: El texto describe un problema de la categoria indicada?\n"
+        f"2. subcategory: El tipo de problema especifico es correcto?\n"
+        f"3. urgency: El tono del texto refleja el nivel de urgencia indicado?\n"
+        f"4. affected_elements: Menciona los elementos afectados indicados?\n"
+        f"5. risks: Los riesgos mencionados son coherentes con los indicados?\n"
+        f"6. location: La ubicacion mencionada es correcta?\n\n"
+        f"RESPONDE SOLO con JSON:\n"
+        f'{{"valid": true/false, "issues": ["lista de campos que no alinean, vacio si todo ok"]}}'
+    )
+
+    return [
+        {"role": "system", "content": system_msg},
+        {"role": "user", "content": user_msg},
+    ]
+
+
+def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str]]:
+    """Validate that user_text faithfully describes the scenario.
+
+    Returns (is_valid, issues_list).
+    """
+    messages = _build_validation_prompt(user_text, problems)
+    try:
+        response = client.chat(messages)
+        data = client.extract_json(response)
+        is_valid = data.get("valid", True)
+        issues = data.get("issues", [])
+        return bool(is_valid), issues if isinstance(issues, list) else []
+    except Exception as e:
+        logger.warning(f"Validation call failed: {e}, assuming valid")
+        return True, []
 
 
 def _stable_seed(record_id: str, index: int, seed_base: int) -> int:
@@ -186,6 +249,9 @@ def generate_dataset(
     resume: bool = True,
     enable_images: bool = False,
     ig_config: dict | None = None,
+    validate: bool = False,
+    max_validation_retries: int = 3,
+    num_workers: int = 1,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -241,49 +307,96 @@ def generate_dataset(
 
     generated = 0
     failed = 0
+    write_lock = threading.Lock()
 
+    # Build list of IDs to generate
+    ids_to_generate = []
     for i in range(start_id, start_id + num_records):
         record_id = f"Q{i:04d}"
-
-        if record_id in existing_ids:
-            logger.debug(f"[{record_id}] Already exists, skipping")
+        if record_id not in existing_ids:
+            ids_to_generate.append(record_id)
+        else:
             generated += 1
-            continue
 
-        logger.info(f"[{record_id}] Generating ({generated + 1}/{num_records})...")
+    logger.info(f"Generating {len(ids_to_generate)} records with {num_workers} workers...")
 
-        result = generate_complaint(
-            client, record_id,
-            image_gen=image_gen,
-            images_dir=images_dir,
-            seed_base=seed_base,
-        )
-
-        if result is None:
-            failed += 1
-            logger.warning(f"[{record_id}] Generation failed")
-            continue
-
-        complaint, ground_truth, metadata = result
-
-        with open(raw_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
-
-        with open(ground_truth_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
-
-        with open(metadata_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
-
-        generated += 1
-
-        if generated % 10 == 0:
-            logger.info(
-                f"Progress: {generated}/{num_records} generated, "
-                f"{failed} failed, "
-                f"tokens: in={client.stats['tokens_in']:,}, "
-                f"out={client.stats['tokens_out']:,}"
+    def _generate_one(record_id: str) -> tuple[str, dict | None]:
+        """Generate one complaint (with validation if enabled). Returns (record_id, result_or_None)."""
+        for attempt in range(max_validation_retries + 1) if validate else [0]:
+            result = generate_complaint(
+                client, record_id,
+                image_gen=image_gen,
+                images_dir=images_dir,
+                seed_base=seed_base,
             )
+            if result is None:
+                return record_id, None
+
+            complaint, ground_truth, metadata = result
+
+            if not validate:
+                return record_id, result
+
+            problems_for_validation = [
+                {
+                    "category": e["category"]["principal"],
+                    "subcategory": e["category"]["subcategory"],
+                    "urgency": e["urgency"],
+                    "location_zone": e["location"]["zone"],
+                    "location_detail": e["location"].get("detail", ""),
+                    "affected_elements": e.get("affected_elements", []),
+                    "risks": e.get("risks", []),
+                }
+                for e in ground_truth["extractions"]
+            ]
+            is_valid, issues = validate_complaint(client, complaint["user_text"], problems_for_validation)
+
+            if is_valid:
+                if attempt > 0:
+                    logger.info(f"[{record_id}] Validated after {attempt + 1} attempts")
+                return record_id, result
+            else:
+                logger.info(f"[{record_id}] Invalid (attempt {attempt + 1}/{max_validation_retries + 1}): {issues}")
+                if attempt < max_validation_retries:
+                    logger.info(f"[{record_id}] Regenerating...")
+                else:
+                    logger.warning(f"[{record_id}] Kept despite validation issues: {issues}")
+                    return record_id, result
+        return record_id, None
+
+    with ThreadPoolExecutor(max_workers=num_workers) as executor:
+        futures = {executor.submit(_generate_one, rid): rid for rid in ids_to_generate}
+        for future in as_completed(futures):
+            record_id = futures[future]
+            try:
+                rid, result = future.result()
+            except Exception as e:
+                logger.error(f"[{record_id}] Worker error: {e}")
+                failed += 1
+                continue
+
+            if result is None:
+                failed += 1
+                logger.warning(f"[{record_id}] Generation failed")
+                continue
+
+            complaint, ground_truth, metadata = result
+            with write_lock:
+                with open(raw_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
+                with open(ground_truth_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
+                with open(metadata_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
+                generated += 1
+
+                if generated % 10 == 0:
+                    logger.info(
+                        f"Progress: {generated}/{len(ids_to_generate)} generated, "
+                        f"{failed} failed, "
+                        f"tokens: in={client.stats['tokens_in']:,}, "
+                        f"out={client.stats['tokens_out']:,}"
+                    )
 
     return {
         "generated": generated,

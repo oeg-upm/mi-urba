@@ -66,6 +66,7 @@ def get_model_params(name: str, cfg: dict | None = None) -> dict[str, Any]:
         "model": m["model"],
         "temperature": m.get("temperature", 0.85),
         "api_key": endpoint.get("api_key"),
+        "extra_params": m.get("extra_params", {}),
     }
 
 

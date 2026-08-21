@@ -50,6 +50,8 @@ def _get_path_args(args, config):
 
 def cmd_generate(args):
     """Generate synthetic raw complaints with a single model."""
+    if args.seed is not None:
+        import random; random.seed(args.seed)
     config = get_config(args.config)
     paths = _get_path_args(args, config)
     model_name = args.model
@@ -61,6 +63,7 @@ def cmd_generate(args):
         temperature=model_cfg["temperature"],
         timeout=args.timeout,
         api_key=model_cfg.get("api_key"),
+        extra_params=model_cfg.get("extra_params", {}),
     )
 
     raw_subdir = paths["raw_subdir"]
@@ -90,6 +93,9 @@ def cmd_generate(args):
         resume=not args.no_resume,
         enable_images=enable_images,
         ig_config=ig_config,
+        validate=args.validate,
+        max_validation_retries=args.max_validation_retries,
+        num_workers=args.workers,
     )
 
     print(f"\n{'=' * 55}")
@@ -106,6 +112,8 @@ def cmd_generate(args):
 
 def cmd_generate_multi(args):
     """Generate with multiple models as configured in config.yaml."""
+    if args.seed is not None:
+        import random; random.seed(args.seed)
     config = get_config(args.config)
     paths = _get_path_args(args, config)
     gen_cfg = config["generation"]
@@ -139,6 +147,7 @@ def cmd_generate_multi(args):
             temperature=model_cfg["temperature"],
             timeout=args.timeout,
             api_key=model_cfg.get("api_key"),
+            extra_params=model_cfg.get("extra_params", {}),
         )
 
         model_dir = f"{output_dir}/{model_name}"
@@ -238,6 +247,12 @@ def main():
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
     common.add_argument("--no-images", action="store_true",
                         help="Disable image generation even if enabled in config")
+    common.add_argument("--validate", action="store_true",
+                        help="Validate generated complaints against GT (2-stage: generate + validate)")
+    common.add_argument("--max-validation-retries", type=int, default=3,
+                        help="Max validation retries before keeping invalid complaint")
+    common.add_argument("--seed", type=int, default=None, help="Random seed for reproducible sampling")
+    common.add_argument("--workers", type=int, default=1, help="Number of concurrent generation workers (default: 1)")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     # ── Generate ────────────────────────────────────────────

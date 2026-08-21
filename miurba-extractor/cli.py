@@ -78,6 +78,7 @@ def cmd_extract(args):
         temperature=temperature,
         timeout=args.timeout,
         api_key=model_cfg.get("api_key"),
+        extra_params=model_cfg.get("extra_params", {}),
     )
 
     print(f"miUrba — Extraction (raw + images → structured, VLM)")
@@ -99,6 +100,7 @@ def cmd_extract(args):
         extractions_file=paths["extractions_file"],
         resume=not args.no_resume,
         max_retries=args.max_retries,
+        num_workers=args.workers,
     )
 
     print(f"\n{'=' * 55}")
@@ -135,6 +137,7 @@ def main():
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
     common.add_argument("--max-retries", type=int, default=3, help="Max retries for failed extractions (default: 3)")
+    common.add_argument("--workers", type=int, default=1, help="Number of concurrent extraction workers (default: 1)")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     # ── Extract ────────────────────────────────────────────

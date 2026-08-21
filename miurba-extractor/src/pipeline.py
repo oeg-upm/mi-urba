@@ -17,6 +17,8 @@ It does NOT generate synthetic complaints; that is the generator project's job.
 import json
 import logging
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from .config import get_vision_model_params
@@ -95,6 +97,7 @@ def extract_dataset(
     extractions_file: str = "extractions.jsonl",
     resume: bool = True,
     max_retries: int = 3,
+    num_workers: int = 1,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -157,34 +160,46 @@ def extract_dataset(
 
         extracted = 0
         failed = 0
+        write_lock = threading.Lock()
 
-        for cid, complaint in complaints.items():
-            if cid in existing_ids:
-                continue
+        ids_to_extract = [cid for cid in complaints if cid not in existing_ids]
+        logger.info(f"Extracting {len(ids_to_extract)} complaints with {num_workers} workers...")
 
-            logger.info(f"[{cid}] Extracting ({extracted + 1}/{total_complaints - skipped})...")
+        def _extract_one(cid: str) -> tuple[str, dict | None]:
+            complaint = complaints[cid]
+            return cid, extract_complaint(client, complaint, images_dir)
 
-            extraction = extract_complaint(client, complaint, images_dir)
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = {executor.submit(_extract_one, cid): cid for cid in ids_to_extract}
+            for future in as_completed(futures):
+                cid = futures[future]
+                try:
+                    rid, extraction = future.result()
+                except Exception as e:
+                    logger.error(f"[{cid}] Worker error: {e}")
+                    failed += 1
+                    total_failed += 1
+                    continue
 
-            if extraction is None:
-                failed += 1
-                total_failed += 1
-                logger.warning(f"[{cid}] Extraction failed")
-                continue
+                if extraction is None:
+                    failed += 1
+                    total_failed += 1
+                    logger.warning(f"[{cid}] Extraction failed")
+                    continue
 
-            with open(output_path, "a", encoding="utf-8") as f:
-                f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+                with write_lock:
+                    with open(output_path, "a", encoding="utf-8") as f:
+                        f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+                    extracted += 1
+                    total_extracted += 1
 
-            extracted += 1
-            total_extracted += 1
-
-            if (extracted + skipped) % 10 == 0:
-                logger.info(
-                    f"Progress: {extracted + skipped}/{total_complaints} done, "
-                    f"{failed} failed this pass, "
-                    f"tokens: in={client.stats['tokens_in']:,}, "
-                    f"out={client.stats['tokens_out']:,}"
-                )
+                    if (extracted + skipped) % 10 == 0:
+                        logger.info(
+                            f"Progress: {extracted + skipped}/{total_complaints} done, "
+                            f"{failed} failed this pass, "
+                            f"tokens: in={client.stats['tokens_in']:,}, "
+                            f"out={client.stats['tokens_out']:,}"
+                        )
 
         if failed == 0:
             break
