@@ -19,14 +19,14 @@ SEED=42
 WARMUP_TIMEOUT=900
 
 GEN_MODELS=(
-    "gen_gemma4_31b_awq|gemma4-31b-awq"
-    "gen_qwen3_6_35b_awq|qwen3.6-35b-awq"
-    "gen_gemma4_12b_awq|gemma4-12b-awq"
-    "gen_qwen3_4b_instr_awq|qwen3-4b-instruct-awq"
+    "gen_gemma4_31b_awq|local_llama/gemma4-31b-awq"
+    "gen_qwen3_6_35b_awq|local_llama/qwen3.6-35b-awq"
+    "gen_gemma4_12b_awq|local_llama/gemma4-12b-awq"
+    "gen_qwen3_4b_instr_awq|local_llama/qwen3-4b-instruct-awq"
 )
 
 EXT_MODELS=(
-    "extract_gemma4_12b|gemma4-12b-awq"
+    "extract_gemma4_12b|local_llama/gemma4-12b-awq"
 )
 
 BASEDIR="eval/results/iter_${ITER}"
@@ -46,8 +46,9 @@ warmup() {
     while [ "$elapsed" -lt "$max_wait" ]; do
         attempt=$((attempt + 1))
         # curl returns non-zero on connection failure / timeout
-        response=$(curl -s --max-time 60 http://192.168.10.11:9292/v1/chat/completions \
+        response=$(curl -s --max-time 60 http://192.168.10.1:4000/v1/chat/completions \
             -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${LLAMA_GATEWAY_API_KEY}" \
             -d "{\"model\":\"${model_id}\",\"messages\":[{\"role\":\"user\",\"content\":\"Di OK\"}],\"max_tokens\":5,\"enable_thinking\":false,\"chat_template_kwargs\":{\"enable_thinking\":false}}" 2>&1)
         curl_rc=$?
         if echo "$response" | grep -q '"choices"'; then
