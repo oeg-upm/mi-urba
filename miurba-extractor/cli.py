@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 # Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_paths, get_vision_model_params, get_extraction_json_schema
+from src.config import get_config, get_paths, get_vision_model_params, get_extraction_json_schema, get_image_description_json_schema
 from src.llm import LLMClient
 from src.pipeline import extract_dataset
 
@@ -97,7 +97,27 @@ def cmd_extract(args):
         json_schema=json_schema,
     )
 
-    print(f"miUrba — Extraction (raw + images → structured, VLM)")
+    # P2 stage split: separate vision client for photo description (stage 1)
+    vision_client = None
+    if args.stage_split:
+        vision_model_name = args.vision_model or args.model
+        vision_cfg = get_vision_model_params(vision_model_name, config)
+        vision_schema = None
+        vision_entry = config.get("models", {}).get(vision_model_name, {})
+        if vision_entry.get("structured_output", False):
+            vision_schema = get_image_description_json_schema(config)
+        vision_client = LLMClient(
+            base_url=vision_cfg["base_url"],
+            model=vision_cfg["model"],
+            temperature=vision_cfg.get("temperature", 0.1),
+            timeout=args.timeout,
+            api_key=vision_cfg.get("api_key"),
+            extra_params=vision_cfg.get("extra_params", {}),
+            json_schema=vision_schema,
+        )
+        logger.info(f"Stage split enabled: vision={vision_model_name} text={args.model}")
+
+    print(f"miUrba - Extraction (raw + images -> structured, VLM)")
     print(f"{'=' * 55}")
     print(f"  Model (VLM): {model_name}")
     print(f"  Endpoint:   {model_cfg['base_url']}")
@@ -105,6 +125,7 @@ def cmd_extract(args):
     print(f"  Images:     {images_dir}")
     print(f"  Output:     {annotated_dir}/{paths['extractions_file']}")
     print(f"  Constrained: {structured_output}")
+    print(f"  Stage split: {args.stage_split}")
     print(f"  Resume:     {not args.no_resume}")
     print(f"{'=' * 55}")
 
@@ -118,6 +139,8 @@ def cmd_extract(args):
         resume=not args.no_resume,
         max_retries=args.max_retries,
         num_workers=args.workers,
+        stage_split=args.stage_split,
+        vision_client=vision_client,
     )
 
     print(f"\n{'=' * 55}")
@@ -155,6 +178,8 @@ def main():
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
     common.add_argument("--max-retries", type=int, default=3, help="Max retries for failed extractions (default: 3)")
     common.add_argument("--workers", type=int, default=1, help="Number of concurrent extraction workers (default: 1)")
+    common.add_argument("--stage-split", action="store_true", help="P2: use two-call pipeline (vision describes photos, then text extracts). Falls back to single-call if no photos.")
+    common.add_argument("--vision-model", default=None, help="P2: model name for stage 1 (vision). Defaults to the same as --model.")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     # ── Extract ────────────────────────────────────────────

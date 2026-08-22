@@ -23,7 +23,7 @@ from pathlib import Path
 
 from .config import get_vision_model_params
 from .llm import LLMClient
-from .prompts import build_extraction_prompt
+from .prompts import build_extraction_prompt, build_image_description_prompt, build_extraction_text_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +38,8 @@ def extract_complaint(
     client: LLMClient,
     complaint: dict,
     images_dir: str | Path,
+    stage_split: bool = False,
+    vision_client: LLMClient | None = None,
 ) -> dict | None:
     """
     Extract structured data + image descriptions from a single complaint.
@@ -45,8 +47,18 @@ def extract_complaint(
     Receives the user_text and the actual photo files; the VLM sees both and
     produces {image_descriptions, extractions} conforming to
     schemas/extraction_schema.json.
+
+    If stage_split=True (P2), uses a two-call pipeline:
+      1. vision_client describes photos (multimodal)
+      2. client extracts structure from text + descriptions (text-only)
+    Falls back to single-call if no photos or no vision_client.
     """
     image_paths = _resolve_image_paths(complaint, images_dir)
+
+    # P2 stage split: only when there are photos and a vision client
+    if stage_split and image_paths and vision_client is not None:
+        return _extract_complaint_stage_split(client, vision_client, complaint, image_paths)
+
     messages = build_extraction_prompt(complaint, image_paths)
 
     try:
@@ -88,6 +100,49 @@ def extract_complaint(
     return extraction
 
 
+def _extract_complaint_stage_split(
+    text_client: LLMClient,
+    vision_client: LLMClient,
+    complaint: dict,
+    image_paths: list[str],
+) -> dict | None:
+    """P2 two-call pipeline: vision describes, then text extracts."""
+    # Stage 1: describe photos (vision)
+    desc_messages = build_image_description_prompt(complaint, image_paths)
+    try:
+        desc_response = vision_client.chat(desc_messages)
+        desc_data = vision_client.extract_json(desc_response)
+    except (RuntimeError, json.JSONDecodeError) as e:
+        logger.warning(f"[{complaint['id']}] Stage 1 (vision) failed: {e}")
+        desc_data = None
+
+    # Stage 2: extract structure (text-only), using descriptions if available
+    descriptions = []
+    if desc_data and isinstance(desc_data.get("descriptions"), list):
+        descriptions = desc_data["descriptions"]
+        logger.info(f"[{complaint['id']}] Stage 1 produced {len(descriptions)} descriptions")
+
+    ext_messages = build_extraction_text_prompt(complaint, descriptions)
+    try:
+        ext_response = text_client.chat(ext_messages)
+        content = text_client.extract_content(ext_response)
+        if not content:
+            logger.warning(f"[{complaint['id']}] Stage 2 empty content")
+            return None
+        extraction = text_client.extract_json(ext_response)
+    except (RuntimeError, json.JSONDecodeError) as e:
+        logger.error(f"[{complaint['id']}] Stage 2 (text) failed: {e}")
+        return None
+
+    # Normalize: image_descriptions as list of strings (captions)
+    if "image_descriptions" not in extraction or not isinstance(extraction.get("image_descriptions"), list):
+        extraction["image_descriptions"] = [d.get("caption", "") for d in descriptions] if descriptions else []
+    extraction["complaint_id"] = complaint["id"]
+    if "extractions" not in extraction or not isinstance(extraction["extractions"], list):
+        extraction["extractions"] = []
+    return extraction
+
+
 def extract_dataset(
     client: LLMClient,
     raw_dir: str = "data/raw",
@@ -98,6 +153,8 @@ def extract_dataset(
     resume: bool = True,
     max_retries: int = 3,
     num_workers: int = 1,
+    stage_split: bool = False,
+    vision_client: LLMClient | None = None,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -167,7 +224,8 @@ def extract_dataset(
 
         def _extract_one(cid: str) -> tuple[str, dict | None]:
             complaint = complaints[cid]
-            return cid, extract_complaint(client, complaint, images_dir)
+            return cid, extract_complaint(client, complaint, images_dir,
+                                          stage_split=stage_split, vision_client=vision_client)
 
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             futures = {executor.submit(_extract_one, cid): cid for cid in ids_to_extract}

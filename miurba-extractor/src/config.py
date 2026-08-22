@@ -158,6 +158,15 @@ def get_extraction_json_schema(cfg: dict | None = None) -> dict[str, Any]:
     return schema
 
 
+def get_image_description_json_schema(cfg: dict | None = None) -> dict[str, Any]:
+    """Load schemas/image_description_schema.json (for P2 stage split, stage 1)."""
+    import json as _json
+    schema_path = DEFAULT_CONFIG_PATH.parent / "schemas" / "image_description_schema.json"
+    with open(schema_path, encoding="utf-8") as f:
+        schema = _json.load(f)
+    return schema
+
+
 def get_vision_model_params(name: str | None = None, cfg: dict | None = None) -> dict[str, Any]:
     """Return model params for the VLM used to read images.
 

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://miurba.es/schemas/image_description",
+  "title": "ImageDescription",
+  "description": "Structured descriptions of each photo attached to a complaint. One entry per photo.",
+  "type": "object",
+  "required": ["complaint_id", "descriptions"],
+  "properties": {
+    "complaint_id": {
+      "type": "string",
+      "description": "References the complaint these descriptions belong to"
+    },
+    "descriptions": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/photoDescription"
+      },
+      "description": "One description per photo, in the same order as the attached photos"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "photoDescription": {
+      "type": "object",
+      "required": ["photo_index", "caption", "damage_indicators"],
+      "properties": {
+        "photo_index": {
+          "type": "integer",
+          "description": "1-based index of the photo in the complaint"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Detailed objective description of what is visible: type of damage, materials, colors, lighting, composition, surroundings, scale, textures"
+        },
+        "objects": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string"
+          },
+          "description": "Relevant objects or elements visible in the photo",
+          "default": []
+        },
+        "damage_indicators": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string"
+          },
+          "description": "Signs of damage, wear, or problems visible in the photo"
+        },
+        "not_in_text": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string"
+          },
+          "description": "Relevant elements visible in the photo that the neighbor did NOT mention in their text. Empty if everything mentioned.",
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
