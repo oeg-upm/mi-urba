@@ -33,7 +33,86 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
-
+  gen_deepseek-r1-distill-qwen-7b:
+    endpoint: litellm
+    model: local_llama/deepseek-r1-distill-qwen-7b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_phi-4:
+    endpoint: litellm
+    model: local_llama/phi-4
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_qwen3-0.6b:
+    endpoint: litellm
+    model: local_llama/qwen3-0.6b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_pantheon-rp-8b-llama3:
+    endpoint: litellm
+    model: local_llama/pantheon-rp-8b-llama3
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_mistral-7b-v0.3-base:
+    endpoint: litellm
+    model: local_llama/mistral-7b-v0.3-base
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_deepseek-r1-distill-llama-8b:
+    endpoint: litellm
+    model: local_llama/deepseek-r1-distill-llama-8b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_granite-3.3-2b:
+    endpoint: litellm
+    model: local_llama/granite-3.3-2b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_olmo-2-13b-instruct:
+    endpoint: litellm
+    model: local_llama/olmo-2-13b-instruct
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_falcon3-7b-instruct:
+    endpoint: litellm
+    model: local_llama/falcon3-7b-instruct
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  gen_glm-4.7-flash:
+    endpoint: litellm
+    model: local_llama/glm-4.7-flash
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
 generation:
   default_output_dir: data
   batches:
