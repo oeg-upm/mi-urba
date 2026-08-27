@@ -53,11 +53,11 @@ for i, genkey in enumerate(selected, 1):
         str(EXT / ".venv" / "bin" / "python"), str(EXT / "cli.py"), "extract",
         "--config", str(CONFIG), "--model", "extract_gemma4_12b",
         "--raw-dir", str(raw), "--annotated-dir", str(ext_dir),
-        "--timeout", "300", "--max-retries", "3", "--workers", "8",
+        "--timeout", "900", "--max-retries", "3", "--retry-delay", "5", "--workers", "1",
     ]
     t0 = time.time()
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=72000, cwd=str(EXT))
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=99000, cwd=str(EXT))
         dt = time.time() - t0
         n_after = sum(1 for _ in open(ext_file)) if ext_file.exists() else 0
         line = f"  DONE {n_after}/{n_comp} in {dt:.0f}s"

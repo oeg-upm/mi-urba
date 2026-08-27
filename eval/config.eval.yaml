@@ -12,18 +12,25 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_gemma4_31b_awq:
     endpoint: litellm
     model: local_llama/gemma4-31b-awq
     temperature: 0.85
+    extra_params:
+      max_tokens: 10000
   gen_gemma4_12b_awq:
     endpoint: litellm
     model: local_llama/gemma4-12b-awq
     temperature: 0.85
+    extra_params:
+      max_tokens: 10000
   gen_qwen3_4b_instr_awq:
     endpoint: litellm
     model: local_llama/qwen3-4b-instruct-awq
     temperature: 0.85
+    extra_params:
+      max_tokens: 10000
   extract_gemma4_12b:
     endpoint: litellm
     model: local_llama/gemma4-12b-awq
@@ -41,6 +48,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_phi-4:
     endpoint: litellm
     model: local_llama/phi-4
@@ -49,6 +57,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_qwen3-0.6b:
     endpoint: litellm
     model: local_llama/qwen3-0.6b
@@ -57,6 +66,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_pantheon-rp-8b-llama3:
     endpoint: litellm
     model: local_llama/pantheon-rp-8b-llama3
@@ -65,6 +75,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_mistral-7b-v0.3-base:
     endpoint: litellm
     model: local_llama/mistral-7b-v0.3-base
@@ -73,6 +84,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_deepseek-r1-distill-llama-8b:
     endpoint: litellm
     model: local_llama/deepseek-r1-distill-llama-8b
@@ -81,6 +93,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_granite-3.3-2b:
     endpoint: litellm
     model: local_llama/granite-3.3-2b
@@ -89,6 +102,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_olmo-2-13b-instruct:
     endpoint: litellm
     model: local_llama/olmo-2-13b-instruct
@@ -97,6 +111,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_falcon3-7b-instruct:
     endpoint: litellm
     model: local_llama/falcon3-7b-instruct
@@ -105,6 +120,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
   gen_glm-4.7-flash:
     endpoint: litellm
     model: local_llama/glm-4.7-flash
@@ -113,6 +129,7 @@ models:
       enable_thinking: false
       chat_template_kwargs:
         enable_thinking: false
+      max_tokens: 10000
 generation:
   default_output_dir: data
   batches:
