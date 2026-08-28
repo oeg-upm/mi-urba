@@ -9,11 +9,14 @@ diagonal level), and (c) the intrinsic entropy of each generator's texts
 This script derives metrics that separate those effects:
 
   H[A][B]        cross-entropy in nats/token (from mean_logprob, no exp)
-  dH[A][B]       = H(A, text_B) - H(A, text_A)   excess surprise vs own text
-  R[A][B]        = exp(dH)                        PPL ratio
+  KLD[A][B]      = H(A,text_B) - H(B,text_B)  sample estimate of
+                   KL(P_B || P_A): extra nats/token to encode B's output
+                   under A instead of under B itself  <-- model-vs-model
+  J[A][B]        = KLD[A][B] + KLD[B][A]      Jeffreys divergence:
+                   symmetric, >=0 in expectation, THE pairwise distance
+  dH[A][B]       = H(A,text_B) - H(A,text_A)   diagnostic only: excess
+                   surprise vs evaluator's own text (calibration-flavored)
   S[A][B]        = (dH[A][B] + dH[B][A]) / 2      symmetrized (signed)
-  J[A][B]        = dH[A][B] + dH[B][A]            symmetric total (can be
-                   negative when text entropies differ strongly: NOT a KL)
 
 Diversity score of generator B: mean over evaluators A!=B of -dH[A][B]
 (positive = B's text is MORE predictable to others than their own = redundant;
@@ -33,6 +36,27 @@ def load_matrix(path):
     # mean_logprob = mean(log p) <= 0; cross-entropy H = -mean(log p) >= 0
     H = {e: {g: -r[e][g]["mean_logprob"] for g in r[e]} for e in r}
     return H, sorted(r.keys())
+
+
+def kld_matrix(H):
+    """KLD[A][B] = H(A,text_B) - H(B,text_B) ~= KL(P_B || P_A).
+    Baseline is the GENERATOR's own-text entropy (the entropy of its output
+    distribution), not the evaluator's self-confidence.
+    """
+    return {e: {g: H[e][g] - H[g][g] for g in H[e]} for e in H}
+
+
+def jeffreys(KLD):
+    """J[A][B] = KL(P_B||P_A) + KL(P_A||P_B); symmetric, >= 0 in expectation."""
+    J = {}
+    for a in KLD:
+        J[a] = {}
+        for b in KLD:
+            if a == b:
+                J[a][b] = 0.0
+            else:
+                J[a][b] = KLD[a][b] + KLD[b][a]
+    return J
 
 
 def dH_matrix(H):
@@ -92,29 +116,39 @@ def main():
     print(f"Models ({len(gens)}): {', '.join(gens)}")
 
     dH = dH_matrix(H)
+    KLD = kld_matrix(H)
+    J = jeffreys(KLD)
     S = symmetrized(dH)
-    R = {e: {g: (1.0 if e == g else sys.float_info.max) for g in gens} for e in gens}
-    for e in gens:
-        for g in gens:
-            if e != g:
-                R[e][g] = math.exp(dH[e][g])
 
-    fmt_table("dH[A][B] = excess cross-entropy (nats/token; 0 = own text)", dH, gens)
-    fmt_table("R[A][B] = PPL ratio vs own text (diag = 1)", R, gens, fmt="{:.3f}", diag_zero=False)
-    fmt_table("S[A][B] = symmetrized (dH_AB + dH_BA)/2", S, gens)
+    fmt_table("KLD[A][B] ~= KL(P_B||P_A): extra nats to encode B's text under A (directed)",
+              KLD, gens)
+    fmt_table("J[A][B] = Jeffreys divergence (symmetric, primary model-to-model distance)",
+              J, gens)
+    # nearest neighbors per model
+    print("\n=== Nearest neighbor (min Jeffreys) per model ===")
+    for a in gens:
+        others = [(J[a][b], b) for b in gens if b != a]
+        if others:
+            j, b = min(others)
+            print(f"  {a[:28]:28s} -> {b[:28]:28s} (J={j:.3f} nats)")
+
+    fmt_table("diagnostic: dH[A][B] = H(A,text_B)-H(A,text_A) (calibration-flavored)",
+              dH, gens)
+    fmt_table("diagnostic: S[A][B] = symmetrized dH (signed)", S, gens)
 
     # diversity ranking: how predictable is each generator's text to the OTHER models
-    print("\n=== Generator diversity (mean over other evaluators of dH[A][B]) ===")
-    print("positive dH -> text surprises others = contributes diversity")
-    print("negative dH -> text MORE predictable than evaluators' own = redundant (degenerate)")
+    # model-vs-model: how far is each model's DISTRIBUTION from the panel's?
+    print("\n=== Model distinctiveness (mean over other evaluators of KLD[A][B] = KL(P_B||P_A)) ===")
+    print("high  -> B's output distribution is far from every other model")
+    print("low   -> B's output could have come from any of the others (redundant)")
     scores = {}
     for g in gens:
-        vals = [dH[e][g] for e in gens if e != g and g in dH[e]]
+        vals = [KLD[e][g] for e in gens if e != g and g in KLD[e]]
         if vals:
             m = sum(vals) / len(vals)
             scores[g] = m
-            print(f"  {g[:28]:28s} mean dH = {m:+.3f} nats")
-    print("  -> ranking (most diverse first): " +
+            print(f"  {g[:28]:28s} mean KL(P_g||P_others) = {m:.3f} nats")
+    print("  -> ranking (most distinctive first): " +
           " > ".join(g for g, _ in sorted(scores.items(), key=lambda kv: -kv[1])))
     # degeneracy flags if cache provided
     cache_path = Path(sys.argv[2]) if len(sys.argv) > 2 else None
