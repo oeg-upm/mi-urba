@@ -276,7 +276,9 @@ def _run_generation_phase_gateway(models, scenarios, args, gen_cache):
             prompt_fmt = gen_cache[gen_tag][rid]["prompt_fmt"]
             logger.info(f"[GEN] {gen_tag}/{rid} generating via gateway (temp=0)...")
             try:
-                content = generate_greedy_gateway(args.gateway, gen_tag, prompt_fmt)
+                content = generate_greedy_gateway(args.gateway, gen_tag, prompt_fmt,
+                                                  timeout=2 * args.req_timeout,
+                                                  max_gen_tokens=args.max_gen_tokens)
                 if content:
                     gen_cache[gen_tag][rid]["content"] = content
                     save_json(args.gen_cache, gen_cache)
@@ -310,7 +312,8 @@ def _run_eval_phase_gateway(models, scenarios, args, gen_cache, results):
                 try:
                     lps, misses = eval_text_gateway(
                         args.gateway, eval_tag, cached["prompt_fmt"],
-                        cached["content"], args.max_content_tokens)
+                        cached["content"], args.max_content_tokens,
+                        req_timeout=args.req_timeout)
                 except Exception as e:
                     logger.warning(f"  [{eval_tag}] {gen_tag}/{rid} FAILED: {e}")
                     continue
@@ -410,11 +413,11 @@ def render_prompt_fmt_from_template(template, scenario):
         messages=msgs, add_generation_prompt=True, tools=[], documents=[])
 
 
-def generate_greedy_gateway(endpoint, tag, prompt_fmt, timeout=600):
+def generate_greedy_gateway(endpoint, tag, prompt_fmt, timeout=600, max_gen_tokens=10000):
     """Greedy generation through llama-swap (routes /completion by the `model`
     field). Neutral penalties keep the diagonal-exact property."""
     r = requests.post(f"{endpoint}/completion", json={
-        "model": tag, "prompt": prompt_fmt, "n_predict": 10000,
+        "model": tag, "prompt": prompt_fmt, "n_predict": max_gen_tokens,
         "temperature": 0, "top_k": 1,
         "repeat_penalty": 1.0, "presence_penalty": 0.0, "frequency_penalty": 0.0,
         "return_tokens": False, "n_probs": 0, "cache_prompt": False,
@@ -423,7 +426,7 @@ def generate_greedy_gateway(endpoint, tag, prompt_fmt, timeout=600):
     return r.json().get("content", "")
 
 
-def eval_text_gateway(endpoint, tag, prompt_fmt, content, max_content_tokens):
+def eval_text_gateway(endpoint, tag, prompt_fmt, content, max_content_tokens, req_timeout=300):
     """Content-only NLL through llama-swap, without /tokenize:
       req1 scores prompt_fmt alone   -> n_prompt = len(pp)+1 (BOS has no entry)
       req2 scores prompt_fmt+content -> slice content logprobs at n_prompt-1
@@ -438,7 +441,7 @@ def eval_text_gateway(endpoint, tag, prompt_fmt, content, max_content_tokens):
         r = requests.post(f"{endpoint}/completion", json={
             "model": tag, "prompt": prompt, "n_predict": 0, "n_probs": 1,
             "prompt_logprobs": True, "cache_prompt": False,
-        }, timeout=300)
+        }, timeout=req_timeout)
         r.raise_for_status()
         pp = r.json().get("prompt_probabilities")
         if not pp:
@@ -740,6 +743,10 @@ def main():
                         help="local port for the CPU template-rendering server")
     parser.add_argument("--templates-file", default=str(DIVERSITY_DIR / "chat_templates.json"),
                         help="GGUF chat-template cache (see extract_chat_template.py)")
+    parser.add_argument("--req-timeout", type=int, default=300,
+                        help="per-request timeout seconds (generation uses 2x)")
+    parser.add_argument("--max-gen-tokens", type=int, default=10000,
+                        help="greedy generation cap per text")
     args = parser.parse_args()
 
     models = args.models
