@@ -131,7 +131,7 @@ def parse_user_text(content):
 
 # ────────────────────────── local server management ──────────────────────────
 
-def start_local_server(server_bin, gguf_path, port, ctx, threads=4):
+def start_local_server(server_bin, gguf_path, port, ctx, threads=4, gpu_layers=99):
     endpoint = f"http://127.0.0.1:{port}"
     # assert the port is truly free: a stale server would answer /health and
     # silently make every evaluation run against the wrong model
@@ -143,7 +143,8 @@ def start_local_server(server_bin, gguf_path, port, ctx, threads=4):
     log_file = f"/tmp/xppl_server_{port}.log"
     srv = subprocess.Popen(
         [server_bin, "-m", gguf_path, "--port", str(port),
-         "--host", "127.0.0.1", "-c", str(ctx), "-t", str(threads), "-ngl", "99"],
+         "--host", "127.0.0.1", "-c", str(ctx), "-t", str(threads),
+         "-ngl", str(gpu_layers)],
         stdout=open(log_file, "w"), stderr=subprocess.STDOUT,
     )
     for _ in range(40):
@@ -223,8 +224,103 @@ def generate_greedy(endpoint, scenario, timeout=300):
     return prompt_fmt, d.get("content", ""), d.get("tokens", [])
 
 
+def _run_generation_phase_gateway(models, scenarios, args, gen_cache):
+    """Gateway mode: prompt templates rendered locally (CPU server, only
+    /apply-template), greedy generation through llama-swap."""
+    for gen_tag in models:
+        base_tag = gen_tag.removesuffix("-xppl")
+        gguf = find_gguf(args.gguf_dir, base_tag)
+        if not gguf:
+            logger.error(f"[GEN] local GGUF not found for {base_tag} (template rendering)")
+            continue
+        gen_cache.setdefault(gen_tag, {})
+        missing = [sc for sc in scenarios
+                   if not gen_cache[gen_tag].get(sc["record_id"], {}).get("content")]
+        if not missing and not args.regenerate:
+            logger.info(f"[GEN] {gen_tag}: all cached (gateway)")
+            continue
+        logger.info(f"[GEN] {gen_tag}: rendering {len(missing)} templates locally (CPU)")
+        srv, endpoint = start_local_server(args.server_bin, gguf, args.template_port,
+                                           ctx=2048, gpu_layers=0)
+        try:
+            for sc in missing:
+                rid = sc["record_id"]
+                if "prompt_fmt" not in gen_cache[gen_tag].get(rid, {}):
+                    gen_cache[gen_tag][rid] = {"prompt_fmt": render_prompt_fmt(endpoint, sc)}
+                    save_json(args.gen_cache, gen_cache)
+        finally:
+            stop_local_server(srv)
+        for sc in missing:
+            rid = sc["record_id"]
+            prompt_fmt = gen_cache[gen_tag][rid]["prompt_fmt"]
+            logger.info(f"[GEN] {gen_tag}/{rid} generating via gateway (temp=0)...")
+            try:
+                content = generate_greedy_gateway(args.gateway, gen_tag, prompt_fmt)
+                if content:
+                    gen_cache[gen_tag][rid]["content"] = content
+                    save_json(args.gen_cache, gen_cache)
+                    logger.info(f"  {len(content)} chars")
+                else:
+                    logger.warning(f"  empty result for {gen_tag}/{rid}")
+            except Exception as e:
+                logger.error(f"  {gen_tag}/{rid} failed: {e}")
+
+
+def _run_eval_phase_gateway(models, scenarios, args, gen_cache, results):
+    """Cross-perplexity entirely through llama-swap (see eval_text_gateway)."""
+    for eval_tag in models:
+        results.setdefault(eval_tag, {})
+        for gen_tag in models:
+            cached_all = gen_cache.get(gen_tag, {})
+            have = [sc["record_id"] for sc in scenarios
+                    if cached_all.get(sc["record_id"], {}).get("content")]
+            prev = results[eval_tag].get(gen_tag)
+            if prev and prev.get("n_scenarios", 0) >= len(have) and not args.regenerate:
+                logger.info(f"  [{eval_tag}] {gen_tag}: done ({prev['n_scenarios']}), skip")
+                continue
+            scen_out = {}
+            all_lps, total_misses, total_tokens = [], 0, 0
+            for sc in scenarios:
+                rid = sc["record_id"]
+                cached = cached_all.get(rid) or {}
+                if not cached.get("content"):
+                    continue
+                t0 = time.time()
+                try:
+                    lps, misses = eval_text_gateway(
+                        args.gateway, eval_tag, cached["prompt_fmt"],
+                        cached["content"], args.max_content_tokens)
+                except Exception as e:
+                    logger.warning(f"  [{eval_tag}] {gen_tag}/{rid} FAILED: {e}")
+                    continue
+                dt = time.time() - t0
+                if not lps:
+                    logger.warning(f"  [{eval_tag}] {gen_tag}/{rid}: no valid logprobs")
+                    continue
+                scen_out[rid] = {"mean_logprob": sum(lps) / len(lps), "n_tokens": len(lps)}
+                all_lps.extend(lps)
+                total_misses += misses
+                total_tokens += len(lps)
+                logger.info(f"  [{eval_tag}] {gen_tag}/{rid} {len(lps)} tok in {dt:.1f}s")
+            if all_lps:
+                mean_lp = sum(all_lps) / len(all_lps)
+                ppl = math.exp(-mean_lp) if mean_lp > -50 else float("inf")
+                results[eval_tag][gen_tag] = {
+                    "mean_ppl": ppl, "mean_logprob": mean_lp,
+                    "n_scenarios": len(scen_out), "n_tokens": total_tokens,
+                    "n_misses": total_misses, "method": "gateway-prompt_logprobs",
+                    "scenarios": scen_out,
+                }
+                logger.info(f"  [{eval_tag}] {gen_tag}: ppl={ppl:.3f} H={-mean_lp:.3f} nats "
+                            f"({total_tokens} tok)")
+            save_json(args.output, results)
+
+
 def run_generation_phase(models, scenarios, args, gen_cache):
     """Ensure gen_cache[gen][rid] = {prompt_fmt, content, gen_tokens?} for all."""
+    if args.gateway:
+        _run_generation_phase_gateway(models, scenarios, args, gen_cache)
+        return
     for gen_tag in models:
         gguf = find_gguf(args.gguf_dir, gen_tag)
         if not gguf:
@@ -259,6 +355,61 @@ def run_generation_phase(models, scenarios, args, gen_cache):
                     logger.error(f"  {gen_tag}/{rid} failed: {e}")
         finally:
             stop_local_server(srv)
+
+
+def render_prompt_fmt(endpoint, scenario):
+    """Chat-template rendering only (no generation) — used in gateway mode,
+    where llama-swap does not expose /apply-template."""
+    msgs = reconstruct_messages(scenario)
+    r = requests.post(f"{endpoint}/apply-template", json={
+        "messages": msgs,
+        "chat_template_kwargs": {"enable_thinking": False},
+    }, timeout=30)
+    r.raise_for_status()
+    return r.json()["prompt"]
+
+
+def generate_greedy_gateway(endpoint, tag, prompt_fmt, timeout=600):
+    """Greedy generation through llama-swap (routes /completion by the `model`
+    field). Neutral penalties keep the diagonal-exact property."""
+    r = requests.post(f"{endpoint}/completion", json={
+        "model": tag, "prompt": prompt_fmt, "n_predict": 10000,
+        "temperature": 0, "top_k": 1,
+        "repeat_penalty": 1.0, "presence_penalty": 0.0, "frequency_penalty": 0.0,
+        "return_tokens": False, "n_probs": 0, "cache_prompt": False,
+    }, timeout=timeout)
+    r.raise_for_status()
+    return r.json().get("content", "")
+
+
+def eval_text_gateway(endpoint, tag, prompt_fmt, content, max_content_tokens):
+    """Content-only NLL through llama-swap, without /tokenize:
+      req1 scores prompt_fmt alone   -> n_prompt = len(pp)+1 (BOS has no entry)
+      req2 scores prompt_fmt+content -> slice content logprobs at n_prompt-1
+    Same slicing convention as eval_text_prompt_logprobs. Requires the prompt
+    to be a stable tokenization prefix (holds for same-family GGUFs; exact when
+    E==G). NOTE: cache_prompt must stay False — with a cached prefix this
+    llama.cpp build omits prompt_probabilities entirely.
+    """
+    content = content[:max_content_tokens * 4]  # rough char cap for ctx fit
+
+    def req(prompt):
+        r = requests.post(f"{endpoint}/completion", json={
+            "model": tag, "prompt": prompt, "n_predict": 0, "n_probs": 1,
+            "prompt_logprobs": True, "cache_prompt": False,
+        }, timeout=300)
+        r.raise_for_status()
+        pp = r.json().get("prompt_probabilities")
+        if not pp:
+            raise RuntimeError("server returned no prompt_probabilities")
+        return pp
+
+    pp_prompt = req(prompt_fmt)
+    n_prompt = len(pp_prompt) + 1
+    pp_full = req(prompt_fmt + content)
+    content_lps = [e.get("logprob") for e in pp_full[n_prompt - 1:]]
+    misses = sum(1 for lp in content_lps if lp is None)
+    return [lp for lp in content_lps if lp is not None], misses
 
 
 # ────────────────────────── phase 2: cross-perplexity ──────────────────────────
@@ -360,6 +511,9 @@ def eval_text_incremental(endpoint, cached, is_diagonal, max_content_tokens):
 
 def run_eval_phase(models, scenarios, args, gen_cache, results):
     """For every evaluator E and generator G, fill results[E][G]."""
+    if args.gateway:
+        _run_eval_phase_gateway(models, scenarios, args, gen_cache, results)
+        return
     for eval_tag in models:
         gguf = find_gguf(args.gguf_dir, eval_tag)
         if not gguf:
@@ -536,12 +690,20 @@ def main():
     parser.add_argument("--gen-cache", default=str(DEFAULT_GEN_CACHE))
     parser.add_argument("--regenerate", action="store_true")
     parser.add_argument("--no-summary", action="store_true")
+    parser.add_argument("--gateway", default=None,
+                        help="llama-swap URL (e.g. http://192.168.10.11:9292): run "
+                             "generation+eval through the gateway; model tags get "
+                             "routed via the `model` field; templates are rendered "
+                             "locally with the -xppl suffix stripped")
+    parser.add_argument("--template-port", type=int, default=18989,
+                        help="local port for the CPU template-rendering server")
     args = parser.parse_args()
 
     models = args.models
     scenarios = load_scenarios(args.n_scenarios)
     logger.info(f"Models: {models}")
-    logger.info(f"Scenarios: {len(scenarios)}, method: {args.method}")
+    logger.info(f"Scenarios: {len(scenarios)}, method: {args.method}"
+                + (f", gateway: {args.gateway}" if args.gateway else ""))
 
     gen_cache = load_json(args.gen_cache, {})
     results = load_json(args.output, {})
