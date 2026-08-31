@@ -225,33 +225,54 @@ def generate_greedy(endpoint, scenario, timeout=300):
 
 
 def _run_generation_phase_gateway(models, scenarios, args, gen_cache):
-    """Gateway mode: prompt templates rendered locally (CPU server, only
-    /apply-template), greedy generation through llama-swap."""
+    """Gateway mode: prompt templates rendered from the GGUF template cache
+    (jinja2) when available, else locally via a CPU server (/apply-template);
+    greedy generation through llama-swap."""
+    templates = load_json(args.templates_file, {}).get("templates", {})
     for gen_tag in models:
-        base_tag = gen_tag.removesuffix("-xppl")
-        gguf = find_gguf(args.gguf_dir, base_tag)
-        if not gguf:
-            logger.error(f"[GEN] local GGUF not found for {base_tag} (template rendering)")
-            continue
         gen_cache.setdefault(gen_tag, {})
         missing = [sc for sc in scenarios
                    if not gen_cache[gen_tag].get(sc["record_id"], {}).get("content")]
         if not missing and not args.regenerate:
             logger.info(f"[GEN] {gen_tag}: all cached (gateway)")
             continue
-        logger.info(f"[GEN] {gen_tag}: rendering {len(missing)} templates locally (CPU)")
-        srv, endpoint = start_local_server(args.server_bin, gguf, args.template_port,
-                                           ctx=2048, gpu_layers=0)
-        try:
+        # precedence: local GGUF -> exact /apply-template; else GGUF template
+        # cache (jinja2 render; minor llama.cpp-specific differences are OK —
+        # the diagonal stays exact by construction since content is generated
+        # from the same prompt_fmt that is later scored)
+        base_tag = gen_tag.removesuffix("-xppl")
+        gguf = find_gguf(args.gguf_dir, base_tag)
+        if gguf:
+            logger.info(f"[GEN] {gen_tag}: rendering {len(missing)} templates locally (exact, CPU)")
+            srv, endpoint = start_local_server(args.server_bin, gguf, args.template_port,
+                                               ctx=2048, gpu_layers=0)
+            try:
+                for sc in missing:
+                    rid = sc["record_id"]
+                    if "prompt_fmt" not in gen_cache[gen_tag].get(rid, {}):
+                        gen_cache[gen_tag][rid] = {"prompt_fmt": render_prompt_fmt(endpoint, sc)}
+                        save_json(args.gen_cache, gen_cache)
+            finally:
+                stop_local_server(srv)
+        elif gen_tag in templates:
             for sc in missing:
                 rid = sc["record_id"]
                 if "prompt_fmt" not in gen_cache[gen_tag].get(rid, {}):
-                    gen_cache[gen_tag][rid] = {"prompt_fmt": render_prompt_fmt(endpoint, sc)}
+                    try:
+                        pf = render_prompt_fmt_from_template(templates[gen_tag]["chat_template"], sc)
+                    except Exception as e:
+                        logger.error(f"[GEN] {gen_tag}/{rid} template render failed: {e}")
+                        continue
+                    gen_cache[gen_tag][rid] = {"prompt_fmt": pf}
                     save_json(args.gen_cache, gen_cache)
-        finally:
-            stop_local_server(srv)
+            logger.info(f"[GEN] {gen_tag}: rendered {len(missing)} templates from GGUF template cache")
+        else:
+            logger.error(f"[GEN] {gen_tag}: no template in cache and no local GGUF for {base_tag}")
+            continue
         for sc in missing:
             rid = sc["record_id"]
+            if "prompt_fmt" not in gen_cache[gen_tag].get(rid, {}):
+                continue
             prompt_fmt = gen_cache[gen_tag][rid]["prompt_fmt"]
             logger.info(f"[GEN] {gen_tag}/{rid} generating via gateway (temp=0)...")
             try:
@@ -367,6 +388,26 @@ def render_prompt_fmt(endpoint, scenario):
     }, timeout=30)
     r.raise_for_status()
     return r.json()["prompt"]
+
+
+def render_prompt_fmt_from_template(template, scenario):
+    """Render a GGUF chat template locally with jinja2 (HF conventions:
+    trim_blocks/lstrip_blocks, strftime_now, add_generation_prompt).
+    Equivalent to llama-server's /apply-template for standard templates."""
+    import datetime
+    from jinja2.sandbox import ImmutableSandboxedEnvironment
+
+    def strftime_now(fmt):
+        return datetime.datetime.now().strftime(fmt)
+
+    env = ImmutableSandboxedEnvironment(trim_blocks=True, lstrip_blocks=True,
+                                        keep_trailing_newline=True)
+    env.globals["strftime_now"] = strftime_now
+    env.globals["raise_exception"] = lambda m: (_ for _ in ()).throw(ValueError(m))
+    t = template.replace("{% generation %}", "").replace("{% endgeneration %}", "")
+    msgs = reconstruct_messages(scenario)
+    return env.from_string(t).render(
+        messages=msgs, add_generation_prompt=True, tools=[], documents=[])
 
 
 def generate_greedy_gateway(endpoint, tag, prompt_fmt, timeout=600):
@@ -697,6 +738,8 @@ def main():
                              "locally with the -xppl suffix stripped")
     parser.add_argument("--template-port", type=int, default=18989,
                         help="local port for the CPU template-rendering server")
+    parser.add_argument("--templates-file", default=str(DIVERSITY_DIR / "chat_templates.json"),
+                        help="GGUF chat-template cache (see extract_chat_template.py)")
     args = parser.parse_args()
 
     models = args.models
