@@ -27,7 +27,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 ENDPOINT = "http://192.168.10.1:4000"
-KEY = "${LLAMA_GATEWAY_API_KEY}"
+from env_utils import get_api_key
+KEY = get_api_key()
 N = 20
 SEED = 42
 OUTROOT = Path(__file__).resolve().parent.parent / "eval" / "results" / "diversity"

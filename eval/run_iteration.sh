@@ -6,6 +6,10 @@
 #
 # Usage: bash eval/run_iteration.sh <iteration_number>
 
+set -euo pipefail
+# Load secrets from repo-root .env (LLAMA_GATEWAY_API_KEY)
+set -a; source "$(dirname "$0")/../.env"; set +a
+
 set -e
 # Resolve repo root relative to this script (works from any CWD)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

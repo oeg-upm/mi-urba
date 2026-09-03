@@ -16,7 +16,8 @@ Writes load_times.log + a JSON list of qualifying models to fast_models.json.
 import requests, json, time, re
 
 EP = "http://192.168.10.1:4000/v1/chat/completions"
-KEY = "${LLAMA_GATEWAY_API_KEY}"
+from env_utils import get_api_key
+KEY = get_api_key()
 H = {"Content-Type":"application/json","Authorization":f"Bearer {KEY}"}
 LOG = "/mnt/backup/pc1/data/miUrba2/mi-urba/eval/results/load_times.log"
 FAST = "/mnt/backup/pc1/data/miUrba2/mi-urba/eval/results/fast_models.json"
