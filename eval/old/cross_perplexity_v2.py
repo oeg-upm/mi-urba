@@ -22,7 +22,7 @@ import argparse, json, math, os, sys, time, logging, subprocess, signal
 from pathlib import Path
 import requests
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]  # archived under eval/old/
 sys.path.insert(0, str(ROOT / "miurba-generator"))
 from src.prompts import build_generation_prompt
 

@@ -6,6 +6,7 @@ Uses a separate log so the main gen_all_models.log stays clean."""
 import requests, json, time, re
 
 ENDPOINT = "http://192.168.10.1:4000/v1/chat/completions"
+import sys as _sys; from pathlib import Path as _Path; _sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))  # eval/env_utils
 from env_utils import get_api_key
 KEY = get_api_key()
 HEADERS = {"Content-Type": "application/json", "Authorization": f"Bearer {KEY}"}
