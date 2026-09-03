@@ -92,6 +92,8 @@ def cmd_extract(args):
         model=model_cfg["model"],
         temperature=temperature,
         timeout=args.timeout,
+        max_retries=args.max_retries,
+        retry_delay=args.retry_delay,
         api_key=model_cfg.get("api_key"),
         extra_params=model_cfg.get("extra_params", {}),
         json_schema=json_schema,
@@ -177,6 +179,7 @@ def main():
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
     common.add_argument("--max-retries", type=int, default=3, help="Max retries for failed extractions (default: 3)")
+    common.add_argument("--retry-delay", type=float, default=5.0, help="Base retry delay (seconds)")
     common.add_argument("--workers", type=int, default=1, help="Number of concurrent extraction workers (default: 1)")
     common.add_argument("--stage-split", action="store_true", help="P2: use two-call pipeline (vision describes photos, then text extracts). Falls back to single-call if no photos.")
     common.add_argument("--vision-model", default=None, help="P2: model name for stage 1 (vision). Defaults to the same as --model.")

@@ -62,6 +62,8 @@ def cmd_generate(args):
         model=model_cfg["model"],
         temperature=model_cfg["temperature"],
         timeout=args.timeout,
+        max_retries=args.max_retries,
+        retry_delay=args.retry_delay,
         api_key=model_cfg.get("api_key"),
         extra_params=model_cfg.get("extra_params", {}),
     )
@@ -146,6 +148,8 @@ def cmd_generate_multi(args):
             model=model_cfg["model"],
             temperature=model_cfg["temperature"],
             timeout=args.timeout,
+            max_retries=args.max_retries,
+            retry_delay=args.retry_delay,
             api_key=model_cfg.get("api_key"),
             extra_params=model_cfg.get("extra_params", {}),
         )
@@ -245,6 +249,8 @@ def main():
     common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
     common.add_argument("--no-resume", action="store_true", help="Start fresh")
     common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
+    common.add_argument("--max-retries", type=int, default=3, help="Max API retries per request")
+    common.add_argument("--retry-delay", type=float, default=5.0, help="Base retry delay (seconds)")
     common.add_argument("--no-images", action="store_true",
                         help="Disable image generation even if enabled in config")
     common.add_argument("--validate", action="store_true",

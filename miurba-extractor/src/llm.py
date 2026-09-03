@@ -25,7 +25,7 @@ class LLMClient:
         model: str = "kimi-k2.6:cloud",
         temperature: float = 0.85,
         timeout: int = 300,
-        max_retries: int = 8,
+        max_retries: int = 3,
         retry_delay: float = 5.0,
         api_key: str | None = None,
         extra_params: dict | None = None,
