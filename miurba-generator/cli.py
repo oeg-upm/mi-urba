@@ -56,6 +56,7 @@ def cmd_generate(args):
     paths = _get_path_args(args, config)
     model_name = args.model
     model_cfg = get_model_params(model_name, config)
+    gen_cfg = config["generation"]
 
     client = LLMClient(
         base_url=model_cfg["base_url"],
@@ -77,7 +78,7 @@ def cmd_generate(args):
     print(f"  Endpoint:   {model_cfg['base_url']}")
     print(f"  Records:    {args.num_records}")
     print(f"  IDs:        Q{args.start_id:04d} — Q{args.start_id + args.num_records - 1:04d}")
-    print(f"  Output:     {args.output_dir}/{raw_subdir}/")
+    print(f"  Output:     {args.output_dir or gen_cfg['default_output_dir']}/{raw_subdir}/")
     print(f"  Images:     {'enabled (FLUX.2)' if enable_images else 'disabled'}")
     print(f"  Resume:     {not args.no_resume}")
     print(f"{'=' * 55}")
@@ -86,7 +87,7 @@ def cmd_generate(args):
         client=client,
         num_records=args.num_records,
         start_id=args.start_id,
-        output_dir=args.output_dir,
+        output_dir=args.output_dir or gen_cfg["default_output_dir"],
         raw_subdir=raw_subdir,
         images_subdir=paths.get("images_subdir", "images"),
         complaints_file=paths["complaints_file"],

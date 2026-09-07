@@ -1,26 +1,55 @@
-# docker-compose.yml — miUrba API
+# docker-compose.yml — miUrba (full stack)
 #
 # Uso:
-#   1. Crear un config con tu API key (ej: copiar config.yaml y añadir tu endpoint+api_key)
+#   1. Ajusta config.yaml (endpoints) o crea tu config y pásalo por MIURBA_CONFIG
 #   2. docker compose up --build
 #   3. http://localhost:8000/docs (Swagger UI)
+#
+# network_mode: host — la config apunta a servicios LAN/host (Ollama
+# localhost:11434, llama-swap 192.168.10.11:9292) sin proxy inverso.
+# Si prefieres red bridge, cambia los endpoints a http://host.docker.internal:...
+# y usa extra_hosts: ["host.docker.internal:host-gateway"].
 
 services:
   miurba-api:
     build: .
     container_name: miurba-api
-    ports:
-      - "8000:8000"
+    network_mode: host
     environment:
-      - MIURBA_CONFIG=config.yaml
+      - MIURBA_CONFIG=${MIURBA_CONFIG:-config.yaml}
       - MIURBA_HOST=0.0.0.0
       - MIURBA_PORT=8000
-    # Montar tu config con API keys (sobrescribe el config.yaml del image):
     volumes:
-      - ./config.yaml:/app/config.yaml:ro
+      - ./${MIURBA_CONFIG:-config.yaml}:/app/config.yaml:ro
+      - ./miurba-generator/data:/app/miurba-generator/data
+      - ./miurba-extractor/data:/app/miurba-extractor/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8000/v1/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+
+  miurba-generator:
+    build:
+      context: .
+      dockerfile: miurba-generator/Dockerfile
+    image: miurba-generator
+    container_name: miurba-generator
+    network_mode: host
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./miurba-generator/data:/app/miurba-generator/data
+    profiles: ["cli"]
+
+  miurba-extractor:
+    build:
+      context: .
+      dockerfile: miurba-extractor/Dockerfile
+    image: miurba-extractor
+    container_name: miurba-extractor
+    network_mode: host
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./miurba-extractor/data:/app/miurba-extractor/data
+    profiles: ["cli"]

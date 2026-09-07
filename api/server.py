@@ -255,6 +255,8 @@ async def health():
 async def list_models(config: str | None = None):
     """List available models (OpenAI-style format)."""
     cfg = load_config(resolve_config(config))
+    annotation = cfg.get("annotation", {}) or {}
+    vision_model = annotation.get("vision_model") or ""
     models_cfg = get_models(cfg)
     data = []
     for name, mc in models_cfg.items():
@@ -262,8 +264,8 @@ async def list_models(config: str | None = None):
             id=name,
             owned_by=mc.get("endpoint", "miurba"),
             capabilities={
-                "vision": name in cfg.get("annotation", {}).get("vision_model", "") or
-                          (cfg.get("annotation", {}).get("model") == name),
+                "vision": name in vision_model or
+                          (annotation.get("model") == name),
             },
         ))
     return ModelsResponse(data=data)
