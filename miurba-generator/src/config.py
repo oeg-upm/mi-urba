@@ -19,7 +19,50 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import os
+import re
+
 import yaml
+
+# Repo root (three levels up: src/ -> project/ -> repo root).
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+_ENV_PATH = _REPO_ROOT / ".env"
+_ENV_LOADED = False
+
+
+def _load_dotenv() -> None:
+    """Populate os.environ from the repo-root .env (existing vars win).
+    Zero dependencies: only standard library."""
+    global _ENV_LOADED
+    if _ENV_LOADED or not _ENV_PATH.exists():
+        _ENV_LOADED = True
+        return
+    for line in _ENV_PATH.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+    _ENV_LOADED = True
+
+
+def _expand_env_vars(value) :
+    """Expand ${VAR} references in string values using os.environ (+.env).
+    Unknown variables expand to empty string."""
+    if not isinstance(value, str) or "${" not in value:
+        return value
+    _load_dotenv()
+    return re.sub(r"\$\{([^}]+)\}", lambda m: os.environ.get(m.group(1), ""), value)
+
+
+def _walk_expand(node):
+    """Recursively expand ${VAR} in all string values of a config tree."""
+    if isinstance(node, dict):
+        return {k: _walk_expand(v) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_walk_expand(v) for v in node]
+    return _expand_env_vars(node)
+
 
 _CONFIG: dict | None = None
 
@@ -35,6 +78,7 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     path = Path(path)
     with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
+    cfg = _walk_expand(cfg)
     _CONFIG = cfg
     return cfg
 

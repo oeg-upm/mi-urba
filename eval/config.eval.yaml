@@ -103,6 +103,87 @@ models:
       chat_template_kwargs:
         enable_thinking: false
       max_tokens: 10000
+  gen_qwen3.5-122b-a10b:
+    endpoint: litellm
+    model: local_llama/qwen3.5-122b-a10b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_devstral-small-2507:
+    endpoint: litellm
+    model: local_llama/devstral-small-2507
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_agentica-deepcoder-14b:
+    endpoint: litellm
+    model: local_llama/agentica-deepcoder-14b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_gpt-oss-120b:
+    endpoint: litellm
+    model: local_llama/gpt-oss-120b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_muse-glimmer-30b:
+    endpoint: litellm
+    model: local_llama/muse-glimmer-30b
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_gemma-3-12b-it:
+    endpoint: litellm
+    model: local_llama/gemma-3-12b-it
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_glm-4.5-air:
+    endpoint: litellm
+    model: local_llama/glm-4.5-air
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_falcon3-10b-instruct:
+    endpoint: litellm
+    model: local_llama/falcon3-10b-instruct
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
+  gen_openchat-3.5-0106:
+    endpoint: litellm
+    model: local_llama/openchat-3.5-0106
+    temperature: 0.85
+    extra_params:
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+      max_tokens: 10000
   gen_olmo-2-13b-instruct:
     endpoint: litellm
     model: local_llama/olmo-2-13b-instruct
