@@ -1,0 +1,26 @@
+{
+  "selected": [
+    "local_llama/deepseek-r1-distill-qwen-7b",
+    "local_llama/phi-4",
+    "local_llama/qwen3-0.6b",
+    "local_llama/pantheon-rp-8b-llama3",
+    "local_llama/mistral-7b-v0.3-base",
+    "local_llama/deepseek-r1-distill-llama-8b",
+    "local_llama/granite-3.3-2b",
+    "local_llama/olmo-2-13b-instruct",
+    "local_llama/falcon3-7b-instruct",
+    "local_llama/glm-4.7-flash"
+  ],
+  "selected_tags": [
+    "deepseek-r1-distill-qwen-7b",
+    "phi-4",
+    "qwen3-0.6b",
+    "pantheon-rp-8b-llama3",
+    "mistral-7b-v0.3-base",
+    "deepseek-r1-distill-llama-8b",
+    "granite-3.3-2b",
+    "olmo-2-13b-instruct",
+    "falcon3-7b-instruct",
+    "glm-4.7-flash"
+  ]
+}

@@ -7,8 +7,8 @@ Moved here (repo cleanup, Sep 2026). Two adjustments were applied so they
 still run from their new location:
 
 - `cross_perplexity{,_v2,_v3,_v4}.py`: repo root is now `parents[2]`.
-- Probes/measurement scripts: small `sys.path` shim to import
-  `eval/env_utils.py` (API key loader).
+- (2026-10) `env_utils.py` eliminado: el loader de API key está inlineado en cada script.
+- Probes/measurement scripts: API-key loading is inlined (repo `.env`, env vars win).
 
 ## Contents
 

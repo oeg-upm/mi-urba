@@ -1,0 +1,153 @@
+[  1/89] GEN  agentica-deepcoder-14b
+[  1/89] DONE agentica-deepcoder-14b (20/20, 371s)
+[  2/89] GEN  command-r-08-2024
+[  2/89] DONE command-r-08-2024 (20/20, 142s)
+[  3/89] GEN  command-r-v01
+[  3/89] DONE command-r-v01 (20/20, 4911s)
+[  4/89] GEN  cydonia-24b-v4.3
+[  4/89] DONE cydonia-24b-v4.3 (20/20, 204s)
+[  5/89] GEN  deepseek-r1-distill-llama-8b
+[  5/89] DONE deepseek-r1-distill-llama-8b (19/20, 197s)
+[  6/89] GEN  deepseek-r1-distill-qwen-14b
+[  1/89] SKIP agentica-deepcoder-14b (20 done)
+[  2/89] SKIP command-r-08-2024 (20 done)
+[  3/89] SKIP command-r-v01 (20 done)
+[  4/89] SKIP cydonia-24b-v4.3 (20 done)
+[  5/89] GEN  deepseek-r1-distill-llama-8b
+[  5/89] DONE deepseek-r1-distill-llama-8b (20/20, 27s)
+[  6/89] GEN  deepseek-r1-distill-qwen-14b
+[  1/89] SKIP agentica-deepcoder-14b (20 done)
+[  2/89] SKIP command-r-08-2024 (20 done)
+[  3/89] SKIP command-r-v01 (20 done)
+[  4/89] SKIP cydonia-24b-v4.3 (20 done)
+[  5/89] SKIP deepseek-r1-distill-llama-8b (20 done)
+[  6/89] GEN  deepseek-r1-distill-qwen-14b
+[  1/89] SKIP agentica-deepcoder-14b (20 done)
+[  2/89] SKIP command-r-08-2024 (20 done)
+[  3/89] SKIP command-r-v01 (20 done)
+[  4/89] SKIP cydonia-24b-v4.3 (20 done)
+[  5/89] SKIP deepseek-r1-distill-llama-8b (20 done)
+[  6/89] GEN  deepseek-r1-distill-qwen-14b
+[  6/89] DONE deepseek-r1-distill-qwen-14b (20/20, 766s)
+[  7/89] GEN  deepseek-r1-distill-qwen-32b
+[  7/89] DONE deepseek-r1-distill-qwen-32b (18/20, 2137s)
+[  8/89] GEN  deepseek-r1-distill-qwen-7b
+[  1/81] SKIP agentica-deepcoder-14b (20 done)
+[  2/81] SKIP command-r-08-2024 (20 done)
+[  3/81] SKIP command-r-v01 (20 done)
+[  4/81] SKIP cydonia-24b-v4.3 (20 done)
+[  5/81] SKIP deepseek-r1-distill-llama-8b (20 done)
+[  6/81] SKIP deepseek-r1-distill-qwen-14b (20 done)
+[  7/81] GEN  deepseek-r1-distill-qwen-32b
+[  7/81] DONE deepseek-r1-distill-qwen-32b (20/20, 135s)
+[  8/81] GEN  deepseek-r1-distill-qwen-7b
+[  8/81] DONE deepseek-r1-distill-qwen-7b (20/20, 88s)
+[  9/81] GEN  devstral-small-2507
+[  9/81] DONE devstral-small-2507 (20/20, 131s)
+[ 10/81] GEN  falcon3-10b-instruct
+[ 10/81] DONE falcon3-10b-instruct (19/20, 91s)
+[ 11/81] GEN  falcon3-1b-instruct
+[ 11/81] DONE falcon3-1b-instruct (20/20, 46s)
+[ 12/81] GEN  falcon3-7b-instruct
+[ 12/81] DONE falcon3-7b-instruct (20/20, 67s)
+[ 13/81] GEN  gemma-2-2b-it
+[ 13/81] DONE gemma-2-2b-it (20/20, 51s)
+[ 14/81] GEN  gemma-2-9b-it
+[ 14/81] DONE gemma-2-9b-it (20/20, 101s)
+[ 15/81] GEN  gemma-3-12b-it
+[ 15/81] DONE gemma-3-12b-it (20/20, 169s)
+[ 16/81] GEN  gemma-3-1b-it
+[ 16/81] DONE gemma-3-1b-it (20/20, 54s)
+[ 17/81] GEN  gemma-3-27b-it
+[ 17/81] DONE gemma-3-27b-it (20/20, 592s)
+[ 18/81] GEN  gemma-3-4b-it
+[ 18/81] DONE gemma-3-4b-it (20/20, 95s)
+[ 19/81] GEN  gemma-4-31B-it
+[ 19/81] DONE gemma-4-31B-it (20/20, 366s)
+[ 20/81] GEN  glm-4-32b-0414
+[ 20/81] DONE glm-4-32b-0414 (20/20, 586s)
+[ 21/81] GEN  glm-4-9b-chat
+[ 21/81] DONE glm-4-9b-chat (20/20, 68s)
+[ 22/81] GEN  glm-4.5-air
+[ 22/81] DONE glm-4.5-air (20/20, 1012s)
+[ 23/81] GEN  glm-4.7-flash
+[ 23/81] DONE glm-4.7-flash (20/20, 289s)
+[ 24/81] GEN  gpt-oss-120b
+[ 24/81] DONE gpt-oss-120b (20/20, 585s)
+[ 25/81] GEN  granite-3.3-2b
+[ 25/81] DONE granite-3.3-2b (20/20, 56s)
+[ 26/81] GEN  granite-3.3-8b
+[ 26/81] DONE granite-3.3-8b (20/20, 87s)
+[ 27/81] GEN  hermes-3-llama-3.1-8b
+[ 27/81] DONE hermes-3-llama-3.1-8b (20/20, 77s)
+[ 28/81] GEN  llama-3.1-8b-instruct
+[ 28/81] DONE llama-3.1-8b-instruct (20/20, 76s)
+[ 29/81] GEN  llama-3.1-nemotron-70b
+[ 29/81] DONE llama-3.1-nemotron-70b (20/20, 1053s)
+[ 30/81] GEN  llama-3.2-1b-instruct
+[ 30/81] DONE llama-3.2-1b-instruct (20/20, 83s)
+[ 31/81] GEN  llama-3.2-3b-instruct
+[ 31/81] DONE llama-3.2-3b-instruct (20/20, 67s)
+[ 32/81] GEN  llama-3.3-70b-instruct
+[ 32/81] DONE llama-3.3-70b-instruct (20/20, 1320s)
+[ 33/81] GEN  ministral-8b-2410
+[ 33/81] DONE ministral-8b-2410 (20/20, 367s)
+[ 34/81] GEN  mistral-7b-instruct-v0.3
+[ 34/81] DONE mistral-7b-instruct-v0.3 (20/20, 71s)
+[ 35/81] GEN  mistral-7b-v0.3-base
+[ 35/81] DONE mistral-7b-v0.3-base (20/20, 76s)
+[ 36/81] GEN  mistral-nemo-12b
+[ 36/81] DONE mistral-nemo-12b (20/20, 89s)
+[ 37/81] GEN  mistral-small-24b
+[ 37/81] DONE mistral-small-24b (20/20, 235s)
+[ 38/81] GEN  muse-glimmer-30b
+[ 38/81] DONE muse-glimmer-30b (20/20, 2176s)
+[ 39/81] GEN  nous-hermes-2-mixtral-8x7b
+[ 39/81] DONE nous-hermes-2-mixtral-8x7b (20/20, 205s)
+[ 40/81] GEN  olmo-2-13b-instruct
+[ 40/81] DONE olmo-2-13b-instruct (20/20, 120s)
+[ 41/81] GEN  olmo-3-7b-instruct
+[ 41/81] DONE olmo-3-7b-instruct (20/20, 138s)
+[ 42/81] GEN  openchat-3.5-0106
+[ 42/81] DONE openchat-3.5-0106 (20/20, 96s)
+[ 43/81] GEN  orca-2-13b
+[ 43/81] DONE orca-2-13b (20/20, 163s)
+[ 44/81] GEN  pantheon-rp-12b-nemo
+[ 44/81] DONE pantheon-rp-12b-nemo (20/20, 178s)
+[ 45/81] GEN  pantheon-rp-8b-llama3
+[ 45/81] DONE pantheon-rp-8b-llama3 (20/20, 170s)
+[ 46/81] GEN  phi-3.5-mini-instruct
+[ 46/81] DONE phi-3.5-mini-instruct (20/20, 307s)
+[ 47/81] GEN  phi-4
+[ 47/81] DONE phi-4 (20/20, 103s)
+[ 48/81] GEN  phi-4-mini-instruct
+[ 48/81] DONE phi-4-mini-instruct (20/20, 45s)
+[ 49/81] GEN  qwen2.5-7b-instruct
+[ 49/81] DONE qwen2.5-7b-instruct (20/20, 77s)
+[ 50/81] GEN  qwen3-0.6b
+[ 50/81] DONE qwen3-0.6b (20/20, 30s)
+[ 51/81] GEN  qwen3-1.7b
+[ 51/81] DONE qwen3-1.7b (20/20, 117s)
+[ 52/81] GEN  qwen3-14b
+[ 52/81] DONE qwen3-14b (20/20, 106s)
+[ 53/81] GEN  qwen3-30b-a3b-thinking
+[ 53/81] DONE qwen3-30b-a3b-thinking (20/20, 751s)
+[ 54/81] GEN  qwen3-4b-instruct-awq
+[ 54/81] DONE qwen3-4b-instruct-awq (20/20, 583s)
+[ 55/81] GEN  qwen3-8b
+[ 55/81] DONE qwen3-8b (20/20, 86s)
+[ 56/81] GEN  qwen3-coder-30b-a3b
+[ 56/81] DONE qwen3-coder-30b-a3b (20/20, 139s)
+[ 57/81] GEN  qwen3.5-122b-a10b
+[ 57/81] DONE qwen3.5-122b-a10b (20/20, 1208s)
+[ 58/81] GEN  qwen3.5-122b-a10b-nothink
+[ 58/81] DONE qwen3.5-122b-a10b-nothink (20/20, 506s)
+[ 59/81] GEN  qwen3.5-122b-a10b-q3
+[ 59/81] DONE qwen3.5-122b-a10b-q3 (20/20, 1121s)
+[ 60/81] GEN  qwen3.5-122b-a10b-q3-nothink
+[ 60/81] DONE qwen3.5-122b-a10b-q3-nothink (20/20, 516s)
+[ 61/81] GEN  qwen3.5-122b-a10b-q4
+[ 61/81] DONE qwen3.5-122b-a10b-q4 (20/20, 518s)
+[ 62/81] GEN  qwen3.5-122b-a10b-q4-nothink
+[ 62/81] DONE qwen3.5-122b-a10b-q4-nothink (18/20, 920s)
+[ 63/81] GEN  qwen3.5-35b-a3b

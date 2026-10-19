@@ -9,11 +9,40 @@ For never-tested models: 15min timeout, max_tokens=400.
 Strictly sequential with 30s cooldown between requests to avoid
 overlapping model loads in llama-swap (which would cause both to fail).
 """
+from pathlib import Path
+import os
 import requests, json, time, re
 
+def _env_path():
+    return Path(__file__).resolve().parents[2] / ".env"
+
+
+def load_env() -> None:
+    """Populate os.environ from the repo-root .env (existing vars win)."""
+    env = _env_path()
+    if not env.exists():
+        return
+    for line in env.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+def get_api_key(name: str = "LLAMA_GATEWAY_API_KEY") -> str:
+    """Return the API key for `name`, from env vars or the repo .env file."""
+    load_env()
+    value = os.environ.get(name, "").strip()
+    if not value:
+        raise SystemExit(
+            f"Missing {name}: set it in {_env_path()} (see .env.example) "
+            "or export it before running."
+        )
+    return value
+
+
 ENDPOINT = "http://192.168.10.1:4000/v1/chat/completions"
-import sys as _sys; from pathlib import Path as _Path; _sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))  # eval/env_utils
-from env_utils import get_api_key
 KEY = get_api_key()
 HEADERS = {"Content-Type": "application/json", "Authorization": f"Bearer {KEY}"}
 LOG = "/mnt/backup/pc1/data/miUrba2/mi-urba/eval/results/gen_retest_isolated.log"

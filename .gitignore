@@ -45,36 +45,22 @@ Thumbs.db
 .tmp/
 
 # Generated test output
-test_results.json
-eval/results/extract-all.log
-eval/results/extractions/*/log.txt
-eval/results/extractions/*/raw/
-eval/results/extractions/*/retry-log.txt
 
-# Iteration results (regenerated, not versioned)
-eval/results/iter_*/
-eval/results/dataset-50k/
-eval/results/dataset-a/
-eval/results/dataset-b/
-eval/results/dataset-bench/
-eval/results/*_run.log
-eval/results/*_nohup.log
-eval/results/*_wait.log
-eval/results/iterations_*.log
-eval/results/wait_and_run_67.log
-eval/results/iter_567_nohup.log
+# Logs (archivados fuera del repo; ver experiments/*/README.md)
+eval/results/*.log
+eval/results/extractions/*/log.txt
+eval/results/extractions/*/retry-log.txt
 eval/results/dataset/log.txt
-eval/results/dataset/raw/
-eval/results/metrics.json
-eval/results/report.md
-eval/results/extractions/minimax-m3-a/
-eval/results/extractions/minimax-m3-b/
-eval/results/extractions/qwen3_local/
-eval/results/extractions/minimax-m3/
+eval/results/iter_*/master_log.txt
+
+# Datos crudos regenerables de iteraciones (en disco, no versionados)
+eval/results/iter_*/gen_*/
+eval/results/iter_*/ext_*/
+
+# Informe de similaridad (no versionado)
+eval/results/diversity/llm_similarity_report.pdf
+eval/results/diversity/llm_similarity_report.tex
 
 # Extractor stray output dir
 miurba-extractor/eval/
 
-# Prompt variant backups (temporary, used by iteration scripts)
-miurba-generator/src/prompts_iter*.py.bak
-miurba-extractor/src/prompts_iter*.py.bak

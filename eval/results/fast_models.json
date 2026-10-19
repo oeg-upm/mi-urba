@@ -1,0 +1,488 @@
+[
+  {
+    "model": "local_llama/agentica-deepcoder-14b",
+    "load_s": 63.6,
+    "warm_s": 0.8,
+    "gen_s": 6.6
+  },
+  {
+    "model": "local_llama/command-r-08-2024",
+    "load_s": 69.0,
+    "warm_s": 0.7,
+    "gen_s": 3.4
+  },
+  {
+    "model": "local_llama/command-r-v01",
+    "load_s": 72.1,
+    "warm_s": 0.4,
+    "gen_s": 10.3
+  },
+  {
+    "model": "local_llama/cydonia-24b-v4.3",
+    "load_s": 69.2,
+    "warm_s": 0.5,
+    "gen_s": 4.5
+  },
+  {
+    "model": "local_llama/deepseek-r1-distill-llama-8b",
+    "load_s": 20.2,
+    "warm_s": 0.4,
+    "gen_s": 1.3
+  },
+  {
+    "model": "local_llama/deepseek-r1-distill-qwen-14b",
+    "load_s": 31.8,
+    "warm_s": 0.4,
+    "gen_s": 5.0
+  },
+  {
+    "model": "local_llama/deepseek-r1-distill-qwen-32b",
+    "load_s": 67.9,
+    "warm_s": 0.5,
+    "gen_s": 9.3
+  },
+  {
+    "model": "local_llama/deepseek-r1-distill-qwen-7b",
+    "load_s": 19.0,
+    "warm_s": 0.5,
+    "gen_s": 3.5
+  },
+  {
+    "model": "local_llama/devstral-small-2507",
+    "load_s": 66.1,
+    "warm_s": 0.3,
+    "gen_s": 2.1
+  },
+  {
+    "model": "local_llama/falcon3-10b-instruct",
+    "load_s": 26.0,
+    "warm_s": 0.5,
+    "gen_s": 1.2
+  },
+  {
+    "model": "local_llama/falcon3-1b-instruct",
+    "load_s": 8.8,
+    "warm_s": 0.2,
+    "gen_s": 0.5
+  },
+  {
+    "model": "local_llama/falcon3-7b-instruct",
+    "load_s": 18.6,
+    "warm_s": 0.5,
+    "gen_s": 1.5
+  },
+  {
+    "model": "local_llama/gemma-2-2b-it",
+    "load_s": 11.0,
+    "warm_s": 0.7,
+    "gen_s": 1.5
+  },
+  {
+    "model": "local_llama/gemma-2-9b-it",
+    "load_s": 24.0,
+    "warm_s": 0.5,
+    "gen_s": 1.5
+  },
+  {
+    "model": "local_llama/gemma-3-12b-it",
+    "load_s": 36.1,
+    "warm_s": 0.6,
+    "gen_s": 2.2
+  },
+  {
+    "model": "local_llama/gemma-3-1b-it",
+    "load_s": 9.0,
+    "warm_s": 0.4,
+    "gen_s": 1.3
+  },
+  {
+    "model": "local_llama/gemma-3-27b-it",
+    "load_s": 63.9,
+    "warm_s": 0.5,
+    "gen_s": 3.7
+  },
+  {
+    "model": "local_llama/gemma-3-4b-it",
+    "load_s": 13.1,
+    "warm_s": 0.7,
+    "gen_s": 1.5
+  },
+  {
+    "model": "local_llama/gemma-4-31B-it",
+    "load_s": 64.1,
+    "warm_s": 0.7,
+    "gen_s": 3.4
+  },
+  {
+    "model": "local_llama/glm-4-32b-0414",
+    "load_s": 88.4,
+    "warm_s": 0.6,
+    "gen_s": 3.0
+  },
+  {
+    "model": "local_llama/glm-4-9b-chat",
+    "load_s": 26.1,
+    "warm_s": 0.4,
+    "gen_s": 1.0
+  },
+  {
+    "model": "local_llama/glm-4.5-air",
+    "load_s": 235.5,
+    "warm_s": 0.5,
+    "gen_s": 2.2
+  },
+  {
+    "model": "local_llama/glm-4.7-flash",
+    "load_s": 116.1,
+    "warm_s": 0.3,
+    "gen_s": 2.7
+  },
+  {
+    "model": "local_llama/gpt-oss-120b",
+    "load_s": 212.6,
+    "warm_s": 0.5,
+    "gen_s": 2.9
+  },
+  {
+    "model": "local_llama/granite-3.3-2b",
+    "load_s": 19.6,
+    "warm_s": 0.2,
+    "gen_s": 0.8
+  },
+  {
+    "model": "local_llama/granite-3.3-8b",
+    "load_s": 20.7,
+    "warm_s": 0.3,
+    "gen_s": 1.7
+  },
+  {
+    "model": "local_llama/hermes-3-llama-3.1-8b",
+    "load_s": 21.0,
+    "warm_s": 0.4,
+    "gen_s": 1.3
+  },
+  {
+    "model": "local_llama/llama-3.1-8b-instruct",
+    "load_s": 20.7,
+    "warm_s": 0.2,
+    "gen_s": 1.4
+  },
+  {
+    "model": "local_llama/llama-3.1-nemotron-70b",
+    "load_s": 139.2,
+    "warm_s": 0.5,
+    "gen_s": 6.2
+  },
+  {
+    "model": "local_llama/llama-3.2-1b-instruct",
+    "load_s": 9.4,
+    "warm_s": 0.4,
+    "gen_s": 1.0
+  },
+  {
+    "model": "local_llama/llama-3.2-3b-instruct",
+    "load_s": 20.1,
+    "warm_s": 0.4,
+    "gen_s": 0.9
+  },
+  {
+    "model": "local_llama/llama-3.3-70b-instruct",
+    "load_s": 141.2,
+    "warm_s": 0.5,
+    "gen_s": 3.9
+  },
+  {
+    "model": "local_llama/ministral-8b-2410",
+    "load_s": 22.3,
+    "warm_s": 0.7,
+    "gen_s": 1.0
+  },
+  {
+    "model": "local_llama/mistral-7b-instruct-v0.3",
+    "load_s": 20.0,
+    "warm_s": 0.4,
+    "gen_s": 1.4
+  },
+  {
+    "model": "local_llama/mistral-7b-v0.3-base",
+    "load_s": 17.9,
+    "warm_s": 0.2,
+    "gen_s": 1.2
+  },
+  {
+    "model": "local_llama/mistral-nemo-12b",
+    "load_s": 29.0,
+    "warm_s": 0.5,
+    "gen_s": 1.7
+  },
+  {
+    "model": "local_llama/mistral-small-24b",
+    "load_s": 94.8,
+    "warm_s": 0.5,
+    "gen_s": 3.9
+  },
+  {
+    "model": "local_llama/muse-glimmer-30b",
+    "load_s": 74.6,
+    "warm_s": 0.8,
+    "gen_s": 6.9
+  },
+  {
+    "model": "local_llama/nous-hermes-2-mixtral-8x7b",
+    "load_s": 102.8,
+    "warm_s": 0.5,
+    "gen_s": 3.9
+  },
+  {
+    "model": "local_llama/olmo-2-13b-instruct",
+    "load_s": 33.4,
+    "warm_s": 0.5,
+    "gen_s": 1.7
+  },
+  {
+    "model": "local_llama/olmo-3-7b-instruct",
+    "load_s": 19.0,
+    "warm_s": 0.3,
+    "gen_s": 1.0
+  },
+  {
+    "model": "local_llama/openchat-3.5-0106",
+    "load_s": 17.7,
+    "warm_s": 0.5,
+    "gen_s": 2.0
+  },
+  {
+    "model": "local_llama/orca-2-13b",
+    "load_s": 30.2,
+    "warm_s": 0.7,
+    "gen_s": 2.0
+  },
+  {
+    "model": "local_llama/pantheon-rp-12b-nemo",
+    "load_s": 29.0,
+    "warm_s": 0.4,
+    "gen_s": 2.0
+  },
+  {
+    "model": "local_llama/pantheon-rp-8b-llama3",
+    "load_s": 23.8,
+    "warm_s": 0.3,
+    "gen_s": 1.2
+  },
+  {
+    "model": "local_llama/phi-3.5-mini-instruct",
+    "load_s": 14.0,
+    "warm_s": 0.3,
+    "gen_s": 1.8
+  },
+  {
+    "model": "local_llama/phi-4",
+    "load_s": 33.9,
+    "warm_s": 0.2,
+    "gen_s": 1.8
+  },
+  {
+    "model": "local_llama/phi-4-mini-instruct",
+    "load_s": 13.8,
+    "warm_s": 0.4,
+    "gen_s": 0.9
+  },
+  {
+    "model": "local_llama/qwen2.5-7b-instruct",
+    "load_s": 20.6,
+    "warm_s": 0.7,
+    "gen_s": 0.8
+  },
+  {
+    "model": "local_llama/qwen3-0.6b",
+    "load_s": 6.7,
+    "warm_s": 0.2,
+    "gen_s": 0.5
+  },
+  {
+    "model": "local_llama/qwen3-1.7b",
+    "load_s": 8.7,
+    "warm_s": 0.4,
+    "gen_s": 0.6
+  },
+  {
+    "model": "local_llama/qwen3-14b",
+    "load_s": 33.9,
+    "warm_s": 0.5,
+    "gen_s": 1.7
+  },
+  {
+    "model": "local_llama/qwen3-30b-a3b-thinking",
+    "load_s": 65.9,
+    "warm_s": 0.2,
+    "gen_s": 3.6
+  },
+  {
+    "model": "local_llama/qwen3-4b-instruct-awq",
+    "load_s": 218.2,
+    "warm_s": 0.5,
+    "gen_s": 0.7
+  },
+  {
+    "model": "local_llama/qwen3-8b",
+    "load_s": 24.1,
+    "warm_s": 0.5,
+    "gen_s": 1.1
+  },
+  {
+    "model": "local_llama/qwen3-coder-30b-a3b",
+    "load_s": 88.1,
+    "warm_s": 0.6,
+    "gen_s": 1.9
+  },
+  {
+    "model": "local_llama/qwen3.5-122b-a10b",
+    "load_s": 227.4,
+    "warm_s": 0.6,
+    "gen_s": 2.7
+  },
+  {
+    "model": "local_llama/qwen3.5-122b-a10b-nothink",
+    "load_s": 39.3,
+    "warm_s": 0.7,
+    "gen_s": 2.9
+  },
+  {
+    "model": "local_llama/qwen3.5-122b-a10b-q3",
+    "load_s": 217.7,
+    "warm_s": 0.7,
+    "gen_s": 3.2
+  },
+  {
+    "model": "local_llama/qwen3.5-122b-a10b-q3-nothink",
+    "load_s": 37.6,
+    "warm_s": 0.7,
+    "gen_s": 2.8
+  },
+  {
+    "model": "local_llama/qwen3.5-122b-a10b-q4",
+    "load_s": 98.0,
+    "warm_s": 1.1,
+    "gen_s": 2.7
+  },
+  {
+    "model": "local_llama/qwen3.5-122b-a10b-q4-nothink",
+    "load_s": 40.4,
+    "warm_s": 0.5,
+    "gen_s": 2.8
+  },
+  {
+    "model": "local_llama/qwen3.6-35b-a3b",
+    "load_s": 73.6,
+    "warm_s": 0.5,
+    "gen_s": 2.0
+  },
+  {
+    "model": "local_llama/qwen3.5-35b-a3b",
+    "load_s": 66.7,
+    "warm_s": 0.6,
+    "gen_s": 1.6
+  },
+  {
+    "model": "local_llama/qwen3.6-27b",
+    "load_s": 116.1,
+    "warm_s": 0.9,
+    "gen_s": 5.6
+  },
+  {
+    "model": "local_llama/qwen3.6-27b-thinking",
+    "load_s": 30.0,
+    "warm_s": 1.0,
+    "gen_s": 3.7
+  },
+  {
+    "model": "local_llama/qwen3.8-27b",
+    "load_s": 88.2,
+    "warm_s": 0.7,
+    "gen_s": 4.8
+  },
+  {
+    "model": "local_llama/qwen3.8-27b-herctic",
+    "load_s": 85.6,
+    "warm_s": 1.0,
+    "gen_s": 4.5
+  },
+  {
+    "model": "local_llama/seed-oss-36b",
+    "load_s": 115.7,
+    "warm_s": 0.5,
+    "gen_s": 13.0
+  },
+  {
+    "model": "local_llama/skyfall-31b-v4y",
+    "load_s": 153.7,
+    "warm_s": 0.6,
+    "gen_s": 11.1
+  },
+  {
+    "model": "local_llama/smollm2-1.7b",
+    "load_s": 18.5,
+    "warm_s": 0.2,
+    "gen_s": 0.7
+  },
+  {
+    "model": "local_llama/smollm3-3b",
+    "load_s": 12.0,
+    "warm_s": 0.4,
+    "gen_s": 1.0
+  },
+  {
+    "model": "local_llama/solar-10.7b-instruct",
+    "load_s": 25.9,
+    "warm_s": 0.5,
+    "gen_s": 1.1
+  },
+  {
+    "model": "local_llama/stablelm-2-1.6b-chat",
+    "load_s": 9.9,
+    "warm_s": 0.4,
+    "gen_s": 0.9
+  },
+  {
+    "model": "local_llama/stheno-v3.4-8b",
+    "load_s": 19.8,
+    "warm_s": 0.4,
+    "gen_s": 1.1
+  },
+  {
+    "model": "local_llama/tinyllama-1.1b-chat",
+    "load_s": 6.9,
+    "warm_s": 0.2,
+    "gen_s": 1.1
+  },
+  {
+    "model": "local_llama/vicuna-13b-v1.5",
+    "load_s": 29.6,
+    "warm_s": 0.2,
+    "gen_s": 1.7
+  },
+  {
+    "model": "local_llama/vicuna-7b-v1.5",
+    "load_s": 17.9,
+    "warm_s": 0.5,
+    "gen_s": 1.0
+  },
+  {
+    "model": "local_llama/vocalis-8b",
+    "load_s": 20.8,
+    "warm_s": 0.4,
+    "gen_s": 1.6
+  },
+  {
+    "model": "local_llama/yi-34b-chat",
+    "load_s": 78.4,
+    "warm_s": 0.5,
+    "gen_s": 3.9
+  },
+  {
+    "model": "local_llama/zephyr-7b-beta",
+    "load_s": 26.4,
+    "warm_s": 0.5,
+    "gen_s": 1.1
+  }
+]

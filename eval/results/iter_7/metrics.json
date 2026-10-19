@@ -1,0 +1,242 @@
+[
+  {
+    "model": "gemma4_31b_awq × gemma4_31b",
+    "total_gt": 250,
+    "total_pred": 250,
+    "evaluated": 250,
+    "missing": [],
+    "field_metrics": {
+      "category_principal": {
+        "accuracy": 1.0,
+        "total": 291
+      },
+      "category_subcategory": {
+        "accuracy": 0.8419,
+        "total": 291
+      },
+      "category_full": {
+        "accuracy": 0.8419,
+        "total": 291
+      },
+      "urgency": {
+        "accuracy": 0.8041,
+        "total": 291
+      },
+      "location_zone": {
+        "accuracy": 0.9381,
+        "total": 291
+      },
+      "location_detail": {
+        "accuracy": 0.6632,
+        "total": 291
+      },
+      "risks_jaccard": {
+        "accuracy": 0.7646,
+        "total": 291
+      },
+      "affected_elements_precision": {
+        "accuracy": 0.6578,
+        "total": 291
+      },
+      "affected_elements_recall": {
+        "accuracy": 0.8677,
+        "total": 291
+      }
+    },
+    "complaint_metrics": {
+      "precision": 0.9263,
+      "recall": 0.9947,
+      "f1": 0.9482,
+      "exact_match_rate": 0.856,
+      "avg_gt_extractions": 1.17,
+      "avg_pred_extractions": 1.37
+    },
+    "match_types": {
+      "exact": 245,
+      "fp": 51,
+      "partial": 46,
+      "fn": 2
+    }
+  },
+  {
+    "model": "gemma4_31b_awq × qwen3_6_35b",
+    "total_gt": 250,
+    "total_pred": 247,
+    "evaluated": 247,
+    "missing": [
+      "Q0131",
+      "Q0198",
+      "Q0190"
+    ],
+    "field_metrics": {
+      "category_principal": {
+        "accuracy": 1.0,
+        "total": 277
+      },
+      "category_subcategory": {
+        "accuracy": 0.7365,
+        "total": 277
+      },
+      "category_full": {
+        "accuracy": 0.7365,
+        "total": 277
+      },
+      "urgency": {
+        "accuracy": 0.7329,
+        "total": 277
+      },
+      "location_zone": {
+        "accuracy": 0.9278,
+        "total": 277
+      },
+      "location_detail": {
+        "accuracy": 0.639,
+        "total": 277
+      },
+      "risks_jaccard": {
+        "accuracy": 0.7022,
+        "total": 277
+      },
+      "affected_elements_precision": {
+        "accuracy": 0.7057,
+        "total": 277
+      },
+      "affected_elements_recall": {
+        "accuracy": 0.8081,
+        "total": 277
+      }
+    },
+    "complaint_metrics": {
+      "precision": 0.9049,
+      "recall": 0.9521,
+      "f1": 0.9199,
+      "exact_match_rate": 0.8543,
+      "avg_gt_extractions": 1.17,
+      "avg_pred_extractions": 1.39
+    },
+    "match_types": {
+      "exact": 204,
+      "partial": 73,
+      "fp": 67,
+      "fn": 13
+    }
+  },
+  {
+    "model": "gemma4_31b_awq × gemma4_12b",
+    "total_gt": 250,
+    "total_pred": 250,
+    "evaluated": 250,
+    "missing": [],
+    "field_metrics": {
+      "category_principal": {
+        "accuracy": 1.0,
+        "total": 287
+      },
+      "category_subcategory": {
+        "accuracy": 0.8293,
+        "total": 287
+      },
+      "category_full": {
+        "accuracy": 0.8293,
+        "total": 287
+      },
+      "urgency": {
+        "accuracy": 0.8223,
+        "total": 287
+      },
+      "location_zone": {
+        "accuracy": 0.9512,
+        "total": 287
+      },
+      "location_detail": {
+        "accuracy": 0.6551,
+        "total": 287
+      },
+      "risks_jaccard": {
+        "accuracy": 0.6527,
+        "total": 287
+      },
+      "affected_elements_precision": {
+        "accuracy": 0.6359,
+        "total": 287
+      },
+      "affected_elements_recall": {
+        "accuracy": 0.8281,
+        "total": 287
+      }
+    },
+    "complaint_metrics": {
+      "precision": 0.9337,
+      "recall": 0.982,
+      "f1": 0.9491,
+      "exact_match_rate": 0.884,
+      "avg_gt_extractions": 1.17,
+      "avg_pred_extractions": 1.32
+    },
+    "match_types": {
+      "exact": 238,
+      "partial": 49,
+      "fp": 42,
+      "fn": 6
+    }
+  },
+  {
+    "model": "gemma4_31b_awq × qwen3_4b",
+    "total_gt": 250,
+    "total_pred": 250,
+    "evaluated": 250,
+    "missing": [],
+    "field_metrics": {
+      "category_principal": {
+        "accuracy": 1.0,
+        "total": 282
+      },
+      "category_subcategory": {
+        "accuracy": 0.7589,
+        "total": 282
+      },
+      "category_full": {
+        "accuracy": 0.7589,
+        "total": 282
+      },
+      "urgency": {
+        "accuracy": 0.4468,
+        "total": 282
+      },
+      "location_zone": {
+        "accuracy": 0.7624,
+        "total": 282
+      },
+      "location_detail": {
+        "accuracy": 0.5177,
+        "total": 282
+      },
+      "risks_jaccard": {
+        "accuracy": 0.6578,
+        "total": 282
+      },
+      "affected_elements_precision": {
+        "accuracy": 0.5115,
+        "total": 282
+      },
+      "affected_elements_recall": {
+        "accuracy": 0.5361,
+        "total": 282
+      }
+    },
+    "complaint_metrics": {
+      "precision": 0.8684,
+      "recall": 0.9607,
+      "f1": 0.8972,
+      "exact_match_rate": 0.78,
+      "avg_gt_extractions": 1.17,
+      "avg_pred_extractions": 1.56
+    },
+    "match_types": {
+      "partial": 68,
+      "exact": 214,
+      "fp": 108,
+      "fn": 11
+    }
+  }
+]

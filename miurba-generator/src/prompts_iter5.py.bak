@@ -1,0 +1,279 @@
+"""
+Prompt templates for synthetic complaint GENERATION.
+
+This module belongs to the generator project. It contains:
+
+* `build_generation_prompt`  — messages for the LLM that produces the raw
+  complaint text (user_text + timestamp). It does NOT produce image
+  descriptions: describing images is the extractor's job.
+
+* `build_image_prompts`      — English text-to-image prompts derived from the
+  sampled scenario, used by the (optional) image-generation step to produce
+  the actual photo files. The prompts are built from the scenario fields
+  (category, location, affected elements, urgency, community), never from a
+  textual description of the image.
+"""
+
+import json
+
+from . import config as cfg
+
+
+# ── English maps for image prompts ──────────────────────────────
+
+_CATEGORY_EN: dict[str, str] = {
+    "fontanería": "plumbing", "electricidad": "electrical", "cubierta": "roof",
+    "fachada": "facade", "carpintería": "window and door carpentry",
+    "jardinería": "gardening and landscaping", "limpieza": "cleaning and waste",
+    "ascensor": "elevator", "climatización": "HVAC and heating",
+    "piscina": "swimming pool", "garaje": "garage", "plagas": "pest infestation",
+    "mobiliario": "communal furniture", "seguridad": "security",
+    "ruido": "noise nuisance", "varios": "maintenance",
+}
+
+_ZONE_EN: dict[str, str] = {
+    "garaje": "underground garage", "portal": "building entrance lobby",
+    "exterior": "exterior facade", "zonas_verdes": "communal garden areas",
+    "piscina": "pool area", "trasteros": "storage room",
+    "azotea": "rooftop", "locales": "commercial premises",
+}
+
+_URGENCY_EN: dict[str, str] = {
+    "inmediata": "severe and urgent", "urgente": "clearly urgent",
+    "alta": "notable", "media": "moderate", "baja": "minor",
+    "planificable": "early-stage preventive",
+}
+
+_ELEMENT_EN: dict[str, str] = {
+    "tubería": "pipes", "instalación_sanitaria": "plumbing fixtures",
+    "revestimiento": "plaster and wall coating", "suelo": "flooring",
+    "instalación_eléctrica": "electrical wiring", "equipamiento": "equipment",
+    "cubierta": "roof surface", "muro": "wall", "ventana": "window",
+    "puerta": "door", "jardín": "garden", "cerramiento": "fence and enclosure",
+    "mobiliario_común": "common furniture", "estructura": "structural element",
+}
+
+
+def _en(map_: dict, key: str) -> str:
+    return map_.get(key, key.replace("_", " "))
+
+
+# ── Generation prompts (text LLM) ───────────────────────────────
+
+def build_generation_prompt(
+    record_id: str,
+    problems: list[dict],
+    community: dict,
+    num_pics: int,
+    persona: dict | None = None,
+    modifier: dict | None = None,
+) -> list[dict[str, str]]:
+    """
+    Build messages for generating raw complaint text.
+
+    The LLM produces ONLY: user_text and timestamp. It does NOT produce
+    image descriptions (those are the extractor's responsibility) nor
+    structured extractions.
+
+    Args:
+        persona: Optional persona dict with 'profile' and 'style' keys.
+        modifier: Optional style modifier dict with 'description' and 'style_override'.
+    """
+    # Describe problems in natural language
+    problem_descs = []
+    for i, p in enumerate(problems, 1):
+        desc = f"  {i}. {p['category']}/{p['subcategory']} en {p['location_zone']}"
+        if p.get("location_detail"):
+            desc += f", {p['location_detail']}"
+        desc += f" (urgencia: {p['urgency']})"
+        # Include affected elements so the LLM mentions them in the text
+        if p.get("affected_elements"):
+            elem_strs = [f"{e['principal']} ({e['subcategory']})" for e in p["affected_elements"]]
+            desc += f"\n     Elementos afectados: {', '.join(elem_strs)}"
+        # Include risks so the LLM can hint at them (with natural-language mapping)
+        if p.get("risks") and p["risks"] != ["ninguno"]:
+            risk_expr = {
+                "caída": "peligro de caída",
+                "eléctrico": "riesgo eléctrico",
+                "inundación": "riesgo de inundación",
+                "derrumbe": "riesgo de derrumbe",
+                "incendio": "riesgo de incendio",
+                "sanitario": "riesgo sanitario",
+                "seguridad": "riesgo de seguridad",
+                "contaminación": "riesgo de contaminación",
+            }
+            risk_strs = [risk_expr.get(r, r) for r in p["risks"]]
+            desc += f"\n     Riesgos: {', '.join(p['risks'])} (el texto debe mencionar: {', '.join(risk_strs)})"
+        problem_descs.append(desc)
+    problems_text = "\n".join(problem_descs)
+
+    # Community description
+    comm = community
+    comm_desc = (
+        f"{comm['name']} — {comm['type']} "
+        f"de {comm['num_viviendas']} viviendas, "
+        f"construida en {comm['year']}"
+    )
+    if comm["has_elevator"]:
+        comm_desc += ", con ascensor"
+    if comm["has_pool"]:
+        comm_desc += ", con piscina"
+    if comm["has_garage"]:
+        comm_desc += ", con garaje"
+
+    # Photo info (the vecino may mention photos, but the LLM does NOT describe them)
+    if num_pics > 0:
+        pic_names = [f"{record_id}_{i}.png" for i in range(1, num_pics + 1)]
+        photo_text = (
+            f"El vecino adjunta {num_pics} foto(s): {', '.join(pic_names)}. "
+            f"Puede referirse a ellas en el texto (\"adjunto foto\", \"como se ve en la imagen\", etc.), "
+            f"pero NO tienes que describir lo que se ve en las fotos."
+        )
+    else:
+        pic_names = []
+        photo_text = "El vecino no adjunta fotos."
+
+    # JSON template — only user_text and timestamp
+    json_template = {
+        "user_text": "<lo que escribe/dice el vecino>",
+        "timestamp": "<ISO8601 realista>",
+    }
+
+    # Persona conditioning
+    persona_block = ""
+    if persona:
+        persona_block += (
+            f"- Perfil del vecino: {persona['profile']}\n"
+            f"- Estilo de escritura: {persona['style']}\n"
+        )
+    if modifier:
+        persona_block += (
+            f"- MODIFICADOR DE ESTILO: {modifier['description']}\n"
+            f"- Aplica también este estilo: {modifier['style_override']}\n"
+        )
+
+    system_msg = (
+        "Eres un vecino de una comunidad de vecinos. Escribe lo que "
+        "un vecino REAL escribiría para reportar un problema de mantenimiento. "
+        "RESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+    )
+    if persona or modifier:
+        parts = ["Adopta la siguiente personalidad y escribe como ese vecino:"]
+        if persona:
+            parts.append(f"Perfil: {persona['profile']}")
+            parts.append(f"Estilo base: {persona['style']}")
+        if modifier:
+            parts.append(f"Modificador de estilo: {modifier['description']}")
+            parts.append(f"Estilo adicional: {modifier['style_override']}")
+        parts.append("")
+        parts.append("Escribe lo que ESE vecino escribiría para reportar un problema "
+                     "de mantenimiento en su comunidad. "
+                     "RESPONDE SOLO con JSON válido, sin markdown ni texto adicional.")
+        system_msg = "\n".join(parts)
+
+    user_msg = (
+        f"PROBLEMA(S) A REPORTAR:\n"
+        f"{problems_text}\n\n"
+        f"CONTEXTO:\n"
+        f"- Comunidad: {comm_desc}\n"
+        f"{persona_block}"
+        f"- {photo_text}\n"
+        f"- ID: {record_id}\n\n"
+        f"INSTRUCCIONES:\n"
+        f"1. Escribe el user_text como lo expresaría este vecino REAL "
+        f"a través de una app de gestión de comunidades.\n\n"
+        f"CONTENIDO ESTRICTO (debe aparecer en el texto, sin excepción):\n"
+        f"   - Categoría y subcategoría: el problema descrito debe corresponder EXACTAMENTE con la categoría y subcategoría indicadas. No describas un problema distinto.\n"
+        f"   - Elementos afectados: menciona EXPLÍCITAMENTE cada elemento afectado indicado, usando lenguaje natural (un vecino no diría 'instalación_eléctrica' pero sí 'la instalación eléctrica' o 'los cables').\n"
+        f"     IMPORTANTE: Los elementos afectados son CONSECUENCIAS o PARTES del problema principal, NO problemas independientes.\n"
+        f"     Por ejemplo: si el problema es 'cubierta/tejas' y los elementos son 'canalón' y 'muro cortafuegos', el vecino debe describirlos como parte del problema de la cubierta,\n"
+        f"     no como averías independientes. Usa frases como 'además se ha afectado el canalón', 'también está dañado el muro cortafuegos', que indican que son consecuencias.\n"
+        f"   - Subcategoría: el texto debe mencionar EXPLÍCITAMENTE la subcategoría indicada con palabras reconocibles de la taxonomía, y debe aparecer EN LA PRIMERA MENCIÓN del problema. Por ejemplo, si la subcategoría es 'cristales', el vecino debe escribir 'cristales' o 'vidrios' (no solo 'ventana'); si es 'tejas', debe decir 'tejas' o 'tejado' (no solo 'cubierta'); si es 'bajante', debe decir 'bajante' o 'tubería del bajante'.\n"
+        f"   - Ubicación: la zona y el detalle deben coincidir con lo indicado.\n"
+f"   - Urgencia: el tono y las palabras deben reflejar EL nivel asignado. Incluye OBLIGATORIAMENTE alguna de las expresiones del nivel correspondiente, sin excepción:\n"
+        f"     * inmediata: debe incluir alguna de \"es una emergencia\", \"peligro inminente\", \"necesito que vengan ya mismo\"\n"
+        f"     * urgente: debe incluir alguna de \"es urgente\", \"no puede esperar\", \"por favor vengan cuanto antes\"\n"
+        f"     * alta: debe incluir alguna de \"es importante\", \"me preocupa\", \"deberían revisarlo pronto\"\n"
+        f"     * media: debe incluir alguna de \"cuando puedan\", \"no tiene prisa pero\"\n"
+        f"     * baja: debe incluir alguna de \"es una sugerencia\", \"para cuando haya tiempo\"\n"
+        f"     * planificable: debe incluir alguna de \"mantenimiento preventivo\", \"para revisar a largo plazo\"\n"
+        f"   - Riesgos: si hay riesgos indicados (no 'ninguno'), el texto debe mencionarlos EXPLÍCITAMENTE con las expresiones indicadas (peligro de caída, riesgo eléctrico, riesgo de inundación, riesgo de derrumbe, riesgo de incendio, riesgo sanitario, riesgo de seguridad, riesgo de contaminación). Usa esas palabras exactas o muy cercanas.\n\n"
+        f"CONTENIDO PROHIBIDO:\n"
+        f"   - NO describas problemas, averías o incidencias que NO estén en la lista de problemas indicados arriba.\n"
+        f"   - Las menciones a elementos afectados deben enmarcarse como síntomas del problema, no como averías separadas.\n"
+        f"   - Si el vecino menciona algo colateral ('por cierto', 'también'), debe ser contexto, no una nueva incidencia.\n\n"
+        f"ESTILO FLEXIBLE (libertad creativa):\n"
+        f"   - Nombre del vecino: invéntalo, realista en español. NUNCA uses placeholders como [Nombre del vecino].\n"
+        f"   - Tono y extensión: varía. A veces enfadado, a veces casual, a veces muy específico, a veces vago.\n"
+        f"   - Contexto adicional: el vecino puede añadir detalles sobre su vida, la comunidad, el historial del problema, etc.\n"
+        f"   - Cómo enmarca el problema: depende de la persona y el modificador de estilo.\n\n"
+        f"   Escribe EXCLUSIVAMENTE en español. No mezcles palabras sueltas de otros idiomas.\n"
+        f"   Revisa la ortografía antes de finalizar.\n"
+        f"2. El timestamp debe ser realista.\n\n"
+        f"RESPONDE SOLO con JSON en este formato:\n"
+        f"{json.dumps(json_template, indent=2, ensure_ascii=False)}"
+    )
+
+    return [
+        {"role": "system", "content": system_msg},
+        {"role": "user", "content": user_msg},
+    ]
+
+
+# ── Image prompts (text-to-image, derived from the scenario) ────
+
+def build_image_prompts(
+    problems: list[dict],
+    community: dict,
+    num_pics: int,
+) -> list[str]:
+    """
+    Build English text-to-image prompts, one per photo.
+
+    Prompts are derived from the scenario fields (category, subcategory,
+    location, affected elements, urgency, community) — NOT from any textual
+    description of the image. Each photo focuses on one of the sampled
+    problems (cycling through them when there are more photos than problems).
+    """
+    if num_pics <= 0:
+        return []
+
+    comm_type_en = {
+        "bloque_pisos": "apartment block", "casa_pareada": "paired house",
+        "urbanizacion": "residential complex",
+    }.get(community.get("type", ""), "residential building")
+
+    base = (
+        f"a {comm_type_en} with {community.get('num_viviendas', 20)} apartments, "
+        f"built around {community.get('year', 2000)}"
+    )
+
+    prompts = []
+    for i in range(num_pics):
+        p = problems[i % len(problems)]
+        cat_en = _en(_CATEGORY_EN, p["category"])
+        zone_en = _en(_ZONE_EN, p.get("location_zone", ""))
+        urg_en = _en(_URGENCY_EN, p.get("urgency", "media"))
+
+        elements = p.get("affected_elements", [])
+        if elements:
+            elems_en = ", ".join(_en(_ELEMENT_EN, e["principal"]) for e in elements)
+        else:
+            elems_en = "building fixtures"
+
+        detail = p.get("location_detail", "")
+        detail_clause = f", specific area: {detail}" if detail else ""
+
+        sub = p.get("subcategory", "general").replace("_", " ")
+
+        prompt = (
+            f"Documentary inspection photograph of {cat_en} damage "
+            f"({sub}) in the {zone_en}{detail_clause} of {base}. "
+            f"Visible affected elements: {elems_en}. "
+            f"The damage looks {urg_en}. "
+            f"Realistic, professional maintenance inspection photo, "
+            f"natural lighting, sharp focus, no people, no text overlays."
+        )
+        prompts.append(prompt)
+
+    return prompts

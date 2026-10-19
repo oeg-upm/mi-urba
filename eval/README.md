@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Medir cuánto se parece la extracción del VLM a la ground truth generada por el
+Medir cuánto se parece la extracción del LLM a la ground truth generada por el
 generador. Es decir: si generamos una queja con un escenario conocido (categoría,
 urgencia, ubicación, riesgos, elementos), ¿el extractor recupera esa misma
 información del texto?
@@ -26,7 +26,7 @@ información del texto?
 | Factor | Niveles | Descripción |
 |--------|---------|-------------|
 | Modelo de generación | `kimi-k2.6`, `qwen3_local`, `glm-5.1` | 3 modelos (NeuralWatt + local) |
-| Modelo de extracción | `kimi-k2.6` | Único VLM multimodal disponible |
+| Modelo de extracción | `kimi-k2.6` | Único modelo multimodal (visión) disponible — elegido de cara a la extensión con imágenes; en los runs ejecutados actúa como LLM extractor solo-texto |
 | Imágenes | sin imágenes | FLUX es lento; se evalúa por separado (ver más abajo) |
 | Nº de problemas | 1 o 2+ | El generador ya mezcla single/multi-problem (~15% multi) |
 
@@ -41,7 +41,7 @@ información del texto?
 FASE 1 — Generar dataset (90 quejas)
   3 modelos × 30 quejas → complaints.jsonl + ground_truth.jsonl + metadata.jsonl
 
-FASE 2 — Extraer (VLM sobre las 90 quejas)
+FASE 2 — Extraer (LLM sobre las 90 quejas)
   kimi-k2.6 → extractions.jsonl
 
 FASE 3 — Evaluar (comparar GT vs extracción)
@@ -58,7 +58,7 @@ M extracciones (no necesariamente M = N). Hay que emparejar:
 2. Si hay múltiples extracciones con la misma categoría principal, se emparejan
    por subcategoría (o por similitud global si no hay coincidencia exacta).
 3. Extracciones GT sin match → **falsos negativos** (recall).
-4. Extracciones del VLM sin match → **falsos positivos** (precision).
+4. Extracciones del LLM sin match → **falsos positivos** (precision).
 
 ### Métricas
 
@@ -79,7 +79,7 @@ M extracciones (no necesariamente M = N). Hay que emparejar:
 
 | Métrica | Definición |
 |--------|------------|
-| Precision | extracciones correctas / extracciones totales del VLM |
+| Precision | extracciones correctas / extracciones totales del LLM |
 | Recall | extracciones correctas / extracciones GT |
 | F1 | 2·P·R / (P+R) |
 | Exact match | todos los campos correctos en todas las extracciones |
@@ -99,7 +99,7 @@ eval/
 ├── evaluate.py             # Lógica de matching + métricas
 ├── results/                # Generado por run_experiment.py
 │   ├── dataset/            # complaints.jsonl + ground_truth.jsonl + metadata.jsonl
-│   ├── extractions/        # extractions.jsonl (salida del VLM)
+│   ├── extractions/        # extractions.jsonl (salida del LLM)
 │   ├── metrics.json         # Métricas en formato JSON
 │   └── report.md           # Informe legible con tablas
 ```
@@ -133,7 +133,7 @@ Merge de `config.yaml` + `config.neuralwatt.yaml` + llama-swap con:
 Como experimento separado (FLUX es lento, ~3 min/imagen):
 - Generar 15 quejas con fotos (5 por modelo)
 - FLUX genera los PNGs
-- Extraer con VLM viendo las fotos
+- Extraer con el modelo de visión viendo las fotos
 - Comparar extracción con/sin imágenes
 
 ## Cómo ejecutar
