@@ -19,6 +19,10 @@ Cada proyecto es **totalmente independiente**: su propio código (`src/`), CLI,
   `config.local.yaml` y `config.neuralwatt.yaml`). Secciones destacadas:
   `image_generation` (generador, opcional) y `extraction.model`
   (extractor, modelo vision — obligatorio).
+- **Testing:** cada subproyecto tiene su propio paquete `src/` (independientes
+  por diseño, sin paquete común). Ejecuta `pytest` **dentro** de
+  `miurba-generator/` y `miurba-extractor/` por separado — desde la raíz el
+  shadowing de `src` rompe la colección.
 - **Schemas:** `schemas/` en la raíz define los contratos de datos:
   - `complaint_schema.json` — salida del generador / entrada del extractor.
   - `extraction_schema.json` — salida del extractor (incluye
