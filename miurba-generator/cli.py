@@ -4,7 +4,7 @@ miUrba — Generador de datasets sintéticos de quejas vecinales.
 
 Genera quejas/incidencias sintéticas reportadas por vecinos de una
 comunidad de vecinos. Produce dos ficheros JSONL por cada ejecución:
-  - complaints.jsonl  (el texto del vecino, canal, timestamp, pics)
+  - complaints.jsonl  (el texto del vecino, timestamp, pics)
   - ground_truth.jsonl  (extracciones esperadas)
   - metadata.jsonl      (persona, modifier, community, image_prompts)
 
@@ -79,6 +79,9 @@ def cmd_generate(args):
     gen_cfg = get_generation_config(config)
     ig_config = get_image_generation_config(config)
     enable_images = bool(ig_config.get("enabled", False))
+
+    from src.prompts import validate_expression_sections
+    validate_expression_sections()
 
     plan = _generation_plan(gen_cfg)
     output_dir = gen_cfg["default_output_dir"]
@@ -164,6 +167,8 @@ def cmd_generate(args):
         )
 
         stats["model"] = model_name
+        stats["errors_absorbed"] = client._stats.get("errors", 0)
+        stats["load_waits"] = client._stats.get("load_waits", 0)
         all_stats.append(stats)
         id_offset += count
 
@@ -184,9 +189,9 @@ def cmd_generate(args):
             print(f"  {'':15s}  validation: ok={v.get('ok', 0)}  rejected={v.get('rejected', 0)}  "
                   f"degraded={v.get('degraded', 0)}"
                   + ("  ⚠ JUDGE DEGRADED" if v.get("degraded") else ""))
-    if client._stats.get("errors") or client._stats.get("load_waits"):
-        print(f"  ⚠ errors absorbed: {client._stats['errors']}  "
-              f"(load waits: {client._stats['load_waits']})")
+        if s.get("errors_absorbed") or s.get("load_waits"):
+            print(f"  {'':15s}  ⚠ errors absorbed: {s['errors_absorbed']}  "
+                  f"(load waits: {s['load_waits']})")
     if validator_client is not None and (validator_client._stats.get("errors") or validator_client._stats.get("load_waits")):
         print(f"  ⚠ judge errors absorbed: {validator_client._stats['errors']}  "
               f"(load waits: {validator_client._stats['load_waits']})")

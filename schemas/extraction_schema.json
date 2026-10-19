@@ -4,7 +4,10 @@
   "title": "Extraction",
   "description": "Structured extraction ground truth for a complaint. A single complaint may yield multiple extractions (one per distinct problem identified).",
   "type": "object",
-  "required": ["complaint_id", "extractions"],
+  "required": [
+    "complaint_id",
+    "extractions"
+  ],
   "properties": {
     "complaint_id": {
       "type": "string",
@@ -23,14 +26,21 @@
       "items": {
         "$ref": "#/$defs/problemExtraction"
       },
-      "description": "One extraction per distinct problem identified in the complaint"
+      "description": "One extraction per distinct problem identified in the complaint",
+      "minItems": 1
     }
   },
   "additionalProperties": false,
   "$defs": {
     "problemExtraction": {
       "type": "object",
-      "required": ["category", "affected_elements", "location", "risks", "urgency"],
+      "required": [
+        "category",
+        "affected_elements",
+        "location",
+        "risks",
+        "urgency"
+      ],
       "properties": {
         "category": {
           "$ref": "#/$defs/classification",
@@ -65,7 +75,10 @@
     "classification": {
       "type": "object",
       "description": "A principal/subcategory pair. Both taxonomies are extensible.",
-      "required": ["principal", "subcategory"],
+      "required": [
+        "principal",
+        "subcategory"
+      ],
       "properties": {
         "principal": {
           "type": "string",
@@ -80,7 +93,9 @@
     },
     "location": {
       "type": "object",
-      "required": ["zone"],
+      "required": [
+        "zone"
+      ],
       "properties": {
         "zone": {
           "type": "string",

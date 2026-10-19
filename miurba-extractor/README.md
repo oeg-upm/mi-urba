@@ -20,7 +20,7 @@ descripciones.
 
 Consume la **salida del proyecto `miurba-generator`**:
 
-- `data/raw/complaints.jsonl` — la queja (`id, user_text, user_pics, channel, …`).
+- `data/raw/complaints.jsonl` — la queja (`id, user_text, user_pics, timestamp`).
 - `data/images/*.png` — las fotos referenciadas por `user_pics`.
 
 Contrato de entrada: `schemas/complaint_schema.json` (raíz del repo).

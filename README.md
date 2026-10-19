@@ -58,7 +58,11 @@ mi-urba/
 ├── config.neuralwatt.yaml
 ├── schemas/
 │   ├── complaint_schema.json
-│   └── extraction_schema.json
+│   ├── extraction_schema.json
+│   └── image_description_schema.json
+├── scripts/
+│   └── docker_smoke.sh
+├── docker-compose.yml
 ├── miurba-generator/            # TAREA 1 (independiente)
 │   ├── cli.py  src/  data/  requirements.txt  requirements-images.txt  README.md
 │   ├── flux2_imagegen.py        # CLI standalone de imágenes (FLUX.2)
@@ -85,7 +89,7 @@ python cli.py generate --config ../config.yaml
 cd ../miurba-extractor
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp ../miurba-generator/data/raw/{complaints,scenarios}.jsonl data/raw/
+cp ../miurba-generator/data/raw/{complaints,ground_truth}.jsonl data/raw/
 cp -r ../miurba-generator/data/images data/        # si se generaron imágenes
 python cli.py extract
 ```

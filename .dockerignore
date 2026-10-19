@@ -11,7 +11,7 @@ miurba-generator/test_results.json
 demo/output/
 *.egg-info/
 dist/
-build/eval/
+build/
 docs/
 data_test*/
 data_test/

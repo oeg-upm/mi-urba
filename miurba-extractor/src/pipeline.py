@@ -45,8 +45,10 @@ def validate_extraction(extraction: dict, schema: dict) -> str | None:
     try:
         import jsonschema
     except ImportError:
-        logger.warning("jsonschema not installed — extraction output NOT validated")
-        return None
+        raise RuntimeError(
+            "jsonschema is required for output validation "
+            "(pip install jsonschema) — refusing to skip validation"
+        )
     try:
         jsonschema.validate(instance=extraction, schema=schema)
         return None
@@ -177,8 +179,10 @@ def _extract_complaint_stage_split(
         extraction["image_descriptions"] = \
             [d.get("caption", "") for d in descriptions] if descriptions else []
     extraction["complaint_id"] = complaint["id"]
+    # Same rule as single-call: non-list extractions = untrustworthy output
     if not isinstance(extraction.get("extractions"), list):
-        extraction["extractions"] = []
+        logger.warning(f"[{complaint['id']}] 'extractions' is not a list — failing record")
+        return None
     return extraction
 
 
@@ -262,6 +266,11 @@ def extract_dataset(
             with open(output_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
         return True
+
+    # resume=False means start fresh: truncate previous output
+    if not resume and output_path.exists():
+        output_path.write_text("")
+        logger.info(f"Start fresh: truncated {output_path}")
 
     pending = [(cid, c) for cid, c in complaints.items() if cid not in existing_ids]
     skipped = len(complaints) - len(pending)

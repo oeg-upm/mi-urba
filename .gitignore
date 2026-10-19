@@ -61,3 +61,8 @@ logs/
 
 # Prompt iteration backups
 *.bak
+
+# Coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
