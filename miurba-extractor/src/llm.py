@@ -167,8 +167,18 @@ class LLMClient:
         )
 
     def extract_content(self, response: dict) -> str:
-        """Extract the assistant's text content from a chat response."""
-        return response["choices"][0]["message"]["content"].strip()
+        """Extract the assistant's text content from a chat response.
+
+        Returns "" on any unexpected structure (missing choices, null
+        content, reasoning-model payloads) instead of raising: callers
+        already treat empty content as a failed record.
+        """
+        try:
+            content = response["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError):
+            logger.warning(f"Unexpected response structure: {str(response)[:200]}")
+            return ""
+        return (content or "").strip()
 
     def extract_json(self, response: dict) -> dict:
         """Extract and parse JSON from the assistant's response content.
