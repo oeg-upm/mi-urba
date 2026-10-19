@@ -90,7 +90,11 @@ def cmd_extract(args):
     # loads the extraction schema (enums synced from config) and the server
     # enforces it token-by-token. json_object only guarantees valid JSON.
     structured_mode = config.get("models", {}).get(model_name, {}).get("structured_output")
+    # Constrained decoding (server-side sampling constraint) — only with json_schema
     json_schema = get_extraction_json_schema(config) if structured_mode == "json_schema" else None
+    # BUT our own validation ALWAYS applies: the output must conform to the
+    # schema no matter how the model was sampled.
+    validation_schema = get_extraction_json_schema(config)
 
     fallback_base = config.get("generation", {}).get("default_output_dir", "data")
     raw_dir, annotated_dir, images_dir = resolve_dirs(ext_cfg, paths, fallback_base)
@@ -109,6 +113,8 @@ def cmd_extract(args):
         connection_backoff=model_cfg.get("connection_backoff", False),
         extra_params=model_cfg.get("extra_params", {}),
     )
+    if validation_schema is not None:
+        logger.info("Output validation against extraction_schema.json: ENABLED")
 
     # Stage-split: optional vision client for stage 1 (photo descriptions)
     stage_split = bool(ext_cfg.get("stage_split"))
@@ -163,6 +169,7 @@ def cmd_extract(args):
         stage_split=stage_split,
         vision_client=vision_client,
         num_workers=ext_cfg["workers"],
+        validation_schema=validation_schema,
     )
 
     print(f"\n{'=' * 55}")

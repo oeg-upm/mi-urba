@@ -34,12 +34,34 @@ def _resolve_image_paths(complaint: dict, images_dir: str | Path) -> list[str]:
     return [str(img_dir / pic) for pic in complaint.get("user_pics", [])]
 
 
+def validate_extraction(extraction: dict, schema: dict) -> str | None:
+    """Validate an extraction record against the schema.
+
+    Returns None when valid, or the human-readable error reason. This is
+    ALWAYS applied by the CLI regardless of the model's structured_output
+    mode: that flag controls sampling constraints server-side, not whether
+    our code trusts the output.
+    """
+    try:
+        import jsonschema
+    except ImportError:
+        logger.warning("jsonschema not installed — extraction output NOT validated")
+        return None
+    try:
+        jsonschema.validate(instance=extraction, schema=schema)
+        return None
+    except jsonschema.ValidationError as e:
+        path = "/".join(str(p) for p in e.absolute_path) or "<root>"
+        return f"{e.message} (at {path})"
+
+
 def extract_complaint(
     client: LLMClient,
     complaint: dict,
     images_dir: str | Path,
     stage_split: bool = False,
     vision_client: LLMClient | None = None,
+    validation_schema: dict | None = None,
 ) -> dict | None:
     """
     Extract structured data + image descriptions from a single complaint.
@@ -58,7 +80,13 @@ def extract_complaint(
 
     # P2 stage split: only when there are photos and a vision client
     if stage_split and image_paths and vision_client is not None:
-        return _extract_complaint_stage_split(client, vision_client, complaint, image_paths)
+        result = _extract_complaint_stage_split(client, vision_client, complaint, image_paths)
+        if result is not None and validation_schema is not None:
+            reason = validate_extraction(result, validation_schema)
+            if reason:
+                logger.warning(f"[{complaint['id']}] schema validation failed: {reason}")
+                return None
+        return result
 
     messages = build_extraction_prompt(complaint, image_paths)
 
@@ -87,6 +115,12 @@ def extract_complaint(
     # Normalize keys the model may hispanize
     if "extractions" not in extraction and "extracciones" in extraction:
         extraction["extractions"] = extraction.pop("extracciones")
+
+    if validation_schema is not None:
+        reason = validate_extraction(extraction, validation_schema)
+        if reason:
+            logger.warning(f"[{complaint['id']}] schema validation failed: {reason}")
+            return None
 
     # Ensure image_descriptions is present (default to [] if the model omitted it)
     if "image_descriptions" not in extraction:
@@ -159,6 +193,7 @@ def extract_dataset(
     stage_split: bool = False,
     vision_client: LLMClient | None = None,
     num_workers: int = 1,
+    validation_schema: dict | None = None,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -218,7 +253,8 @@ def extract_dataset(
     def _extract_and_write(cid: str, complaint: dict) -> bool:
         extraction = extract_complaint(client, complaint, images_dir,
                                        stage_split=stage_split,
-                                       vision_client=vision_client)
+                                       vision_client=vision_client,
+                                       validation_schema=validation_schema)
         if extraction is None:
             logger.warning(f"[{cid}] Extraction failed")
             return False
