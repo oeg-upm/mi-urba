@@ -92,8 +92,8 @@ repositorio (`../config.yaml`). Secciones usadas: `endpoints`, `models`,
 `location_zones`, `risks`, `urgency_levels`, `risk_expressions`,
 `urgency_expressions`, `urgency_weights`, `category_elements`, `category_zones`,
 `category_risks`, `communities`, `personas`, `weights`, `modifiers`,
-`modifier_prob`, `image_generation`. La sección `annotation` no la usa (es del
-extractor).
+`modifier_prob`, `image_generation`. Las secciones `annotation` y `extraction`
+no la usan (son del extractor).
 
 ### Parámetros por modelo y endpoint
 

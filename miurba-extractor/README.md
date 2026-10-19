@@ -68,10 +68,9 @@ estructurada soportado por su servidor:
 | `json_object` | `response_format: json_object` — JSON válido garantizado, sin schema |
 | `json_schema` | `response_format: json_schema` — el servidor fuerza el schema completo (vLLM+XGrammar, llama.cpp). Requiere que el endpoint lo soporte |
 
-Resolución del modelo VLM: `extraction.model` > `annotation.vision_model` >
-`annotation.model`. **El modelo
+Modelo VLM: `extraction.model` (obligatorio, clave de `models:`). **El modelo
 debe ser multimodal** (capaz de ver imágenes). Secciones usadas: `endpoints`,
-`models`, `annotation`, `paths`, `categories`, `location_zones`, `risks`,
+`models`, `paths`, `categories`, `location_zones`, `risks`,
 `urgency_levels`.
 
 ### Parámetros por modelo y endpoint
