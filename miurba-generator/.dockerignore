@@ -1,0 +1,11 @@
+.venv*/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+data_test/
+test_results.json
+tests/
+*.md
+Dockerfile
+.dockerignore

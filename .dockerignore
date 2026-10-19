@@ -11,4 +11,13 @@ miurba-generator/test_results.json
 demo/output/
 *.egg-info/
 dist/
-build/
+build/eval/
+docs/
+data_test*/
+data_test/
+logs/
+.env
+config.local.yaml
+config.neuralwatt.yaml
+config.test*.yaml
+*.bak
