@@ -1,147 +1,110 @@
-# Evaluación experimental de miUrba
+# eval/ — Evaluación experimental de miUrba
 
-## Objetivo
+Este documento es el **hilo conductor**: por qué existe cada experimento, en qué orden
+se ejecutaron, qué respondieron y qué queda abierto. El detalle de cada uno está en
+`experiments/<experimento>/README.md` (mapa código↔datos) y `docs/` (narrativa
+extendida).
 
-Medir cuánto se parece la extracción del LLM a la ground truth generada por el
-generador. Es decir: si generamos una queja con un escenario conocido (categoría,
-urgencia, ubicación, riesgos, elementos), ¿el extractor recupera esa misma
-información del texto?
+---
 
-## Hipótesis
+## 1. El sistema y su bucle de evaluación
 
-1. **El extractor recupera bien la categoría principal** (fontanería, electricidad, etc.)
-   porque está explícita o casi en el texto del vecino.
-2. **La subcategoría es más difícil** porque el vecino no usa terminología técnica.
-3. **La urgencia tiende a sobreestimarse** (el vecino la exagera respecto al GT).
-4. **El extractor detecta problemas adicionales** que el GT no contempla (falsos positivos)
-   porque lee matices que el vecino menciona de pasada.
-5. **Las imágenes mejoran la extracción** de elementos afectados y riesgos.
-6. **El modelo de generación afecta la calidad de la extracción**: textos más realistas
-   (kimi) son más fáciles de extraer que textos más rígidos (glm).
+miUrba genera **quejas vecinales sintéticas** a partir de un escenario estructurado
+(categoría, urgencia, ubicación, riesgos, elementos) y después **extrae** esa
+estructura desde el texto con un LLM. Todo el esfuerzo de evaluación gira alrededor de
+una pregunta central:
 
-## Diseño experimental
+> **¿Conserva el sistema la información estructural de la queja de extremo a extremo?**
 
-### Factores
+Eso se descompone en cuatro sub-preguntas, y cada experimento ataca una:
 
-| Factor | Niveles | Descripción |
-|--------|---------|-------------|
-| Modelo de generación | `kimi-k2.6`, `qwen3_local`, `glm-5.1` | 3 modelos (NeuralWatt + local) |
-| Modelo de extracción | `kimi-k2.6` | Único modelo multimodal (visión) disponible — elegido de cara a la extensión con imágenes; en los runs ejecutados actúa como LLM extractor solo-texto |
-| Imágenes | sin imágenes | FLUX es lento; se evalúa por separado (ver más abajo) |
-| Nº de problemas | 1 o 2+ | El generador ya mezcla single/multi-problem (~15% multi) |
+1. ¿Qué modelos pueden escribir las quejas? → **selección de generadores**
+2. ¿Cómo de bien extrae el extractor la estructura? → **evaluación extractor vs GT**
+3. ¿Cómo hacemos que el texto conserve mejor la estructura? → **iteraciones del prompt**
+4. ¿Los generadores son genuinamente distintos entre sí? → **caracterización**
 
-### Tamaño
-
-- 30 quejas por modelo de generación × 3 modelos = **90 quejas totales**
-- Cada queja tiene 1-2 problemas → ~100-110 extracciones GT esperadas
-
-### Pipeline
+## 2. Cadena causal (orden real de ejecución)
 
 ```
-FASE 1 — Generar dataset (90 quejas)
-  3 modelos × 30 quejas → complaints.jsonl + ground_truth.jsonl + metadata.jsonl
-
-FASE 2 — Extraer (LLM sobre las 90 quejas)
-  kimi-k2.6 → extractions.jsonl
-
-FASE 3 — Evaluar (comparar GT vs extracción)
-  matching + métricas → metrics.json + report.md
+Cribado de 89 modelos del gateway (ago 2026)
+        │
+        ▼
+E1a. SELECCIÓN iter 1 (TF-IDF) ──► 10 generadores ──► dataset-5k
+        │
+        ▼
+E4. EXTRACCIÓN VLM vs GT (854 quejas) ──► identifica campos que fallan
+        │
+        ▼
+E5. ITERACIONES DEL PROMPT (iter 1-8) ──► gana iter 6 (F1 0.973) ──► prompt de producción
+        │
+        ▼
+E3. CARACTERIZACIÓN multidimensional (4 familias de métricas, 87 generadores)
+        │
+        ▼
+E1b. SELECCIÓN iter 2 (embeddings 7 jueces + 1 por linaje) ──► 10 nuevos generadores
+        │                                                          (solo 1 repite)
+        ▼
+     dataset-10k (parcial)
 ```
 
-### Fase 3: Matching GT vs Extracción
+## 3. Los experimentos
 
-El GT tiene N extracciones (problemas) por queja. El extractor puede producir
-M extracciones (no necesariamente M = N). Hay que emparejar:
+| # | Experimento | Pregunta | Resultado principal | Carpeta |
+|---|---|---|-----|---------|
+| E1+E3 | Selección y caracterización de generadores | ¿Qué generadores usar? (2 iteraciones: TF-IDF → fingerprints) | 10 seleccionados por linajes con embeddings; dos ejes ortogónicos estilo/semántica | `experiments/seleccion_modelos/` |
+| E2 | Datasets a escala | ¿Con qué corpus evaluamos? | 854 + 5K completos; 10K parcial; 50K descartado | `experiments/datasets/` |
+| E4 | Extracción LLM vs GT | ¿Fidelidad del extractor? | P/R/F1 por campo y por par generador×extractor; categoría ≫ subcategoría; urgencia sobreestimada | `experiments/extraccion_llm/` |
+| E5 | Iteraciones del prompt | ¿Qué prompt conserva mejor la estructura? | iter 6: F1 0.973, exact match 0.944 → producción | `experiments/iteraciones_prompt/` |
 
-1. **Matching por categoría principal**: si el GT tiene `fontanería` y la predicción
-   tiene `fontanería`, se emparejan.
-2. Si hay múltiples extracciones con la misma categoría principal, se emparejan
-   por subcategoría (o por similitud global si no hay coincidencia exacta).
-3. Extracciones GT sin match → **falsos negativos** (recall).
-4. Extracciones del LLM sin match → **falsos positivos** (precision).
+## 4. Timeline
 
-### Métricas
+| Fecha | Hito |
+|---|---|
+| ~21 ago 2026 | Runner de iteraciones (`4faec84`); variantes iter 2-4 |
+| 26 ago 2026 | Cribado 89 modelos + selección TF-IDF + corpus de diversidad (`9b8d95c`) |
+| 10 ago–sep | dataset-50k (descartado) y datasets 5k |
+| 3 sep 2026 | Embeddings 3 jueces (`b386d40`); cross-PPL gateway con llama.cpp parcheado |
+| sep 2026 | Estilometría + rigidez; iteraciones 5-8; **iter 6 adoptada** (`7257145`) |
+| 7-9 sep 2026 | dataset-10k (parcial); auditoría de afirmaciones (`AFIRMACIONES_*`, en `experiments/seleccion_modelos/`) |
+| sep 2026 | Informe de similaridad (87 generadores, 4 métricas) |
+| 19-20 oct 2026 | Housekeeping: reorganización por experimentos, recuperación de variantes de prompt |
 
-**Por campo (accuracy sobre extracciones emparejadas):**
+## 5. Gaps identificados (al hacer este ejercicio)
 
-| Campo | Métrica | Cómo se calcula |
-|-------|--------|----------------|
-| category.principal | exact match | GT == pred |
-| category.subcategory | exact match | GT == pred |
-| category (completa) | exact match | principal + subcategory |
-| urgency | exact match | GT == pred |
-| location.zone | exact match | GT == pred |
-| location.detail | substring match | GT ⊆ pred o pred ⊆ GT (texto libre) |
-| risks | Jaccard | \|GT ∩ pred\| / \|GT ∪ pred\| |
-| affected_elements | precision/recall | match por (principal, subcategory) |
+### Gaps de diseño no ejecutado
+- **G1 · Imágenes**: la hipótesis 5 de E4 (extraer con fotos generadas por FLUX) nunca
+  se ejecutó. El extractor multimodal se eligió para eso; quedó aplazado indefinidamente.
+- **G2 · Fidelidad del generador no medida directamente**: no hay ningún experimento
+  que puntúe "¿el texto refleja el escenario GT?" con juez LLM/humano. E4 lo mide al
+  revés (extractor→GT) y E5 usa esa medida como proxy. Candidato a experimento E7,
+  reusando `diversity/gen_*/` y `dataset-10k/`.
+- **G3 · Selección iter 2 sin validación downstream**: los 10 modelos elegidos con la
+  métrica buena (embeddings+linajes) alimentaron el dataset-10k, pero este quedó
+  incompleto (warmup timeouts) — la segunda selección nunca se validó end-to-end como
+  sí lo estuvo la primera (5k → E4).
 
-**Por queja (sobre el conjunto de extracciones):**
+### Gaps de cobertura
+- **G4 · Todo es sintético**: ningún run sobre quejas reales ni validación humana de
+  naturalidad. La validez ecológica del pipeline está sin medir.
+- **G5 · Extracción de un solo problema dominante**: el GT tiene ~1.17 problemas/queja;
+  los multi-problema (~15% del generador) apenas tienen peso en las métricas.
+- **G6 · Evaluator-dependence**: E4 usa mayormente un extractor por texto; los pares
+  generador×extractor cubiertos varían entre `metrics.json` (raíz) y los `iter_*/`,
+  sin una matriz completa común.
 
-| Métrica | Definición |
-|--------|------------|
-| Precision | extracciones correctas / extracciones totales del LLM |
-| Recall | extracciones correctas / extracciones GT |
-| F1 | 2·P·R / (P+R) |
-| Exact match | todos los campos correctos en todas las extracciones |
+### Gaps de infraestructura/proceco
+- **G7 · 50K abandonado sin diagnóstico escrito** (marcado "do not use" en TASK_ITER,
+  fichero que ya no existe; ver C6 en `AFIRMACIONES_VERIFICACION.md`).
+- **G8 · Recolección dependiente del gateway**: los runs grandes (10K, cross-PPL full)
+  no son reproducibles sin la VM de GPU con los modelos exactos de sep-2026 cargables.
+- **G9 · E4 `metrics.json`/`report.md` fueron gitineados históricamente**: ahora se
+  versionan, pero no hay snapshot firmado de cuándo se generaron exactamente.
 
-**Por modelo de generación:**
+## 6. Convenciones
 
-Las métricas anteriores se agregan por modelo de generación para comparar si
-alguno produce textos más fáciles de extraer.
-
-### Estructura de carpetas
-
-```
-eval/
-├── README.md               # Este documento (diseño + resultados)
-├── config.eval.yaml        # Config específica del experimento
-├── run_experiment.py       # Script principal: generate → extract → evaluate
-├── evaluate.py             # Lógica de matching + métricas
-├── results/                # Generado por run_experiment.py
-│   ├── dataset/            # complaints.jsonl + ground_truth.jsonl + metadata.jsonl
-│   ├── extractions/        # extractions.jsonl (salida del LLM)
-│   ├── metrics.json         # Métricas en formato JSON
-│   └── report.md           # Informe legible con tablas
-```
-
-### Reproducibilidad
-
-- **Seed fija** en la generación (seed_base: 42)
-- **Config versionada**: `config.eval.yaml` en el repo
-- **Logs completos**: cada run guarda logs del generador y extractor
-- **Script único**: `python run_experiment.py` ejecuta todo
-- **Resultados en el repo**: `results/` se commitea (no es .gitignored)
-
-### Config del experimento (`config.eval.yaml`)
-
-Merge de `config.yaml` + `config.neuralwatt.yaml` + llama-swap con:
-- 3 batches de 30: kimi-k2.6, qwen3_local, glm-5.1
-- `annotation.vision_model: kimi-k2.6`
-- `image_generation.enabled: false`
-
-### Estimación de coste
-
-| Fase | LLM calls | Tokens aprox. | Tiempo aprox. |
-|------|-----------|---------------|----------------|
-| Generar 90 quejas | 90 | ~200K in / ~500K out | ~30-40 min |
-| Extraer 90 quejas | 90 | ~150K in / ~300K out | ~30-40 min |
-| Evaluar | 0 (local) | — | < 1 min |
-| **Total** | 180 | ~350K in / ~800K out | ~60-80 min |
-
-### Extensión futura: imágenes
-
-Como experimento separado (FLUX es lento, ~3 min/imagen):
-- Generar 15 quejas con fotos (5 por modelo)
-- FLUX genera los PNGs
-- Extraer con el modelo de visión viendo las fotos
-- Comparar extracción con/sin imágenes
-
-## Cómo ejecutar
-
-```bash
-cd eval
-python run_experiment.py           # todo el experimento
-python run_experiment.py --generate  # solo fase 1
-python run_experiment.py --extract  # solo fase 2 (necesita fase 1)
-python run_experiment.py --evaluate  # solo fase 3 (necesita fases 1+2)
-```
+- Los datos viven en `results/`; los scripts y configs de cada experimento en su
+  carpeta de `experiments/`; la narrativa extendida en `docs/`.
+- Los logs de ejecución se archivan **fuera del repo**: `../mi-urba-eval-logs/`.
+- Los scripts archivados (superseded) están en `../mi-urba-eval-old/` (fuera del repo).
+- Semillas fijas y configs versionadas donde aplica; ver el README de cada experimento
+  para su reproducibilidad exacta.
