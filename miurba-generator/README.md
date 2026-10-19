@@ -29,15 +29,33 @@ Para cada queja:
 
 El contrato de salida es `schemas/complaint_schema.json` (en la raíz del repo).
 
-## Uso
+## Uso (config-only)
+
+Todos los parámetros se leen del config compartido (`../config.yaml`, o el
+que se indique con `--config`). No hay flags de parámetros.
 
 ```bash
-python cli.py generate -n 100                # generar (sin imágenes por defecto)
-python cli.py generate -n 100 --model glm-5.1 # otro modelo
-python cli.py generate --no-images           # forzar desactivar imágenes
-python cli.py generate-multi                 # generación por lotes multi-modelo
-python cli.py merge                          # fusionar salidas por modelo
+python cli.py generate --config ../config.yaml  # generar según generation.batches/models
+python cli.py merge    --config ../config.yaml  # fusionar salidas por modelo
 ```
+
+Secciones del config que gobiernan la generación (ver defaults comentados
+en el propio `config.yaml`):
+
+| Clave (`generation:`) | Función |
+|---|---|
+| `default_output_dir` | Base de salida; cada modelo escribe en `<dir>/<model>/` |
+| `batches` | Plan `[{model, count}, ...]` |
+| `models` + `num_records` | Plan alternativo: lista explícita de modelos |
+| `start_id` | Primer ID (secuencial a lo largo del plan) |
+| `seed` | Semilla de muestreo (`null` = no determinista) |
+| `resume` | Saltar registros ya generados |
+| `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
+
+Además: `paths:` (nombres de subdirs/ficheros) e `image_generation:`
+(`enabled: true/false`).
+
+Tests: `python -m pytest tests/` (no requieren red).
 
 ## Generación de imágenes (opcional)
 

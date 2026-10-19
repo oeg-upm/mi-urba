@@ -20,7 +20,10 @@ models:
     model: gemma4:31b-cloud
     temperature: 0.85
 generation:
+  # Directorio base de salida: cada modelo escribe en <default_output_dir>/<model>/
   default_output_dir: data
+  # Plan de generación por lotes [{model, count}, ...].
+  # Alternativa: models: [a, b] + num_records: N (cada modelo genera N).
   batches:
   - model: kimi-k2.6
     count: 25
@@ -30,6 +33,36 @@ generation:
     count: 25
   - model: gemma4-31b
     count: 25
+  # Registros por modelo cuando se usa `models` (ignorado con `batches`)
+  num_records: 100
+  # Primer número de ID (Q<start_id>, secuencial a lo largo del plan)
+  start_id: 1
+  # Semilla base de muestreo (null = no determinista)
+  seed: null
+  # Saltar registros ya presentes en los ficheros de salida
+  resume: true
+  # Cliente LLM: timeout por petición y política de reintentos
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+
+extraction:
+  # Modelo VLM (clave de models:). null → annotation.vision_model → annotation.model
+  model: null
+  # Temperatura de las llamadas de extracción
+  temperature: 0.2
+  # Base de rutas por defecto (null → generation.default_output_dir)
+  default_output_dir: null
+  # Directorios explícitos (null → <default_output_dir>/<subdir de paths:>)
+  raw_dir: null
+  annotated_dir: null
+  images_dir: null
+  # Saltar quejas ya presentes en extractions.jsonl
+  resume: true
+  # Cliente LLM: timeout por petición y política de reintentos
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
 annotation:
   model: kimi-k2.6
   temperature: 0.2

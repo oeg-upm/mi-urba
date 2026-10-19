@@ -111,18 +111,21 @@ def get_weights(cfg: dict | None = None) -> dict[str, Any]:
     return cfg["weights"]
 
 
+_DEFAULT_PATHS = {
+    "raw_subdir": "raw",
+    "annotated_subdir": "annotated",
+    "images_subdir": "images",
+    "complaints_file": "complaints.jsonl",
+    "ground_truth_file": "ground_truth.jsonl",
+    "metadata_file": "metadata.jsonl",
+    "extractions_file": "extractions.jsonl",
+}
+
+
 def get_paths(cfg: dict | None = None) -> dict[str, str]:
-    """Return path configuration with sensible defaults."""
+    """Return path configuration: defaults merged with the paths: section."""
     cfg = cfg or get_config()
-    return cfg.get("paths", {
-        "raw_subdir": "raw",
-        "annotated_subdir": "annotated",
-        "images_subdir": "images",
-        "complaints_file": "complaints.jsonl",
-        "ground_truth_file": "ground_truth.jsonl",
-        "metadata_file": "metadata.jsonl",
-        "extractions_file": "extractions.jsonl",
-    })
+    return {**_DEFAULT_PATHS, **cfg.get("paths", {})}
 
 
 def get_vision_model_params(name: str | None = None, cfg: dict | None = None) -> dict[str, Any]:
@@ -130,13 +133,47 @@ def get_vision_model_params(name: str | None = None, cfg: dict | None = None) ->
 
     Resolution order:
       1. explicit `name` argument
-      2. annotation.vision_model in config
-      3. annotation.model in config
+      2. extraction.model in config (extraction-section override)
+      3. annotation.vision_model in config
+      4. annotation.model in config
 
     The chosen model MUST be vision-capable (multimodal) so it can see the
     attached photos.
     """
     cfg = cfg or get_config()
+    ext = cfg.get("extraction", {})
     ann = cfg.get("annotation", {})
-    model_name = name or ann.get("vision_model") or ann.get("model", "kimi-k2.6")
+    model_name = (name or ext.get("model") or ann.get("vision_model")
+                  or ann.get("model", "kimi-k2.6"))
     return get_model_params(model_name, cfg)
+
+
+# ── Extraction section ─────────────────────────────────────────
+
+_DEFAULT_EXTRACTION = {
+    # Model name (key in models:) used for extraction. When None, falls
+    # back to annotation.vision_model, then annotation.model.
+    "model": None,
+    # Sampling temperature for extraction calls.
+    "temperature": 0.2,
+    # Explicit directories. When None, each resolves to
+    # <default_output_dir>/<raw|annotated|images subdir> from `paths:`.
+    "default_output_dir": None,
+    "raw_dir": None,
+    "annotated_dir": None,
+    "images_dir": None,
+    # Skip complaints already present in the extractions file.
+    "resume": True,
+    # Per-request timeout and retry policy for the LLM client.
+    "timeout": 300,
+    "max_retries": 3,
+    "retry_delay": 5.0,
+}
+
+
+def get_extraction_config(cfg: dict | None = None) -> dict[str, Any]:
+    """Return the `extraction:` section with defaults for missing keys."""
+    cfg = cfg or get_config()
+    ext = dict(_DEFAULT_EXTRACTION)
+    ext.update(cfg.get("extraction", {}))
+    return ext

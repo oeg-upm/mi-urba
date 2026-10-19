@@ -32,17 +32,31 @@ Si una foto no existe, se marca como no disponible y se extrae del texto.
   extractions}`.
 - Contrato de salida: `schemas/extraction_schema.json` (raíz del repo).
 
-## Uso
+## Uso (config-only)
+
+Todos los parámetros se leen del config compartido (`../config.yaml`, o el
+que se indique con `--config`). No hay flags de parámetros.
 
 ```bash
-python cli.py extract --model <vlm>                 # modelo vision
-python cli.py extract --raw-dir data/raw --images-dir data/images --annotated-dir data/annotated
+python cli.py extract --config ../config.yaml
 ```
 
 ## Configuración
 
-Config compartida en la raíz (`../config.yaml`). El modelo vision se resuelve
-como: `--model` > `annotation.vision_model` > `annotation.model`. **El modelo
+Secciones del config que gobiernan la extracción (ver defaults comentados
+en el propio `config.yaml`):
+
+| Clave (`extraction:`) | Función |
+|---|---|
+| `model` | Modelo VLM (clave de `models:`) |
+| `temperature` | Temperatura de extracción |
+| `default_output_dir` | Base de rutas (`null` → `generation.default_output_dir`) |
+| `raw_dir` / `annotated_dir` / `images_dir` | Directorios explícitos (opcionales) |
+| `resume` | Saltar quejas ya extraídas |
+| `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
+
+Resolución del modelo VLM: `extraction.model` > `annotation.vision_model` >
+`annotation.model`. **El modelo
 debe ser multimodal** (capaz de ver imágenes). Secciones usadas: `endpoints`,
 `models`, `annotation`, `paths`, `categories`, `location_zones`, `risks`,
 `urgency_levels`.

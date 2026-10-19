@@ -11,120 +11,97 @@ comunidad de vecinos. Produce dos ficheros JSONL por cada ejecución:
 La extracción estructurada de estas quejas es una tarea independiente
 que corresponde al proyecto `miurba-extractor`.
 
-Uso:
-  python cli.py generate                   # Generar con config por defecto
-  python cli.py generate -n 100            # Generar 100 registros
-  python cli.py generate --model glm-5.1   # Usar otro modelo
-  python cli.py generate-multi             # Generación por lotes multi-modelo
-  python cli.py merge                      # Fusionar salidas por modelo
+Uso (config-only — TODOS los parámetros viven en el config):
 
-Toda la configuración se lee de la config COMPARTIDA en la raíz del
-repositorio (../config.yaml por defecto, o la indicada con --config).
+  python cli.py generate --config ../config.yaml    # generar según el plan
+  python cli.py merge    --config ../config.yaml    # fusionar salidas por modelo
+
+El comando `generate` acepta un único argumento, `--config` (por defecto
+el config compartido en la raíz del repositorio). Toda la configuración
+pertinente se lee de dos secciones:
+
+  generation:
+    default_output_dir   Directorio base de salida (<dir>/<modelo>/)
+    batches              Plan por lotes: [{model, count}, ...]
+    models               Lista explícita de modelos (count = num_records)
+    num_records          Registros por modelo cuando se usa `models`
+    start_id             Primer número de ID (Q<start_id>, secuencial)
+    seed                 Semilla base de muestreo (null = no determinista)
+    resume               Saltar registros ya presentes en la salida
+    timeout              Timeout por petición (segundos)
+    max_retries          Reintentos por petición
+    retry_delay          Espera base entre reintentos (segundos)
+
+  paths:                 Nombres de subdirectorios y ficheros JSONL
+  image_generation:      Generación de imágenes (enabled: true/false)
+
+Cada modelo escribe en <default_output_dir>/<modelo>/; al final del plan
+`generate` fusiona todas las salidas en <default_output_dir>/<raw_subdir>/.
+El comando `merge` repite solo la fusión.
 """
 
 import argparse
 import logging
+import random
 import sys
 from pathlib import Path
 
 # Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_model_params, get_paths, get_image_generation_config
+from src.config import get_config, get_generation_config, get_model_params, get_paths, get_image_generation_config
 from src.llm import LLMClient
 from src.pipeline import generate_dataset, merge_outputs
 
 
-def _get_path_args(args, config):
-    """Build path kwargs from CLI overrides or config defaults."""
-    paths = get_paths(config)
-    return {
-        "raw_subdir": args.raw_subdir or paths.get("raw_subdir", "raw"),
-        "annotated_subdir": args.annotated_subdir or paths.get("annotated_subdir", "annotated"),
-        "complaints_file": args.complaints_file or paths.get("complaints_file", "complaints.jsonl"),
-        "ground_truth_file": args.ground_truth_file or paths.get("ground_truth_file", "ground_truth.jsonl"),
-        "metadata_file": args.metadata_file or paths.get("metadata_file", "metadata.jsonl"),
-        "extractions_file": args.extractions_file or paths.get("extractions_file", "extractions.jsonl"),
-    }
+def _generation_plan(gen_cfg: dict) -> list[tuple[str, int]]:
+    """Resolve the (model, count) plan from the generation config.
+
+    Precedence: explicit `models` list (each with `num_records`) over
+    `batches`. Raises ValueError when neither is configured.
+    """
+    if gen_cfg.get("models"):
+        n = gen_cfg["num_records"]
+        return [(m, n) for m in gen_cfg["models"]]
+    if gen_cfg.get("batches"):
+        return [(b["model"], b["count"]) for b in gen_cfg["batches"]]
+    raise ValueError(
+        "config.yaml: define generation.batches ([{model, count}, ...]) "
+        "or generation.models (list) — nothing to generate."
+    )
 
 
 def cmd_generate(args):
-    """Generate synthetic raw complaints with a single model."""
+    """Generate synthetic raw complaints — ALL parameters come from the config."""
     config = get_config(args.config)
-    paths = _get_path_args(args, config)
-    model_name = args.model
-    model_cfg = get_model_params(model_name, config)
-
-    client = LLMClient(
-        base_url=model_cfg["base_url"],
-        model=model_cfg["model"],
-        temperature=model_cfg["temperature"],
-        timeout=args.timeout,
-        api_key=model_cfg.get("api_key"),
-    )
-
-    raw_subdir = paths["raw_subdir"]
+    paths = get_paths(config)
+    gen_cfg = get_generation_config(config)
     ig_config = get_image_generation_config(config)
-    enable_images = bool(ig_config.get("enabled", False)) and not args.no_images
-    print(f"miUrba — Generation (single model)")
-    print(f"{'=' * 55}")
-    print(f"  Model:      {model_name} ({model_cfg['model']})")
-    print(f"  Endpoint:   {model_cfg['base_url']}")
-    print(f"  Records:    {args.num_records}")
-    print(f"  IDs:        Q{args.start_id:04d} — Q{args.start_id + args.num_records - 1:04d}")
-    print(f"  Output:     {args.output_dir}/{raw_subdir}/")
+    enable_images = bool(ig_config.get("enabled", False))
+
+    plan = _generation_plan(gen_cfg)
+    output_dir = gen_cfg["default_output_dir"]
+    raw_subdir = paths["raw_subdir"]
+
+    if gen_cfg["seed"] is not None:
+        random.seed(gen_cfg["seed"])
+
+    print("miUrba — Generation (config-only)")
+    print("=" * 60)
+    print(f"  Config:     {args.config or 'config.yaml (repo root)'}")
+    print(f"  Output:     {output_dir}/")
     print(f"  Images:     {'enabled (FLUX.2)' if enable_images else 'disabled'}")
-    print(f"  Resume:     {not args.no_resume}")
-    print(f"{'=' * 55}")
-
-    stats = generate_dataset(
-        client=client,
-        num_records=args.num_records,
-        start_id=args.start_id,
-        output_dir=args.output_dir,
-        raw_subdir=raw_subdir,
-        images_subdir=paths.get("images_subdir", "images"),
-        complaints_file=paths["complaints_file"],
-        ground_truth_file=paths["ground_truth_file"],
-        metadata_file=paths["metadata_file"],
-        resume=not args.no_resume,
-        enable_images=enable_images,
-        ig_config=ig_config,
-    )
-
-    print(f"\n{'=' * 55}")
-    print(f"Generation complete!")
-    print(f"  Generated:  {stats['generated']}")
-    print(f"  Failed:     {stats['failed']}")
-    print(f"  Tokens in:  {stats['total_tokens_in']:,}")
-    print(f"  Tokens out: {stats['total_tokens_out']:,}")
-    print(f"  Raw:        {stats['raw_path']}")
-    print(f"  Ground truth: {stats['ground_truth_path']}")
-    print(f"  Metadata:    {stats['metadata_path']}")
-    print(f"  Images dir: {stats.get('images_dir')}")
-
-
-def cmd_generate_multi(args):
-    """Generate with multiple models as configured in config.yaml."""
-    config = get_config(args.config)
-    paths = _get_path_args(args, config)
-    gen_cfg = config["generation"]
-    batches = gen_cfg["batches"]
-    output_dir = args.output_dir or gen_cfg["default_output_dir"]
-    raw_subdir = paths["raw_subdir"]
-    ig_config = get_image_generation_config(config)
-    enable_images = bool(ig_config.get("enabled", False)) and not args.no_images
-
-    print("miUrba — Multi-model generation")
+    print(f"  Seed:       {gen_cfg['seed']}")
+    print(f"  Resume:     {gen_cfg['resume']}")
+    print(f"  Plan:       {', '.join(f'{m}×{c}' for m, c in plan)}")
     print("=" * 60)
 
     all_stats = []
-    id_offset = 0
+    id_offset = gen_cfg["start_id"] - 1
 
-    for batch in batches:
-        model_name = batch["model"]
-        count = batch["count"]
+    for model_name, count in plan:
         model_cfg = get_model_params(model_name, config)
+        model_dir = f"{output_dir}/{model_name}"
 
         print(f"\n{'─' * 60}")
         print(f"  Model: {model_name} ({model_cfg['model']})")
@@ -137,11 +114,11 @@ def cmd_generate_multi(args):
             base_url=model_cfg["base_url"],
             model=model_cfg["model"],
             temperature=model_cfg["temperature"],
-            timeout=args.timeout,
+            timeout=gen_cfg["timeout"],
+            max_retries=gen_cfg["max_retries"],
+            retry_delay=gen_cfg["retry_delay"],
             api_key=model_cfg.get("api_key"),
         )
-
-        model_dir = f"{output_dir}/{model_name}"
 
         stats = generate_dataset(
             client=client,
@@ -152,8 +129,8 @@ def cmd_generate_multi(args):
             images_subdir=paths.get("images_subdir", "images"),
             complaints_file=paths["complaints_file"],
             ground_truth_file=paths["ground_truth_file"],
-        metadata_file=paths["metadata_file"],
-            resume=not args.no_resume,
+            metadata_file=paths["metadata_file"],
+            resume=gen_cfg["resume"],
             enable_images=enable_images,
             ig_config=ig_config,
         )
@@ -167,39 +144,23 @@ def cmd_generate_multi(args):
         print(f"    Failed:    {stats['failed']}")
         print(f"    Tokens:    in={stats['total_tokens_in']:,} out={stats['total_tokens_out']:,}")
 
-    # Merge
-    print(f"\n{'=' * 60}")
-    print("Merging outputs...")
-    batch_dirs = [b["model"] for b in batches]
-    merge_stats = merge_outputs(
-        output_dir,
-        batch_dirs,
-        raw_subdir=raw_subdir,
-        complaints_file=paths["complaints_file"],
-        ground_truth_file=paths["ground_truth_file"],
-        metadata_file=paths["metadata_file"],
-    )
-
-    print(f"  Merged: {merge_stats['complaints']} complaints → {merge_stats['complaints_path']}")
-    print(f"  Merged: {merge_stats['ground_truth']} ground_truth → {merge_stats['ground_truth_path']}")
-    print(f"  Merged: {merge_stats['metadata']} metadata → {merge_stats['metadata_path']}")
+    _merge(config, output_dir)
 
     print(f"\n{'=' * 60}")
     print("Summary per model:")
     for s in all_stats:
         print(f"  {s['model']:15s}  gen={s['generated']}  fail={s['failed']}  "
               f"tok_in={s['total_tokens_in']:>8,}  tok_out={s['total_tokens_out']:>8,}")
-    print(f"{'=' * 60}")
-    print(f"Total merged: {merge_stats['complaints']} complaints")
+    print("=" * 60)
 
 
-def cmd_merge(args):
-    """Merge per-model outputs into data/raw/."""
-    config = get_config(args.config)
-    paths = _get_path_args(args, config)
-    gen_cfg = config["generation"]
-    output_dir = args.output_dir or gen_cfg["default_output_dir"]
-    batch_dirs = [b["model"] for b in gen_cfg["batches"]]
+def _merge(config, output_dir: str | None = None) -> dict:
+    """Merge per-model outputs into <output_dir>/<raw_subdir>/."""
+    paths = get_paths(config)
+    gen_cfg = get_generation_config(config)
+    output_dir = output_dir or gen_cfg["default_output_dir"]
+    plan = _generation_plan(gen_cfg)
+    batch_dirs = [m for m, _ in plan]
 
     merge_stats = merge_outputs(
         output_dir,
@@ -213,50 +174,32 @@ def cmd_merge(args):
     print(f"Merged {merge_stats['complaints']} complaints → {merge_stats['complaints_path']}")
     print(f"Merged {merge_stats['ground_truth']} ground_truth → {merge_stats['ground_truth_path']}")
     print(f"Merged {merge_stats['metadata']} metadata → {merge_stats['metadata_path']}")
+    return merge_stats
+
+
+def cmd_merge(args):
+    """Merge per-model outputs into the shared raw dir (config-only)."""
+    config = get_config(args.config)
+    _merge(config)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="miUrba — Generador de datasets sintéticos de quejas vecinales"
+        description="miUrba — Generador de datasets sintéticos de quejas vecinales "
+                    "(todos los parámetros se leen del config compartido)"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    # ── Shared arguments ───────────────────────────────────
+    # ── Shared arguments (config-only) ─────────────────────
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--config", default=None,
                         help="Path to shared config.yaml (default: ../config.yaml at repo root)")
-    common.add_argument("--output-dir", default=None, help="Output directory (default: from config)")
-    common.add_argument("--raw-subdir", default=None, help="Raw subdirectory name (default: from config)")
-    common.add_argument("--annotated-subdir", default=None, help="Annotated subdirectory name (default: from config)")
-    common.add_argument("--raw-dir", default=None, help="Raw directory path (default: <output_dir>/<raw_subdir>)")
-    common.add_argument("--annotated-dir", default=None, help="Annotated directory path (default: <output_dir>/<annotated_subdir>)")
-    common.add_argument("--complaints-file", default=None, help="Complaints filename (default: from config)")
-    common.add_argument("--ground-truth-file", default=None, help="Ground truth filename (default: from config)")
-    common.add_argument("--metadata-file", default=None, help="Metadata filename (default: from config)")
-    common.add_argument("--extractions-file", default=None, help="Extractions filename (default: from config)")
-    common.add_argument("--no-resume", action="store_true", help="Start fresh")
-    common.add_argument("--timeout", type=int, default=300, help="Request timeout (seconds)")
-    common.add_argument("--no-images", action="store_true",
-                        help="Disable image generation even if enabled in config")
     common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
-    # ── Generate ────────────────────────────────────────────
-    gen_parser = subparsers.add_parser("generate", parents=[common],
-                                        help="Generate synthetic raw complaints")
-    gen_parser.add_argument("-n", "--num-records", type=int, default=100,
-                             help="Number of records")
-    gen_parser.add_argument("--start-id", type=int, default=1,
-                             help="Starting ID number")
-    gen_parser.add_argument("--model", default="kimi-k2.6",
-                             help="Model name (from config.yaml)")
-
-    # ── Generate multi ──────────────────────────────────────
-    multi_parser = subparsers.add_parser("generate-multi", parents=[common],
-                                          help="Multi-model batch generation")
-
-    # ── Merge ───────────────────────────────────────────────
-    merge_parser = subparsers.add_parser("merge", parents=[common],
-                                          help="Merge per-model outputs")
+    subparsers.add_parser("generate", parents=[common],
+                          help="Generate synthetic raw complaints (plan from config)")
+    subparsers.add_parser("merge", parents=[common],
+                          help="Merge per-model outputs (plan from config)")
 
     args = parser.parse_args()
 
@@ -268,7 +211,6 @@ def main():
 
     commands = {
         "generate": cmd_generate,
-        "generate-multi": cmd_generate_multi,
         "merge": cmd_merge,
     }
 

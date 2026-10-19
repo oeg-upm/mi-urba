@@ -106,18 +106,54 @@ def get_weights(cfg: dict | None = None) -> dict[str, Any]:
     return cfg["weights"]
 
 
+_DEFAULT_PATHS = {
+    "raw_subdir": "raw",
+    "annotated_subdir": "annotated",
+    "images_subdir": "images",
+    "complaints_file": "complaints.jsonl",
+    "ground_truth_file": "ground_truth.jsonl",
+    "metadata_file": "metadata.jsonl",
+    "extractions_file": "extractions.jsonl",
+}
+
+
 def get_paths(cfg: dict | None = None) -> dict[str, str]:
-    """Return path configuration with sensible defaults."""
+    """Return path configuration: defaults merged with the paths: section."""
     cfg = cfg or get_config()
-    return cfg.get("paths", {
-        "raw_subdir": "raw",
-        "annotated_subdir": "annotated",
-        "images_subdir": "images",
-        "complaints_file": "complaints.jsonl",
-        "ground_truth_file": "ground_truth.jsonl",
-        "metadata_file": "metadata.jsonl",
-        "extractions_file": "extractions.jsonl",
-    })
+    return {**_DEFAULT_PATHS, **cfg.get("paths", {})}
+
+
+# ── Generation section ─────────────────────────────────────────
+
+_DEFAULT_GENERATION = {
+    # Where per-model outputs are written: <default_output_dir>/<model>/
+    "default_output_dir": "data",
+    # Batch plan: [{model: <name in models:>, count: <int>}, ...].
+    # Ignored when `models` is set explicitly.
+    "batches": [],
+    # Explicit model list; each model generates `num_records` records.
+    "models": None,
+    # Records per model when `models` is used (ignored with `batches`).
+    "num_records": 100,
+    # First ID number (IDs are Q<start_id>.. sequential across the plan).
+    "start_id": 1,
+    # Base random seed for sampling (None = non-deterministic).
+    "seed": None,
+    # Skip records already present in the output files.
+    "resume": True,
+    # Per-request timeout and retry policy for the LLM client.
+    "timeout": 300,
+    "max_retries": 3,
+    "retry_delay": 5.0,
+}
+
+
+def get_generation_config(cfg: dict | None = None) -> dict[str, Any]:
+    """Return the `generation:` section with defaults for missing keys."""
+    cfg = cfg or get_config()
+    gen = dict(_DEFAULT_GENERATION)
+    gen.update(cfg.get("generation", {}))
+    return gen
 
 
 # ── Image generation config (optional) ──────────────────────────
