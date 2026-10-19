@@ -2,9 +2,9 @@ endpoints:
   neuralwatt:
     base_url: https://api.neuralwatt.com/v1
     description: NeuralWatt API (OpenAI-compatible)
-    api_key: sk-a16ec848369b9f78bdb67db1a8c43d8ac9afc49fa1ad255ce5eec0be0691a699
+    api_key: ${NEURALWATT_API_KEY}   # from .env or environment (never commit)
   llama_swap:
-    base_url: http://192.168.10.11:9292
+    base_url: http://llama-swap.local:9292   # set to your llama-swap host
     description: Local GPU cluster via llama-swap
 models:
   kimi-k2.6:
