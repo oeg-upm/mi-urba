@@ -1,106 +1,102 @@
 # miurba-generator
 
-Generador de **datasets sintéticos de quejas/incidencias** reportadas por
-vecinos de una comunidad de vecinos. Genera el **texto del vecino** y, de forma
-**opcional**, las **imágenes** (fotos) adjuntas.
+Genera datasets sintéticos de quejas vecinales: para cada registro muestrea un
+escenario (categoría, urgencia, ubicación, riesgos, elementos afectados,
+persona, comunidad) y pide a un LLM el texto del vecino (`user_text`) y un
+`timestamp`. Opcionalmente genera las fotos adjuntas con FLUX.2.
 
-## Qué hace
+## Uso
 
-Para cada queja:
+Todos los parámetros se leen del config compartido. Único argumento:
+`--config` (por defecto, `../config.yaml`). El nivel de log se controla con
+`logging.level`.
 
-1. Muestrea un escenario (categoría, urgencia, ubicación, riesgos, elementos
-   afectados), una comunidad, un canal, una persona y un modificador de estilo.
-2. Pide a un LLM (OpenAI-compatible) que genere `user_text` + `timestamp`.
-   **El LLM NO describe las imágenes**: describir las fotos es tarea del
-   extractor.
-3. Si la generación de imágenes está activada (`image_generation.enabled` en la
-   config compartida), construye prompts de imagen a partir del **scenario**
-   (no de descripciones textuales) y genera los PNG con FLUX.2-dev (multi-GPU).
+```bash
+python cli.py generate --config ../config.yaml   # generar según el plan
+python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
+```
+
+`generate` recorre el plan (`generation.batches` o `generation.models` +
+`num_records`), escribe la salida de cada modelo en
+`<default_output_dir>/<modelo>/` y fusiona todo al final en
+`<default_output_dir>/<paths.raw_subdir>/`.
 
 ## Salida
 
-- `data/raw/complaints.jsonl` — la queja (`id, user_text, user_pics, timestamp`).
-  `user_pics` son nombres `.png`.
-- `data/raw/ground_truth.jsonl` — extracciones esperadas (complaint_id +
-  `extractions`), conforme a `extraction_schema.json`.
-- `data/raw/metadata.jsonl` — persona, modifier, comunidad y `image_prompts`
-  (los prompts usados para generar las imágenes).
-- `data/images/*.png` — las fotos reales (solo si la generación de imágenes
-  está activada).
-
-El contrato de salida es `schemas/complaint_schema.json` (en la raíz del repo).
-
-## Uso (config-only)
-
-Todos los parámetros se leen del config compartido (`../config.yaml`, o el
-que se indique con `--config`). No hay flags de parámetros.
-
-```bash
-python cli.py generate --config ../config.yaml  # generar según generation.batches/models
-python cli.py merge    --config ../config.yaml  # fusionar salidas por modelo
-```
-
-Secciones del config que gobiernan la generación (ver defaults comentados
-en el propio `config.yaml`):
-
-| Clave (`generation:`) | Función |
+| Fichero | Contenido |
 |---|---|
-| `default_output_dir` | Base de salida; cada modelo escribe en `<dir>/<model>/` |
-| `batches` | Plan `[{model, count}, ...]` |
-| `models` + `num_records` | Plan alternativo: lista explícita de modelos |
-| `start_id` | Primer ID (secuencial a lo largo del plan) |
-| `seed` | Semilla de muestreo (`null` = no determinista) |
-| `resume` | Saltar registros ya generados |
-| `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
-| `validate` | Validación en 2ª pasada (juez LLM verifica alineación texto/escenario) |
-| `max_validation_retries` | Regeneraciones máximas si el juez rechaza (se conserva el último texto) |
-| `validator` | Modelo juez (clave de `models:`); `null` = el propio generador. Recomendado: modelo distinto |
-| `model_load_wait` | Paciencia (s) con modelos en frío: 5xx en la ventana no consumen reintentos. `null` = off |
-| `workers` | Generación en paralelo (ThreadPool); 1 = secuencial. Appends thread-safe |
-
-Además: `paths:` (nombres de subdirs/ficheros) e `image_generation:`
-(`enabled: true/false`).
-
-Tests: `python -m pytest tests/` (no requieren red).
-
-> **Nota**: el prompt de generación es *scenario-faithful* — el texto debe
-> mencionar los elementos afectados, riesgos y expresión de urgencia del
-> escenario (expresiones configurables en `risk_expressions:` y
-> `urgency_expressions:` del config). Los datasets generados con versiones
-> anteriores del prompt no son comparables con los nuevos.
-
-## Generación de imágenes (opcional)
-
-Se controla con la sección `image_generation` de la config compartida
-(`enabled: false` por defecto). Requiere GPU + FLUX.2 y las dependencias extra
-de `requirements-images.txt`:
-
-```bash
-pip install -r requirements-images.txt
-```
-
-Activar solo en un host con GPUs. Si se activa sin GPU/deps, el pipeline lo
-detecta y **continúa sin imágenes** (no falla). También hay un CLI standalone
-`flux2_imagegen.py` (`--metadata`, `--test`, 12 incidencias) que reutiliza el
-mismo backend.
+| `<out>/<modelo>/raw/complaints.jsonl` | `id`, `user_text`, `user_pics`, `timestamp` |
+| `<out>/<modelo>/raw/ground_truth.jsonl` | extracciones esperadas (`complaint_id`, `extractions`) |
+| `<out>/<modelo>/raw/metadata.jsonl` | persona, modifier, comunidad, `image_prompts` |
+| `<out>/<modelo>/images/*.png` | fotos (solo con `image_generation.enabled: true`) |
 
 ## Configuración
 
-Toda la configuración se lee de la **config compartida** en la raíz del
-repositorio (`../config.yaml`). Secciones usadas: `endpoints`, `models`,
-`generation`, `paths`, `logging`, `categories`, `affected_elements`,
-`location_zones`, `risks`, `urgency_levels`, `risk_expressions`,
-`urgency_expressions`, `urgency_weights`, `category_elements`, `category_zones`,
-`category_risks`, `communities`, `personas`, `weights`, `modifiers`,
-`modifier_prob`, `image_generation`. Las secciones `annotation` y `extraction`
-no la usan (son del extractor).
+Secciones del config que consume. Obligatorias para ejecutar:
+`endpoints`, `models`, la taxonomía del dominio (`categories`,
+`affected_elements`, `location_zones`, `risks`, `urgency_levels`,
+`communities`, `personas`, `modifiers`, `modifier_prob`, `weights`,
+`urgency_weights`, `category_risks`, `category_elements`, `category_zones`,
+`risk_expressions`, `urgency_expressions`) y un plan en `generation`.
+Opcionales con defaults: `paths`, `image_generation`, `logging` y el resto de
+claves de `generation`. Detalle y valores por defecto comentados en
+`config.yaml`.
 
-### Parámetros por modelo y endpoint
+### `generation:`
 
-- `models.<nombre>.extra_params` — claves provider-specific que se pasan
-  verbatim al payload (p. ej. `enable_thinking: false`,
-  `chat_template_kwargs: {...}`). Sin él, el payload es limpio
-  (`model`/`messages`/`temperature`).
-- `endpoints.<nombre>.connection_backoff: true` — backoff generoso ante
-  caídas del servidor (`ConnectionError`/`Timeout`): espera
-  `max(retry_delay, 20s) × intento`. Default `false` (lineal).
+| Clave | Función | Default |
+|---|---|---|
+| `default_output_dir` | Base de salida | `data` |
+| `batches` | Plan `[{model, count}, ...]` | `[]` |
+| `models` + `num_records` | Plan alternativo: lista de modelos | `null` |
+| `start_id` | Primer ID (secuencial en el plan) | `1` |
+| `seed` | Semilla de muestreo. Determinista solo con `workers: 1` | `null` |
+| `resume` | Saltar registros ya generados | `true` |
+| `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
+| `model_load_wait` | Paciencia (s) con modelos en frío; `null` = off | `null` |
+| `workers` | Generación en paralelo | `1` |
+| `validate` | Validación en 2ª pasada (juez LLM) | `false` |
+| `max_validation_retries` | Regeneraciones si el juez rechaza | `3` |
+| `validator` | Modelo juez; `null` = el propio generador | `null` |
+
+### `models:` y `endpoints:`
+
+```yaml
+models:
+  qwen3.5:
+    endpoint: llama_swap
+    model: qwen3.5-122b-a10b
+    temperature: 0.85
+    extra_params:              # claves verbatim al payload (opcional)
+      enable_thinking: false
+
+endpoints:
+  llama_swap:
+    base_url: http://llama-swap.local:9292
+    connection_backoff: true   # backoff generoso ante caídas (opcional)
+  neuralwatt:
+    base_url: https://api.neuralwatt.com/v1
+    api_key: ${NEURALWATT_API_KEY}   # secreto: resolver desde .env
+```
+
+### `image_generation:` (opcional, requiere GPU)
+
+`enabled: false` por defecto. Requiere `pip install -r requirements-images.txt`
+y un host con GPUs. Si se activa sin GPU o dependencias, el pipeline continúa
+sin imágenes. CLI standalone: `flux2_imagegen.py --metadata data/raw/metadata.jsonl`.
+
+## Validación con juez (opcional)
+
+Con `validate: true`, tras generar cada texto un modelo juez comprueba que
+alinea con el escenario (categoría, subcategoría, urgencia, elementos,
+riesgos, ubicación). Si no alinea, regenera hasta `max_validation_retries`
+veces y conserva el último texto. El juez fallido o degradado se refleja en el
+resumen del run (`validation: ok/rejected/degraded`).
+
+## Tests
+
+```bash
+python -m pytest tests/
+```
+
+Sin red. Ejecuta pytest dentro de este directorio (no desde la raíz del repo).

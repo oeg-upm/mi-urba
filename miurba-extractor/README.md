@@ -1,81 +1,100 @@
 # miurba-extractor
 
-Extractor / **summarizador** de quejas vecinales con un **VLM** (modelo
-multimodal vision). Transforma una queja no estructurada en una extracción
-estructurada conforme a un JSON schema, **describiendo él mismo las fotos**.
+Extrae información estructurada de quejas vecinales (texto + fotos adjuntas)
+con un VLM. Lee el `complaints.jsonl` producido por `miurba-generator`, usa un
+modelo de visión para describir las fotos y produce
+`extractions.jsonl` conforme a `schemas/extraction_schema.json`.
 
-## Qué hace
+## Uso
 
-Recibe el texto del vecino y las **fotos reales** (PNG) adjuntadas, y usa un
-VLM (vision-language model) que **ve las imágenes** para, en una sola llamada:
-
-1. Describir cada foto → `image_descriptions`.
-2. Extraer la información estructurada → `extractions` (categoría, elementos
-   afectados, ubicación, riesgos, urgencia), considerando texto e imágenes.
-
-**Describir las imágenes es tarea del extractor.** El generador ya no produce
-descripciones.
-
-## Entrada
-
-Consume la **salida del proyecto `miurba-generator`**:
-
-- `data/raw/complaints.jsonl` — la queja (`id, user_text, user_pics, timestamp`).
-- `data/images/*.png` — las fotos referenciadas por `user_pics`.
-
-Contrato de entrada: `schemas/complaint_schema.json` (raíz del repo).
-Si una foto no existe, se marca como no disponible y se extrae del texto.
-
-## Salida
-
-- `data/annotated/extractions.jsonl` — `{complaint_id, image_descriptions,
-  extractions}`.
-- Contrato de salida: `schemas/extraction_schema.json` (raíz del repo).
-
-## Uso (config-only)
-
-Todos los parámetros se leen del config compartido (`../config.yaml`, o el
-que se indique con `--config`). No hay flags de parámetros.
+Todos los parámetros se leen del config compartido. Único argumento:
+`--config` (por defecto, `../config.yaml`).
 
 ```bash
 python cli.py extract --config ../config.yaml
 ```
 
+Entrada: `<raw_dir>/<complaints_file>` (producido por el generador) y los PNG
+en `<images_dir>`. Salida: `<annotated_dir>/<extractions_file>`.
+
+## Salida
+
+`extractions.jsonl` — un registro por queja:
+
+```json
+{
+  "complaint_id": "Q0001",
+  "image_descriptions": ["caption de cada foto, en orden"],
+  "extractions": [
+    {
+      "category": {"principal": "...", "subcategory": "..."},
+      "affected_elements": [{"principal": "...", "subcategory": "..."}],
+      "location": {"zone": "...", "detail": "..."},
+      "risks": ["..."],
+      "urgency": "..."
+    }
+  ]
+}
+```
+
+Todo registro se valida contra `schemas/extraction_schema.json` (con los
+enums sincronizados desde `config.yaml`) independientemente del modo de
+muestreo del modelo. Un registro inválido cuenta como fallo y no se escribe.
+
+## Dos modos de extracción
+
+- **Single-call** (`stage_split: false`): el VLM ve texto y fotos en una
+  llamada y produce descripciones + extracción.
+- **Stage-split** (`stage_split: true`): dos llamadas — un modelo de visión
+  (`extraction.vision_model`) describe las fotos (schema
+  `image_description_schema.json`) y un modelo de texto extrae la estructura.
+  Requiere fotos y `vision_model`; sin ellos cae automáticamente a single-call.
+
 ## Configuración
 
-Secciones del config que gobiernan la extracción (ver defaults comentados
-en el propio `config.yaml`):
+Secciones consumidas: `extraction`, `models`, `endpoints`, `paths`,
+`logging` y la taxonomía (`categories`, `affected_elements`,
+`location_zones`, `risks`, `urgency_levels`). Defaults comentados en
+`config.yaml`.
 
-| Clave (`extraction:`) | Función |
-|---|---|
-| `model` | Modelo VLM (clave de `models:`) |
-| `temperature` | Temperatura de extracción |
-| `default_output_dir` | Base de rutas (`null` → `generation.default_output_dir`) |
-| `raw_dir` / `annotated_dir` / `images_dir` | Directorios explícitos (opcionales) |
-| `resume` | Saltar quejas ya extraídas |
-| `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
-| `stage_split` | Dos llamadas: visión describe fotos → texto extrae (fallback a llamada única sin fotos/vision_model) |
-| `vision_model` | Modelo VLM de la etapa 1 (clave de `models:`) cuando `stage_split: true` |
-| `model_load_wait` | Paciencia (s) con modelos en frío: 5xx en la ventana no consumen reintentos. `null` = off |
-| `workers` | Extracción en paralelo (ThreadPool); 1 = secuencial. Appends thread-safe |
+### `extraction:`
 
-Además, por **modelo** en `models:<nombre>.structured_output` — modo de salida
-estructurada soportado por su servidor:
+| Clave | Función | Default |
+|---|---|---|
+| `model` | **Obligatorio.** Modelo VLM (clave de `models:`) | — |
+| `temperature` | Temperatura de extracción | `0.2` |
+| `default_output_dir` | Base de rutas; `null` → `generation.default_output_dir` | `null` |
+| `raw_dir` / `annotated_dir` / `images_dir` | Directorios explícitos | `null` → `<base>/<subdir de paths:>` |
+| `resume` | Saltar quejas ya extraídas | `true` |
+| `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
+| `model_load_wait` | Paciencia (s) con modelos en frío; `null` = off | `null` |
+| `workers` | Extracción en paralelo | `1` |
+| `stage_split` | Pipeline de dos llamadas | `false` |
+| `vision_model` | Modelo de visión para stage-split | `null` |
+
+### `models:` — salida estructurada
+
+`models.<nombre>.structured_output` declara lo que el **servidor** soporta:
 
 | Modo | Comportamiento |
 |---|---|
-| `null` (default) | Generación libre |
+| `null` | Generación libre |
 | `json_object` | `response_format: json_object` — JSON válido garantizado, sin schema |
-| `json_schema` | `response_format: json_schema` — el servidor fuerza el schema completo (vLLM+XGrammar, llama.cpp). Requiere que el endpoint lo soporte |
+| `json_schema` | `response_format: json_schema` — el servidor fuerza el schema completo (vLLM+XGrammar, llama.cpp) |
 
-Modelo VLM: `extraction.model` (obligatorio, clave de `models:`). **El modelo
-debe ser multimodal** (capaz de ver imágenes). Secciones usadas: `endpoints`,
-`models`, `paths`, `categories`, `location_zones`, `risks`,
-`urgency_levels`.
+Con `json_schema`, `cli.py` carga el schema y lo envía en cada petición.
+Recuerda: la validación final en local se aplica en todos los modos.
 
-### Parámetros por modelo y endpoint
+## Requisitos del endpoint
 
-- `models.<nombre>.extra_params` — claves provider-specific pasadas verbatim
-  al payload (p. ej. `enable_thinking: false`).
-- `endpoints.<nombre>.connection_backoff: true` — backoff generoso ante caídas
-  del servidor: `max(retry_delay, 20s) × intento`. Default `false`.
+Cualquier endpoint OpenAI-compatible. Para modelos multimodales, el servidor
+debe aceptar mensajes con `image_url` (data URL base64). `json_schema`
+requiere soporte de structured outputs en el servidor.
+
+## Tests
+
+```bash
+python -m pytest tests/
+```
+
+Sin red. Ejecuta pytest dentro de este directorio (no desde la raíz del repo).

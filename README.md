@@ -1,95 +1,110 @@
 # miUrba
 
-Repositorio con **dos tareas independientes** sobre quejas/incidencias
-reportadas por vecinos de comunidades:
+Generación sintética y extracción estructurada de quejas vecinales.
+Dos herramientas independientes sobre una configuración compartida:
 
-1. **`miurba-generator/`** — generador de **datasets sintéticos** de quejas
-   vecinales. Genera el texto del vecino y, opcionalmente, las **imágenes**
-   (fotos) adjuntas (FLUX.2-dev, multi-GPU, activable por config).
-2. **`miurba-extractor/`** — **extractor / summarizador** con un **VLM** que ve
-   el texto y las fotos, describe las imágenes y produce la extracción
-   estructurada conforme a un JSON schema.
+- **`miurba-generator/`** — genera datasets sintéticos de quejas: texto del
+  vecino (LLM), ground truth estructurado y, opcionalmente, imágenes (FLUX.2).
+- **`miurba-extractor/`** — extrae estructura de quejas reales o sintéticas
+  (texto + fotos) con un VLM, conforme a un JSON Schema.
 
-Cada proyecto es **totalmente independiente**: su propio código (`src/`), CLI,
-`requirements.txt` y `data/`. No comparten paquetes ni módulos.
-
-## Lo único compartido
-
-- **Configuración:** un único `config.yaml` en la raíz (+ variantes
-  `config.local.yaml` y `config.neuralwatt.yaml`). Secciones destacadas:
-  `image_generation` (generador, opcional) y `extraction.model`
-  (extractor, modelo vision — obligatorio).
-- **Testing:** cada subproyecto tiene su propio paquete `src/` (independientes
-  por diseño, sin paquete común). Ejecuta `pytest` **dentro** de
-  `miurba-generator/` y `miurba-extractor/` por separado — desde la raíz el
-  shadowing de `src` rompe la colección.
-- **Schemas:** `schemas/` en la raíz define los contratos de datos:
-  - `complaint_schema.json` — salida del generador / entrada del extractor.
-  - `extraction_schema.json` — salida del extractor (incluye
-    `image_descriptions`, que produce el extractor, no el generador).
-
-## Flujo entre los dos proyectos
+## Flujo de datos
 
 ```
-miurba-generator                                  miurba-extractor
-  scenario ──► LLM ──► user_text + timestamp        user_text + PNGs ──► VLM
-  scenario ──► FLUX ──► PNGs (opcional)                                   │
-      │                                                                   ▼
-      ▼                                                  image_descriptions + extractions.jsonl
-  complaints.jsonl + ground_truth.jsonl + metadata.jsonl
-   (user_pics = nombres .png)                          (conforme a extraction_schema.json)
+miurba-generator                          miurba-extractor
+  escenario ─► LLM ─► user_text             user_text + PNGs ─► VLM
+  escenario ─► FLUX ─► PNGs (opcional)                            │
+       ▼                                                          ▼
+  complaints.jsonl + ground_truth.jsonl + metadata.jsonl    extractions.jsonl
+       └────────────── entrada del extractor ──────────────┘
 ```
 
-- El generador produce `complaints.jsonl`, `ground_truth.jsonl` y
-  `metadata.jsonl` (+ los PNG si la generación de imágenes está activada).
-  **No** produce `image_descriptions`.
-- El extractor consume `complaints.jsonl` + los PNG; **él** describe las
-  imágenes (VLM) y extrae la estructura.
-
-El nexo es **el formato de datos** (`complaint_schema.json` y los ficheros
-`.png` referenciados por `user_pics`), no código.
+El nexo entre ambas es el formato de datos (`schemas/` y los PNG
+referenciados por `user_pics`), no código.
 
 ## Estructura
 
 ```
 mi-urba/
-├── config.yaml                  # COMPARTIDA
-├── config.local.yaml
-├── config.neuralwatt.yaml
-├── schemas/
+├── config.yaml                  # configuración compartida (obligatoria)
+├── schemas/                     # contratos de datos
 │   ├── complaint_schema.json
 │   ├── extraction_schema.json
 │   └── image_description_schema.json
-├── scripts/
-│   └── docker_smoke.sh
-├── docker-compose.yml
-├── miurba-generator/            # TAREA 1 (independiente)
-│   ├── cli.py  src/  data/  requirements.txt  requirements-images.txt  README.md
-│   ├── flux2_imagegen.py        # CLI standalone de imágenes (FLUX.2)
-│   └── test_models.py           # auxiliar: benchmark de modelos
-└── miurba-extractor/            # TAREA 2 (independiente, VLM)
-    ├── cli.py  src/  data/  requirements.txt  README.md
+├── docker-compose.yml           # ejecución dockerizada
+├── scripts/docker_smoke.sh      # smoke test end-to-end
+├── miurba-generator/            # CLI: generate, merge
+└── miurba-extractor/            # CLI: extract
 ```
+
+## Requisitos
+
+- Python 3.10+ (probado con 3.12)
+- Un endpoint LLM OpenAI-compatible (vLLM, llama.cpp/llama-swap, Ollama…)
+- Opcional: GPU + FLUX.2 para generación de imágenes
 
 ## Inicio rápido
 
 ```bash
-# Generador (sin imágenes)
+# 1. Configura el endpoint y los modelos en config.yaml (ver abajo).
+#    Los secretos van en .env (copia .env.example) y se referencian como ${VAR}.
+
+# 2. Generar quejas sintéticas
 cd miurba-generator
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python cli.py generate --config ../config.yaml
 
-# Generador con imágenes (requiere GPU + FLUX.2)
-pip install -r requirements-images.txt
-# en config.yaml: image_generation.enabled: true
-python cli.py generate --config ../config.yaml
-
-# Extractor (VLM)
+# 3. Extraer estructura de las quejas generadas
 cd ../miurba-extractor
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp ../miurba-generator/data/raw/{complaints,ground_truth}.jsonl data/raw/
-cp -r ../miurba-generator/data/images data/        # si se generaron imágenes
-python cli.py extract
+python cli.py extract --config ../config.yaml
 ```
+
+Salidas por defecto: `<default_output_dir>/<modelo>/{raw,images}` en el
+generador y `<default_output_dir>/annotated/extractions.jsonl` en el extractor.
+
+## Docker
+
+```bash
+docker compose build
+docker compose run --rm miurba-generator generate --config /config/config.test.yaml
+docker compose run --rm miurba-extractor extract  --config /config/config.test.yaml
+```
+
+Monta `config.yaml`, `schemas/`, los directorios de datos y `logs/`
+(activa `logging.file: /logs/run.log` para persistir el log del run).
+`scripts/docker_smoke.sh` ejecuta la verificación completa.
+
+## Configuración
+
+Un único `config.yaml` compartido en la raíz. Detalle completo de claves,
+defaults y comentarios en el propio fichero y en los README de cada
+subproyecto. Resumen:
+
+| Sección | Obligatoria | Uso |
+|---|---|---|
+| `endpoints` | sí | URLs base y `api_key` (referenciada como `${VAR}` desde `.env`) |
+| `models` | sí | Modelos por nombre: `endpoint`, `model`, `temperature`, `structured_output` (extractor), `extra_params` |
+| Taxonomía (`categories`, `risks`, `location_zones`, `personas`, `communities`, `weights`, …) | sí (generador) | Dominio del muestreo y del prompt |
+| `risk_expressions`, `urgency_expressions` | sí (generador) | Expresiones obligatorias en el texto generado; cobertura validada al arrancar |
+| `generation` | no | Plan de batches, seed, workers, retries, validación con juez |
+| `extraction` | no (salvo `model`, obligatorio) | Modelo VLM, rutas, workers, retries |
+| `paths`, `logging` | no | Nombres de ficheros y log de run |
+| `image_generation` | no | FLUX.2 (`enabled: false` por defecto; requiere GPU) |
+
+Variantes típicas: `config.local.yaml` / `config.test.yaml` (gitignored,
+con IPs de LAN); se seleccionan con `--config`.
+
+## Testing
+
+Ejecuta `pytest` **dentro** de cada subproyecto (los paquetes `src` son
+independientes y colisionan si se lanzan desde la raíz):
+
+```bash
+cd miurba-generator && python -m pytest tests/
+cd miurba-extractor && python -m pytest tests/
+```
+
+No requieren red.
