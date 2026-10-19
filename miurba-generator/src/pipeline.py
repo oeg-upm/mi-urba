@@ -206,7 +206,7 @@ def generate_complaint(
                     break
                 user_text = regen_text
                 timestamp = data.get("timestamp", timestamp)
-            except RuntimeError as e:
+            except (RuntimeError, json.JSONDecodeError) as e:
                 logger.error(f"[{record_id}] regeneration LLM call failed: {e}, keeping previous text")
                 break
 
