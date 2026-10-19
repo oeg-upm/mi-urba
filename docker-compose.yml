@@ -17,7 +17,6 @@ services:
       - ./config.test.yaml:/config/config.test.yaml:ro
       - ./data_test:/data
       - ./logs:/logs
-    working_dir: /data
 
   miurba-extractor:
     build: ./miurba-extractor
@@ -27,4 +26,3 @@ services:
       - ./schemas:/schemas:ro
       - ./data_test:/data
       - ./logs:/logs
-    working_dir: /data

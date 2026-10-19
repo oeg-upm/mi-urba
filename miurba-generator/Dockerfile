@@ -20,4 +20,4 @@ USER appuser
 #   -v ./config.yaml:/config.yaml:ro
 #   -v ./data:/data
 #   -v ./logs:/logs   (config.yaml → logging.file: /logs/run.log)
-CMD ["python", "cli.py", "--help"]
+ENTRYPOINT ["python", "cli.py"]

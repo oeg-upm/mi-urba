@@ -149,11 +149,15 @@ class LLMClient:
         return response["choices"][0]["message"]["content"].strip()
 
     def extract_json(self, response: dict) -> dict:
-        """Extract and parse JSON from the assistant's response content."""
+        """Extract and parse JSON from the assistant's response content.
+
+        strict=False tolerates raw control characters (e.g. newlines)
+        inside JSON strings, which small models emit sometimes.
+        """
         content = self.extract_content(response)
         # Strip markdown code fences if present
         if content.startswith("```"):
             lines = content.split("\n")
             lines = [l for l in lines if not l.strip().startswith("```")]
             content = "\n".join(lines)
-        return json.loads(content)
+        return json.loads(content, strict=False)
