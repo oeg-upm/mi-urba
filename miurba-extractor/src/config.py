@@ -168,6 +168,12 @@ _DEFAULT_EXTRACTION = {
     "timeout": 300,
     "max_retries": 3,
     "retry_delay": 5.0,
+    # P2 stage-split: two-call pipeline (vision describes, text extracts).
+    # Requires photos in the complaint; falls back to single-call otherwise.
+    "stage_split": False,
+    # Vision model (key in models:) for stage 1 when stage_split is true.
+    # null → stage-split falls back to single-call with a warning.
+    "vision_model": None,
 }
 
 
@@ -177,3 +183,43 @@ def get_extraction_config(cfg: dict | None = None) -> dict[str, Any]:
     ext = dict(_DEFAULT_EXTRACTION)
     ext.update(cfg.get("extraction", {}))
     return ext
+
+
+# ── JSON schemas for constrained decoding ───────────────────────
+
+def _load_schema(name: str) -> dict[str, Any]:
+    import json as _json
+    schema_path = DEFAULT_CONFIG_PATH.parent / "schemas" / name
+    with open(schema_path, encoding="utf-8") as f:
+        return _json.load(f)
+
+
+def get_extraction_json_schema(cfg: dict | None = None) -> dict[str, Any]:
+    """Load schemas/extraction_schema.json with enums synced from config.
+
+    Injects the taxonomy values from config.yaml (risks, urgency_levels,
+    location_zones) into the schema so the two can never diverge. Adds
+    maxItems to free-form arrays to prevent generation loops in small
+    models.
+    """
+    schema = _load_schema("extraction_schema.json")
+    cfg = cfg or get_config()
+
+    risks = get_risks(cfg)
+    urgency = get_urgency_levels(cfg)
+    zones_cfg = get_location_zones(cfg)
+    zones = list(zones_cfg.keys()) if isinstance(zones_cfg, dict) else zones_cfg
+
+    schema["$defs"]["risk"]["enum"] = risks
+    schema["$defs"]["urgency"]["enum"] = urgency
+    schema["$defs"]["location"]["properties"]["zone"]["enum"] = zones
+
+    problem = schema["$defs"]["problemExtraction"]["properties"]
+    problem["affected_elements"]["maxItems"] = 5
+    problem["risks"]["maxItems"] = 5
+    return schema
+
+
+def get_image_description_json_schema(cfg: dict | None = None) -> dict[str, Any]:
+    """Load schemas/image_description_schema.json (stage-1 vision output)."""
+    return _load_schema("image_description_schema.json")

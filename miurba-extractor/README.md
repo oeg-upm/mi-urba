@@ -54,6 +54,17 @@ en el propio `config.yaml`):
 | `raw_dir` / `annotated_dir` / `images_dir` | Directorios explícitos (opcionales) |
 | `resume` | Saltar quejas ya extraídas |
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
+| `stage_split` | Dos llamadas: visión describe fotos → texto extrae (fallback a llamada única sin fotos/vision_model) |
+| `vision_model` | Modelo VLM de la etapa 1 (clave de `models:`) cuando `stage_split: true` |
+
+Además, por **modelo** en `models:<nombre>.structured_output` — modo de salida
+estructurada soportado por su servidor:
+
+| Modo | Comportamiento |
+|---|---|
+| `null` (default) | Generación libre |
+| `json_object` | `response_format: json_object` — JSON válido garantizado, sin schema |
+| `json_schema` | `response_format: json_schema` — el servidor fuerza el schema completo (vLLM+XGrammar, llama.cpp). Requiere que el endpoint lo soporte |
 
 Resolución del modelo VLM: `extraction.model` > `annotation.vision_model` >
 `annotation.model`. **El modelo

@@ -21,7 +21,7 @@ from pathlib import Path
 
 from .config import get_vision_model_params
 from .llm import LLMClient
-from .prompts import build_extraction_prompt
+from .prompts import build_extraction_prompt, build_image_description_prompt, build_extraction_text_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +36,28 @@ def extract_complaint(
     client: LLMClient,
     complaint: dict,
     images_dir: str | Path,
+    stage_split: bool = False,
+    vision_client: LLMClient | None = None,
 ) -> dict | None:
     """
     Extract structured data + image descriptions from a single complaint.
 
-    Receives the user_text and the actual photo files; the VLM sees both and
-    produces {image_descriptions, extractions} conforming to
+    Default (single-call): the VLM sees user_text + photos and produces
+    {image_descriptions, extractions} conforming to
     schemas/extraction_schema.json.
+
+    If stage_split=True (P2) and there are photos and a vision_client:
+      1. vision_client describes photos (multimodal, image_description schema)
+      2. client extracts structure from text + descriptions (text-only)
+    Falls back to the single-call path when there are no photos or no
+    vision client.
     """
     image_paths = _resolve_image_paths(complaint, images_dir)
+
+    # P2 stage split: only when there are photos and a vision client
+    if stage_split and image_paths and vision_client is not None:
+        return _extract_complaint_stage_split(client, vision_client, complaint, image_paths)
+
     messages = build_extraction_prompt(complaint, image_paths)
 
     try:
@@ -86,6 +99,50 @@ def extract_complaint(
     return extraction
 
 
+def _extract_complaint_stage_split(
+    text_client: LLMClient,
+    vision_client: LLMClient,
+    complaint: dict,
+    image_paths: list[str],
+) -> dict | None:
+    """P2 two-call pipeline: vision describes, then text extracts."""
+    # Stage 1: describe photos (vision)
+    desc_messages = build_image_description_prompt(complaint, image_paths)
+    try:
+        desc_response = vision_client.chat(desc_messages)
+        desc_data = vision_client.extract_json(desc_response)
+    except (RuntimeError, json.JSONDecodeError) as e:
+        logger.warning(f"[{complaint['id']}] Stage 1 (vision) failed: {e}")
+        desc_data = None
+
+    # Stage 2: extract structure (text-only), using descriptions if available
+    descriptions = []
+    if desc_data and isinstance(desc_data.get("descriptions"), list):
+        descriptions = desc_data["descriptions"]
+        logger.info(f"[{complaint['id']}] Stage 1 produced {len(descriptions)} descriptions")
+
+    ext_messages = build_extraction_text_prompt(complaint, descriptions)
+    try:
+        ext_response = text_client.chat(ext_messages)
+        content = text_client.extract_content(ext_response)
+        if not content:
+            logger.warning(f"[{complaint['id']}] Stage 2 empty content")
+            return None
+        extraction = text_client.extract_json(ext_response)
+    except (RuntimeError, json.JSONDecodeError) as e:
+        logger.error(f"[{complaint['id']}] Stage 2 (text) failed: {e}")
+        return None
+
+    # Normalize: image_descriptions as list of strings (captions)
+    if not isinstance(extraction.get("image_descriptions"), list):
+        extraction["image_descriptions"] = \
+            [d.get("caption", "") for d in descriptions] if descriptions else []
+    extraction["complaint_id"] = complaint["id"]
+    if not isinstance(extraction.get("extractions"), list):
+        extraction["extractions"] = []
+    return extraction
+
+
 def extract_dataset(
     client: LLMClient,
     raw_dir: str = "data/raw",
@@ -94,6 +151,8 @@ def extract_dataset(
     raw_complaints_file: str = "complaints.jsonl",
     extractions_file: str = "extractions.jsonl",
     resume: bool = True,
+    stage_split: bool = False,
+    vision_client: LLMClient | None = None,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -154,7 +213,9 @@ def extract_dataset(
 
         logger.info(f"[{cid}] Extracting ({extracted + 1}/{len(complaints) - skipped})...")
 
-        extraction = extract_complaint(client, complaint, images_dir)
+        extraction = extract_complaint(client, complaint, images_dir,
+                                       stage_split=stage_split,
+                                       vision_client=vision_client)
 
         if extraction is None:
             failed += 1

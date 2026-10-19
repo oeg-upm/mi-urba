@@ -15,6 +15,12 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+# Structured-output modes a client may declare (models.<name>.structured_output):
+#   None          — free generation, no response_format sent
+#   "json_object" — response_format json_object: valid JSON, no schema
+#   "json_schema" — response_format json_schema: server enforces the schema
+VALID_STRUCTURED_MODES = (None, "json_object", "json_schema")
+
 
 class LLMClient:
     """Client for OpenAI-compatible LLM APIs."""
@@ -28,7 +34,16 @@ class LLMClient:
         max_retries: int = 3,
         retry_delay: float = 5.0,
         api_key: str | None = None,
+        structured_output: str | None = None,
+        json_schema: dict | None = None,
     ):
+        if structured_output not in VALID_STRUCTURED_MODES:
+            raise ValueError(
+                f"structured_output must be one of {VALID_STRUCTURED_MODES}, "
+                f"got {structured_output!r}"
+            )
+        if structured_output == "json_schema" and json_schema is None:
+            raise ValueError("structured_output='json_schema' requires json_schema")
         # Normalize: strip trailing slash and /v1 suffix
         base = base_url.rstrip("/")
         if base.endswith("/v1"):
@@ -40,6 +55,8 @@ class LLMClient:
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         self.api_key = api_key
+        self.structured_output = structured_output
+        self.json_schema = json_schema
         self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0, "errors": 0}
 
     @property
@@ -67,6 +84,15 @@ class LLMClient:
             "messages": messages,
             "temperature": temperature or self.temperature,
         }
+
+        # Structured output (mode declared per model in config)
+        if self.structured_output == "json_object":
+            payload["response_format"] = {"type": "json_object"}
+        elif self.structured_output == "json_schema":
+            payload["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {"name": "extraction", "schema": self.json_schema},
+            }
 
         headers = {"Content-Type": "application/json"}
         if self.api_key:

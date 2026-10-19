@@ -71,6 +71,11 @@ extraction:
   timeout: 300
   max_retries: 3
   retry_delay: 5.0
+  # P2 stage-split: dos llamadas (visión describe fotos → texto extrae).
+  # Requiere fotos; sin fotos o sin vision_model cae a llamada única.
+  stage_split: false
+  # Modelo de visión para la etapa 1 (clave de models:) cuando stage_split: true
+  vision_model: null
 annotation:
   model: kimi-k2.6
   temperature: 0.2

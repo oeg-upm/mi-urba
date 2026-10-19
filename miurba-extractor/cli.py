@@ -53,9 +53,14 @@ from pathlib import Path
 # Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_extraction_config, get_paths, get_vision_model_params
+from src.config import (get_config, get_extraction_config, get_paths,
+                        get_vision_model_params, get_model_params,
+                        get_extraction_json_schema,
+                        get_image_description_json_schema)
 from src.llm import LLMClient
 from src.pipeline import extract_dataset
+
+logger = logging.getLogger(__name__)
 
 
 def resolve_dirs(ext_cfg: dict, paths: dict, fallback_base: str) -> tuple[str, str, str]:
@@ -83,7 +88,12 @@ def cmd_extract(args):
     model_cfg = get_vision_model_params(ext_cfg["model"], config)
     model_name = model_cfg["model"]
 
-    fallback_base = config.get("generation", {}).get("default_output_dir", "data")
+    # Constrained decoding: per-model structured_output mode. json_schema
+    # loads the extraction schema (enums synced from config) and the server
+    # enforces it token-by-token. json_object only guarantees valid JSON.
+    structured_mode = config.get("models", {}).get(ext_cfg["model"], {}).get("structured_output")
+    json_schema = get_extraction_json_schema(config) if structured_mode == "json_schema" else None
+
     raw_dir, annotated_dir, images_dir = resolve_dirs(ext_cfg, paths, fallback_base)
 
     client = LLMClient(
@@ -94,7 +104,33 @@ def cmd_extract(args):
         max_retries=ext_cfg["max_retries"],
         retry_delay=ext_cfg["retry_delay"],
         api_key=model_cfg.get("api_key"),
+        structured_output=structured_mode,
+        json_schema=json_schema,
     )
+
+    # Stage-split: optional vision client for stage 1 (photo descriptions)
+    stage_split = bool(ext_cfg.get("stage_split"))
+    vision_client = None
+    if stage_split:
+        vision_name = ext_cfg.get("vision_model")
+        if vision_name:
+            v_cfg = get_model_params(vision_name, config)
+            v_mode = config.get("models", {}).get(vision_name, {}).get("structured_output")
+            vision_client = LLMClient(
+                base_url=v_cfg["base_url"],
+                model=v_cfg["model"],
+                temperature=v_cfg.get("temperature", 0.2),
+                timeout=ext_cfg["timeout"],
+                max_retries=ext_cfg["max_retries"],
+                retry_delay=ext_cfg["retry_delay"],
+                api_key=v_cfg.get("api_key"),
+                structured_output=v_mode,
+                json_schema=get_image_description_json_schema(config) if v_mode == "json_schema" else None,
+            )
+        else:
+            logger.warning("extraction.stage_split=true but extraction.vision_model is null — "
+                           "falling back to single-call")
+            stage_split = False
 
     print(f"miUrba — Extraction (raw + images → structured, VLM)")
     print(f"{'=' * 55}")
@@ -105,6 +141,9 @@ def cmd_extract(args):
     print(f"  Images:     {images_dir}")
     print(f"  Output:     {annotated_dir}/{paths['extractions_file']}")
     print(f"  Resume:     {ext_cfg['resume']}")
+    print(f"  Constrained: {structured_mode or 'off'}")
+    print(f"  Stage-split: {stage_split}" +
+          (f" (vision: {ext_cfg['vision_model']})" if stage_split else ""))
     print(f"{'=' * 55}")
 
     stats = extract_dataset(
@@ -115,6 +154,8 @@ def cmd_extract(args):
         raw_complaints_file=paths["complaints_file"],
         extractions_file=paths["extractions_file"],
         resume=ext_cfg["resume"],
+        stage_split=stage_split,
+        vision_client=vision_client,
     )
 
     print(f"\n{'=' * 55}")
