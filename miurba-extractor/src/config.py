@@ -151,11 +151,6 @@ def get_urgency_levels(cfg: dict | None = None) -> list[str]:
     return cfg["urgency_levels"]
 
 
-def get_channels(cfg: dict | None = None) -> dict[str, dict]:
-    cfg = cfg or get_config()
-    return cfg["channels"]
-
-
 def get_communities(cfg: dict | None = None) -> list[dict]:
     cfg = cfg or get_config()
     return cfg["communities"]
