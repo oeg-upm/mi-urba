@@ -17,8 +17,8 @@ Cada proyecto es **totalmente independiente**: su propio código (`src/`), CLI,
 
 - **Configuración:** un único `config.yaml` en la raíz (+ variantes
   `config.local.yaml` y `config.neuralwatt.yaml`). Secciones destacadas:
-  `image_generation` (generador, opcional) y `annotation.vision_model`
-  (extractor, modelo vision).
+  `image_generation` (generador, opcional) y `extraction.model`
+  (extractor, modelo vision — obligatorio).
 - **Schemas:** `schemas/` en la raíz define los contratos de datos:
   - `complaint_schema.json` — salida del generador / entrada del extractor.
   - `extraction_schema.json` — salida del extractor (incluye
