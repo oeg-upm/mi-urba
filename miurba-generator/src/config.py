@@ -16,6 +16,8 @@ Default path resolution (miurba-generator/src/config.py):
 
 from __future__ import annotations
 
+import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -27,16 +29,57 @@ _CONFIG: dict | None = None
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.yaml"
 
 
+_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
+
+
+def _load_dotenv() -> None:
+    """Populate os.environ from the repo-root .env (existing vars win)."""
+    env_path = DEFAULT_CONFIG_PATH.parent / ".env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+def _expand_vars(node: Any) -> Any:
+    """Recursively expand ${VAR} references from the environment.
+
+    Secrets (API keys) never live in config.yaml: reference them as
+    ${VAR_NAME} and define them in the environment or the repo-root .env.
+    Missing variables fail fast with a clear error.
+    """
+    if isinstance(node, dict):
+        return {k: _expand_vars(v) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_expand_vars(v) for v in node]
+    if isinstance(node, str):
+        def repl(m: "re.Match[str]") -> str:
+            name = m.group(1)
+            if name not in os.environ:
+                raise ValueError(
+                    f"config references ${{{name}}} but it is not defined "
+                    f"in the environment or the repo-root .env"
+                )
+            return os.environ[name]
+        return _VAR_RE.sub(repl, node)
+    return node
+
+
 def load_config(path: str | Path | None = None) -> dict[str, Any]:
-    """Load and cache the YAML configuration."""
+    """Load and cache the YAML configuration, expanding ${VAR} references."""
     global _CONFIG
     if path is None:
         path = DEFAULT_CONFIG_PATH
     path = Path(path)
+    _load_dotenv()
     with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
-    _CONFIG = cfg
-    return cfg
+    _CONFIG = _expand_vars(cfg)
+    return _CONFIG
 
 
 def get_config(path: str | Path | None = None) -> dict[str, Any]:
