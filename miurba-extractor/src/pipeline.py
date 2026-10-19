@@ -175,7 +175,9 @@ def extract_dataset(
 
     if not raw_path.exists():
         logger.error(f"Raw complaints not found: {raw_path}")
-        return {"extracted": 0, "failed": 0, "skipped": 0}
+        return {"extracted": 0, "failed": 0, "skipped": 0, "total": 0,
+                "total_tokens_in": 0, "total_tokens_out": 0,
+                "images_dir": str(images_dir), "output_path": str(output_path)}
 
     # Resolve images dir: explicit > sibling of raw_dir
     if images_dir is None:

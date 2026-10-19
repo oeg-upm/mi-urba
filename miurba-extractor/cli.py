@@ -94,6 +94,7 @@ def cmd_extract(args):
     structured_mode = config.get("models", {}).get(ext_cfg["model"], {}).get("structured_output")
     json_schema = get_extraction_json_schema(config) if structured_mode == "json_schema" else None
 
+    fallback_base = config.get("generation", {}).get("default_output_dir", "data")
     raw_dir, annotated_dir, images_dir = resolve_dirs(ext_cfg, paths, fallback_base)
 
     client = LLMClient(
