@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# docker_smoke.sh — full smoke test of the dockerized miUrba pipeline.
+#
+# Usage:  bash scripts/docker_smoke.sh
+# Requires: docker, docker compose, and a live endpoint (config.test.yaml).
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+PASS=0; FAIL=0
+ok()   { echo "  ✅ $1"; PASS=$((PASS+1)); }
+fail() { echo "  ❌ $1"; FAIL=$((FAIL+1)); }
+
+echo "── 0. Precondiciones"
+curl -s --max-time 5 http://192.168.10.11:9292/v1/models >/dev/null \
+  && ok "endpoint 192.168.10.11:9292 vivo" || { fail "endpoint caído — abortando"; exit 1; }
+[ -f .env ] && echo "  (usando .env para secretos)" || cp .env.example .env
+rm -rf "$ROOT/data_test" "$ROOT/logs"   # smoke limpio: sin resume de runs anteriores
+
+echo "── 1. Build de imágenes"
+docker compose build -q && ok "imágenes construidas" || fail "build"
+
+echo "── 2. Config visible dentro del contenedor"
+docker compose run --rm --no-deps miurba-generator \
+  python -c "import yaml; c=yaml.safe_load(open('/config.yaml')); assert 'generation' in c; assert 'logging' in c" \
+  && ok "config.yaml montado en /config.yaml" || fail "config mount"
+
+echo "── 3. Generación dockerizada (3 quejas, workers=3, juez externo)"
+GEN_OUT=$(docker compose run --rm miurba-generator \
+  generate --config /config/config.test.yaml 2>&1) || GEN_RC=$?
+echo "$GEN_OUT" | grep -q "gen=3" && ok "generate: 3/3" || { fail "generate"; echo "$GEN_OUT" | tail -5; }
+echo "$GEN_OUT" | grep -q "errors absorbed" && echo "  ⚠ errores absorbidos (revisar logs)" || ok "sin errores absorbidos"
+
+echo "── 4. Extracción dockerizada (stage-split + json_schema)"
+EXT_OUT=$(docker compose run --rm miurba-extractor \
+  extract --config /config/config.test.yaml 2>&1) || EXT_RC=$?
+echo "$EXT_OUT" | grep -q "Extracted:  3" && ok "extract: 3/3" || { fail "extract"; echo "$EXT_OUT" | tail -5; }
+
+echo "── 5. Secretos: \${VAR} expandida desde .env (fail-fast si falta)"
+docker compose run --rm --no-deps -e TEST_SECRET=sk-x miurba-generator \
+  python -c "
+import sys; sys.path.insert(0,'/app')
+from src.config import load_config, _expand_vars
+assert _expand_vars({'k': '\${TEST_SECRET}'})['k'] == 'sk-x'
+print('ok')" >/dev/null && ok "\${VAR} se expande en el contenedor" || fail "\${VAR} expansion"
+
+echo "── 6. Log de run escrito en el volumen montado"
+LOG_FILE="$ROOT/logs/run.log"
+if [ -f "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
+  ok "logs/run.log existe y no está vacío ($(wc -l < "$LOG_FILE") líneas)"
+  grep -qE 'API call failed|Generated|Extracting' "$LOG_FILE" \
+    && ok "el log contiene eventos del run" || fail "log sin contenido esperado"
+else
+  fail "logging.file no escribió en ./logs/"
+fi
+
+echo ""
+echo "══════════════════════════════════"
+echo "Resultado: $PASS pasados, $FAIL fallidos"
+[ "$FAIL" -eq 0 ]
