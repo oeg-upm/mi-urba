@@ -83,20 +83,26 @@ class Judge:
 def test_verdict_string_false_is_rejected():
     client = GenClient(["t"])
     judge = Judge([{"valid": "false", "issues": []}])
+    log = []
     result = pl.generate_complaint(client, "Q0001", validate=True,
                                    max_validation_retries=1,
-                                   validator_client=judge)
+                                   validator_client=judge,
+                                   validation_log=log)
     # string "false" is NOT True → rejected; no more retries allowed → kept
     assert judge.calls == 1 and result[0]["user_text"] == "t"
+    assert log == ["rejected"]  # NOT ["ok"] — distinguishes strict vs truthy
 
 
 def test_verdict_numeric_is_rejected():
     client = GenClient(["t"])
     judge = Judge([{"valid": 1, "issues": []}])
+    log = []
     result = pl.generate_complaint(client, "Q0001", validate=True,
                                    max_validation_retries=1,
-                                   validator_client=judge)
+                                   validator_client=judge,
+                                   validation_log=log)
     assert judge.calls == 1 and result[0]["user_text"] == "t"
+    assert log == ["rejected"]
 
 
 def test_verdict_boolean_true_passes():

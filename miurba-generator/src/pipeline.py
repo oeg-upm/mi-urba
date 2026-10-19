@@ -94,9 +94,11 @@ def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) 
     try:
         response = client.chat(messages)
         data = client.extract_json(response)
-        is_valid = data.get("valid", True)
+        # Strict: only a literal true counts. A judge returning "valid":
+        # "false"/"no"/"0" (strings) must NOT pass (bool("false") is True).
+        is_valid = data.get("valid", True) is True
         issues = data.get("issues", [])
-        return bool(is_valid), issues if isinstance(issues, list) else [], False
+        return is_valid, issues if isinstance(issues, list) else [], False
     except Exception as e:
         logger.warning(f"Validation call failed: {e}, assuming valid (DEGRADED)")
         return True, [], True
