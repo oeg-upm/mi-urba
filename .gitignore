@@ -46,3 +46,12 @@ Thumbs.db
 
 # Generated test output
 test_results.json
+
+# Test config with LAN endpoint
+config.test.yaml
+config.test_b.yaml
+config.test_c.yaml
+config.test_d.yaml
+data_test/
+data_test_b/
+data_test_b2/
