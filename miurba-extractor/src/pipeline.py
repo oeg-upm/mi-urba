@@ -94,9 +94,12 @@ def extract_complaint(
     if not isinstance(extraction["image_descriptions"], list):
         extraction["image_descriptions"] = []
 
-    # Ensure extractions is a list
-    if "extractions" not in extraction or not isinstance(extraction["extractions"], list):
-        extraction.setdefault("extractions", [])
+    # extractions MUST be a list: anything else means the model output is
+    # untrustworthy — fail the record (caller counts it as failed) instead
+    # of writing schema-violating garbage to extractions.jsonl.
+    if not isinstance(extraction.get("extractions"), list):
+        logger.warning(f"[{complaint['id']}] 'extractions' is not a list — failing record")
+        return None
 
     return extraction
 

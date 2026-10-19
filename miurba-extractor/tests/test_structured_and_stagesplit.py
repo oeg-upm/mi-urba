@@ -210,3 +210,22 @@ def test_no_vision_client_falls_back_to_single_call(tmp_path, fake_taxonomy):
     out = extract_complaint(text, complaint, tmp_path,
                             stage_split=True, vision_client=None)
     assert text.calls == 1  # single-call despite stage_split=True
+
+
+# ── M2: invalid extractions shape fails the record ────────────
+
+def test_non_list_extractions_fail_the_record(tmp_path, fake_taxonomy):
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
+    text = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001", "extractions": "no soy lista",
+        "image_descriptions": []})}}]}])
+    out = extract_complaint(text, complaint, tmp_path)
+    assert out is None  # record failed, no garbage written
+
+
+def test_missing_extractions_fail_the_record(tmp_path, fake_taxonomy):
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
+    text = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001", "image_descriptions": []})}}]}])
+    out = extract_complaint(text, complaint, tmp_path)
+    assert out is None
