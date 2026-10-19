@@ -53,7 +53,8 @@ from pathlib import Path
 # Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import (get_config, get_extraction_config, get_paths,
+from src.config import (get_logging_config,
+                        get_config, get_extraction_config, get_paths,
                         get_vision_model_params, get_model_params,
                         get_extraction_json_schema,
                         get_image_description_json_schema)
@@ -177,6 +178,9 @@ def cmd_extract(args):
     print(f"  Tokens out: {stats['total_tokens_out']:,}")
     print(f"  Images dir: {stats.get('images_dir')}")
     print(f"  Output:     {stats['output_path']}")
+    if client._stats.get("errors") or client._stats.get("load_waits"):
+        print(f"  ⚠ errors absorbed: {client._stats['errors']}  "
+              f"(load waits: {client._stats['load_waits']})")
 
 
 def main():
@@ -197,11 +201,20 @@ def main():
 
     args = parser.parse_args()
 
+    log_cfg = get_logging_config(get_config(args.config))
+    handlers: list = [logging.StreamHandler()]
+    if log_cfg.get("file"):
+        log_file = Path(log_cfg["file"])
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
     logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
+        level=getattr(logging, str(log_cfg.get("level", "INFO")).upper(), logging.INFO),
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%H:%M:%S",
+        handlers=handlers,
     )
+    if log_cfg.get("file"):
+        print(f"Logging to: {log_cfg['file']}")
 
     commands = {
         "extract": cmd_extract,

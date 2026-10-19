@@ -1,3 +1,12 @@
+# ============================================================
+# Logging de runs (ambos CLIs). `file` escribe además del stdout;
+# en Docker apunta a un volumen montado, p. ej. /logs/run.log con
+#   docker compose run -v ./logs:/logs miurba-generator ...
+# ============================================================
+logging:
+  level: INFO
+  file: null
+
 endpoints:
   ollama_cloud:
     base_url: http://localhost:11434

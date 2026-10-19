@@ -47,6 +47,16 @@ def get_config(path: str | Path | None = None) -> dict[str, Any]:
     return _CONFIG
 
 
+# ── Logging section ────────────────────────────────────────────
+
+def get_logging_config(cfg: dict | None = None) -> dict[str, Any]:
+    """Return the shared `logging:` section (level + optional run file)."""
+    cfg = cfg or get_config()
+    out = {"level": "INFO", "file": None}
+    out.update(cfg.get("logging", {}))
+    return out
+
+
 # ── Endpoint & model helpers ──────────────────────────────────
 
 def get_endpoint_url(name: str, cfg: dict | None = None) -> str:

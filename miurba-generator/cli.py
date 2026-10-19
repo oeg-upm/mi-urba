@@ -49,7 +49,8 @@ from pathlib import Path
 # Add this project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.config import get_config, get_generation_config, get_model_params, get_paths, get_image_generation_config
+from src.config import (get_config, get_generation_config, get_model_params,
+                        get_paths, get_image_generation_config, get_logging_config)
 from src.llm import LLMClient
 from src.pipeline import generate_dataset, merge_outputs
 
@@ -178,6 +179,12 @@ def cmd_generate(args):
     for s in all_stats:
         print(f"  {s['model']:15s}  gen={s['generated']}  fail={s['failed']}  "
               f"tok_in={s['total_tokens_in']:>8,}  tok_out={s['total_tokens_out']:>8,}")
+    if client._stats.get("errors") or client._stats.get("load_waits"):
+        print(f"  ⚠ errors absorbed: {client._stats['errors']}  "
+              f"(load waits: {client._stats['load_waits']})")
+    if validator_client is not None and (validator_client._stats.get("errors") or validator_client._stats.get("load_waits")):
+        print(f"  ⚠ judge errors absorbed: {validator_client._stats['errors']}  "
+              f"(load waits: {validator_client._stats['load_waits']})")
     print("=" * 60)
 
 
@@ -230,11 +237,20 @@ def main():
 
     args = parser.parse_args()
 
+    log_cfg = get_logging_config(get_config(args.config))
+    handlers: list = [logging.StreamHandler()]
+    if log_cfg.get("file"):
+        log_file = Path(log_cfg["file"])
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
     logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
+        level=getattr(logging, str(log_cfg.get("level", "INFO")).upper(), logging.INFO),
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%H:%M:%S",
+        handlers=handlers,
     )
+    if log_cfg.get("file"):
+        print(f"Logging to: {log_cfg['file']}")
 
     commands = {
         "generate": cmd_generate,

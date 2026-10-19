@@ -54,7 +54,8 @@ class LLMClient:
         # Provider-specific payload keys passed verbatim (enable_thinking,
         # chat_template_kwargs, ...). Merged into every request payload.
         self.extra_params = extra_params or {}
-        self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0, "errors": 0}
+        self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0,
+                       "errors": 0, "load_waits": 0}
 
     @property
     def stats(self) -> dict:
@@ -118,6 +119,7 @@ class LLMClient:
                     and time.time() < load_deadline
                 )
                 if is_load_error:
+                    self._stats["load_waits"] += 1
                     logger.info("Model loading (5xx within model_load_wait window) — waiting 15s...")
                     time.sleep(15)
                     continue
