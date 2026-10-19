@@ -17,6 +17,8 @@ the photos are generated from text-to-image prompts derived from the scenario.
 import json
 import logging
 import random
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from . import config as cfg
@@ -282,6 +284,7 @@ def generate_dataset(
     validate: bool = False,
     max_validation_retries: int = 3,
     validator_client: LLMClient | None = None,
+    num_workers: int = 1,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -337,17 +340,10 @@ def generate_dataset(
 
     generated = 0
     failed = 0
+    write_lock = threading.Lock()
 
-    for i in range(start_id, start_id + num_records):
-        record_id = f"Q{i:04d}"
-
-        if record_id in existing_ids:
-            logger.debug(f"[{record_id}] Already exists, skipping")
-            generated += 1
-            continue
-
-        logger.info(f"[{record_id}] Generating ({generated + 1}/{num_records})...")
-
+    def _generate_and_write(record_id: str) -> bool:
+        """Generate one record and append it to the JSONL files (thread-safe)."""
         result = generate_complaint(
             client, record_id,
             image_gen=image_gen,
@@ -357,32 +353,54 @@ def generate_dataset(
             max_validation_retries=max_validation_retries,
             validator_client=validator_client,
         )
-
         if result is None:
-            failed += 1
             logger.warning(f"[{record_id}] Generation failed")
-            continue
+            return False
 
         complaint, ground_truth, metadata = result
+        with write_lock:
+            with open(raw_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
+            with open(ground_truth_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
+            with open(metadata_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
+        return True
 
-        with open(raw_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
+    pending = [f"Q{i:04d}" for i in range(start_id, start_id + num_records)
+               if f"Q{i:04d}" not in existing_ids]
+    generated += num_records - len(pending)  # resumed records count as done
 
-        with open(ground_truth_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
+    if num_workers > 1:
+        logger.info(f"Generating with {num_workers} parallel workers...")
+        with ThreadPoolExecutor(max_workers=num_workers) as pool:
+            futures = {pool.submit(_generate_and_write, rid): rid for rid in pending}
+            for n, future in enumerate(as_completed(futures), 1):
+                if future.result():
+                    generated += 1
+                else:
+                    failed += 1
+                if n % 10 == 0:
+                    logger.info(
+                        f"Progress: {n}/{len(pending)} processed, {failed} failed, "
+                        f"tokens: in={client.stats['tokens_in']:,}, "
+                        f"out={client.stats['tokens_out']:,}"
+                    )
+    else:
+        for record_id in pending:
+            logger.info(f"[{record_id}] Generating ({generated + 1}/{num_records})...")
+            if _generate_and_write(record_id):
+                generated += 1
+            else:
+                failed += 1
 
-        with open(metadata_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
-
-        generated += 1
-
-        if generated % 10 == 0:
-            logger.info(
-                f"Progress: {generated}/{num_records} generated, "
-                f"{failed} failed, "
-                f"tokens: in={client.stats['tokens_in']:,}, "
-                f"out={client.stats['tokens_out']:,}"
-            )
+            if generated % 10 == 0:
+                logger.info(
+                    f"Progress: {generated}/{num_records} generated, "
+                    f"{failed} failed, "
+                    f"tokens: in={client.stats['tokens_in']:,}, "
+                    f"out={client.stats['tokens_out']:,}"
+                )
 
     return {
         "generated": generated,

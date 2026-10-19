@@ -17,6 +17,8 @@ It does NOT generate synthetic complaints; that is the generator project's job.
 import json
 import logging
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from .config import get_vision_model_params
@@ -153,6 +155,7 @@ def extract_dataset(
     resume: bool = True,
     stage_split: bool = False,
     vision_client: LLMClient | None = None,
+    num_workers: int = 1,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -207,35 +210,54 @@ def extract_dataset(
     extracted = 0
     failed = 0
     skipped = 0
+    write_lock = threading.Lock()
 
-    for cid, complaint in complaints.items():
-        if cid in existing_ids:
-            skipped += 1
-            continue
-
-        logger.info(f"[{cid}] Extracting ({extracted + 1}/{len(complaints) - skipped})...")
-
+    def _extract_and_write(cid: str, complaint: dict) -> bool:
         extraction = extract_complaint(client, complaint, images_dir,
                                        stage_split=stage_split,
                                        vision_client=vision_client)
-
         if extraction is None:
-            failed += 1
             logger.warning(f"[{cid}] Extraction failed")
-            continue
+            return False
+        with write_lock:
+            with open(output_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+        return True
 
-        with open(output_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+    pending = [(cid, c) for cid, c in complaints.items() if cid not in existing_ids]
+    skipped = len(complaints) - len(pending)
 
-        extracted += 1
+    if num_workers > 1:
+        logger.info(f"Extracting with {num_workers} parallel workers...")
+        with ThreadPoolExecutor(max_workers=num_workers) as pool:
+            futures = {pool.submit(_extract_and_write, cid, c): cid for cid, c in pending}
+            for n, future in enumerate(as_completed(futures), 1):
+                if future.result():
+                    extracted += 1
+                else:
+                    failed += 1
+                if n % 10 == 0:
+                    logger.info(
+                        f"Progress: {n}/{len(pending)} processed, {failed} failed, "
+                        f"tokens: in={client.stats['tokens_in']:,}, "
+                        f"out={client.stats['tokens_out']:,}"
+                    )
+    else:
+        for cid, complaint in pending:
+            logger.info(f"[{cid}] Extracting ({extracted + 1}/{len(pending)})...")
 
-        if extracted % 10 == 0:
-            logger.info(
-                f"Progress: {extracted} extracted, {failed} failed, "
-                f"{skipped} skipped, "
-                f"tokens: in={client.stats['tokens_in']:,}, "
-                f"out={client.stats['tokens_out']:,}"
-            )
+            if _extract_and_write(cid, complaint):
+                extracted += 1
+            else:
+                failed += 1
+
+            if extracted % 10 == 0:
+                logger.info(
+                    f"Progress: {extracted} extracted, {failed} failed, "
+                    f"{skipped} skipped, "
+                    f"tokens: in={client.stats['tokens_in']:,}, "
+                    f"out={client.stats['tokens_out']:,}"
+                )
 
     return {
         "extracted": extracted,
