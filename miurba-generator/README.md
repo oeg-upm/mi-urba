@@ -54,6 +54,8 @@ en el propio `config.yaml`):
 | `validate` | Validación en 2ª pasada (juez LLM verifica alineación texto/escenario) |
 | `max_validation_retries` | Regeneraciones máximas si el juez rechaza (se conserva el último texto) |
 | `validator` | Modelo juez (clave de `models:`); `null` = el propio generador. Recomendado: modelo distinto |
+| `model_load_wait` | Paciencia (s) con modelos en frío: 5xx en la ventana no consumen reintentos. `null` = off |
+| `workers` | Generación en paralelo (ThreadPool); 1 = secuencial. Appends thread-safe |
 
 Además: `paths:` (nombres de subdirs/ficheros) e `image_generation:`
 (`enabled: true/false`).
@@ -89,3 +91,13 @@ repositorio (`../config.yaml`). Secciones usadas: `endpoints`, `models`,
 `risks`, `urgency_levels`, `channels`, `communities`, `personas`, `weights`,
 `modifiers`, `modifier_prob`, `image_generation`. La sección `annotation` no la
 usa (es del extractor).
+
+### Parámetros por modelo y endpoint
+
+- `models.<nombre>.extra_params` — claves provider-specific que se pasan
+  verbatim al payload (p. ej. `enable_thinking: false`,
+  `chat_template_kwargs: {...}`). Sin él, el payload es limpio
+  (`model`/`messages`/`temperature`).
+- `endpoints.<nombre>.connection_backoff: true` — backoff generoso ante
+  caídas del servidor (`ConnectionError`/`Timeout`): espera
+  `max(retry_delay, 20s) × intento`. Default `false` (lineal).

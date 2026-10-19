@@ -95,6 +95,9 @@ def cmd_generate(args):
             max_retries=gen_cfg["max_retries"],
             retry_delay=gen_cfg["retry_delay"],
             api_key=v_cfg.get("api_key"),
+            model_load_wait=gen_cfg["model_load_wait"],
+            connection_backoff=v_cfg.get("connection_backoff", False),
+            extra_params=v_cfg.get("extra_params", {}),
         )
 
     if gen_cfg["seed"] is not None:
@@ -107,6 +110,7 @@ def cmd_generate(args):
     print(f"  Images:     {'enabled (FLUX.2)' if enable_images else 'disabled'}")
     print(f"  Seed:       {gen_cfg['seed']}")
     print(f"  Resume:     {gen_cfg['resume']}")
+    print(f"  Workers:    {gen_cfg['workers']}")
     print(f"  Validate:   {gen_cfg['validate']}" +
           (f" (judge: {gen_cfg['validator']})" if gen_cfg.get("validate") and gen_cfg.get("validator") else ""))
     print(f"  Plan:       {', '.join(f'{m}×{c}' for m, c in plan)}")
@@ -134,6 +138,9 @@ def cmd_generate(args):
             max_retries=gen_cfg["max_retries"],
             retry_delay=gen_cfg["retry_delay"],
             api_key=model_cfg.get("api_key"),
+            model_load_wait=gen_cfg["model_load_wait"],
+            connection_backoff=model_cfg.get("connection_backoff", False),
+            extra_params=model_cfg.get("extra_params", {}),
         )
 
         stats = generate_dataset(
@@ -152,6 +159,7 @@ def cmd_generate(args):
             validate=gen_cfg["validate"],
             max_validation_retries=gen_cfg["max_validation_retries"],
             validator_client=validator_client,
+            num_workers=gen_cfg["workers"],
         )
 
         stats["model"] = model_name

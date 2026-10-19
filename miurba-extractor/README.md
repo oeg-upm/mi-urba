@@ -56,6 +56,8 @@ en el propio `config.yaml`):
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
 | `stage_split` | Dos llamadas: visión describe fotos → texto extrae (fallback a llamada única sin fotos/vision_model) |
 | `vision_model` | Modelo VLM de la etapa 1 (clave de `models:`) cuando `stage_split: true` |
+| `model_load_wait` | Paciencia (s) con modelos en frío: 5xx en la ventana no consumen reintentos. `null` = off |
+| `workers` | Extracción en paralelo (ThreadPool); 1 = secuencial. Appends thread-safe |
 
 Además, por **modelo** en `models:<nombre>.structured_output` — modo de salida
 estructurada soportado por su servidor:
@@ -71,3 +73,10 @@ Resolución del modelo VLM: `extraction.model` > `annotation.vision_model` >
 debe ser multimodal** (capaz de ver imágenes). Secciones usadas: `endpoints`,
 `models`, `annotation`, `paths`, `categories`, `location_zones`, `risks`,
 `urgency_levels`.
+
+### Parámetros por modelo y endpoint
+
+- `models.<nombre>.extra_params` — claves provider-specific pasadas verbatim
+  al payload (p. ej. `enable_thinking: false`).
+- `endpoints.<nombre>.connection_backoff: true` — backoff generoso ante caídas
+  del servidor: `max(retry_delay, 20s) × intento`. Default `false`.

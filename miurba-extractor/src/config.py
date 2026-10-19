@@ -66,6 +66,8 @@ def get_model_params(name: str, cfg: dict | None = None) -> dict[str, Any]:
         "model": m["model"],
         "temperature": m.get("temperature", 0.85),
         "api_key": endpoint.get("api_key"),
+        "extra_params": m.get("extra_params", {}),
+        "connection_backoff": endpoint.get("connection_backoff", False),
     }
 
 
@@ -174,6 +176,11 @@ _DEFAULT_EXTRACTION = {
     # Vision model (key in models:) for stage 1 when stage_split is true.
     # null → stage-split falls back to single-call with a warning.
     "vision_model": None,
+    # Patience (seconds) with cold models: 5xx within this window are treated
+    # as "model loading" and do not consume retries. null = disabled.
+    "model_load_wait": None,
+    # Concurrent extraction workers (1 = sequential, current behaviour).
+    "workers": 1,
 }
 
 

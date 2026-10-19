@@ -36,6 +36,9 @@ class LLMClient:
         api_key: str | None = None,
         structured_output: str | None = None,
         json_schema: dict | None = None,
+        model_load_wait: int | None = None,
+        connection_backoff: bool = False,
+        extra_params: dict | None = None,
     ):
         if structured_output not in VALID_STRUCTURED_MODES:
             raise ValueError(
@@ -55,6 +58,14 @@ class LLMClient:
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         self.api_key = api_key
+        # Optional patience for cold models: 5xx within this window (seconds)
+        # are treated as "model loading" and do NOT consume retry attempts.
+        self.model_load_wait = model_load_wait
+        # Optional generous backoff for server crashes (connection errors).
+        self.connection_backoff = connection_backoff
+        # Provider-specific payload keys passed verbatim (enable_thinking,
+        # chat_template_kwargs, ...). Merged into every request payload.
+        self.extra_params = extra_params or {}
         self.structured_output = structured_output
         self.json_schema = json_schema
         self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0, "errors": 0}
@@ -85,6 +96,9 @@ class LLMClient:
             "temperature": temperature or self.temperature,
         }
 
+        # Extra provider-specific params (verbatim merge)
+        payload.update(self.extra_params)
+
         # Structured output (mode declared per model in config)
         if self.structured_output == "json_object":
             payload["response_format"] = {"type": "json_object"}
@@ -99,7 +113,9 @@ class LLMClient:
             headers["Authorization"] = f"Bearer {self.api_key}"
 
         last_error: Exception | None = None
-        for attempt in range(1, self.max_retries + 1):
+        attempt = 0
+        load_deadline = time.time() + self.model_load_wait if self.model_load_wait else None
+        while attempt < self.max_retries:
             try:
                 resp = requests.post(self.api_url, json=payload, headers=headers, timeout=self.timeout)
                 resp.raise_for_status()
@@ -113,18 +129,39 @@ class LLMClient:
                 return data
 
             except (requests.RequestException, json.JSONDecodeError) as e:
-                last_error = e
                 self._stats["errors"] += 1
+
+                # 5xx within the model-load window: poll without consuming retries
+                is_load_error = (
+                    load_deadline is not None
+                    and isinstance(e, requests.HTTPError)
+                    and e.response is not None
+                    and e.response.status_code >= 500
+                    and time.time() < load_deadline
+                )
+                if is_load_error:
+                    logger.info("Model loading (5xx within model_load_wait window) — waiting 15s...")
+                    time.sleep(15)
+                    continue
+
+                attempt += 1
+                last_error = e
                 logger.warning(
                     f"API call failed (attempt {attempt}/{self.max_retries}): {e}"
                 )
                 if attempt < self.max_retries:
-                    wait = self.retry_delay * attempt
+                    is_connection_error = isinstance(
+                        e, (requests.ConnectionError, requests.Timeout)
+                    )
+                    if self.connection_backoff and is_connection_error:
+                        wait = max(self.retry_delay, 20.0) * attempt
+                    else:
+                        wait = self.retry_delay * attempt
                     logger.info(f"Retrying in {wait:.1f}s...")
                     time.sleep(wait)
 
         raise RuntimeError(
-            f"API call failed after {self.max_retries} attempts: {last_error}"
+            f"API call failed after {attempt or self.max_retries} attempts: {last_error}"
         )
 
     def extract_content(self, response: dict) -> str:

@@ -66,6 +66,8 @@ def get_model_params(name: str, cfg: dict | None = None) -> dict[str, Any]:
         "model": m["model"],
         "temperature": m.get("temperature", 0.85),
         "api_key": endpoint.get("api_key"),
+        "extra_params": m.get("extra_params", {}),
+        "connection_backoff": endpoint.get("connection_backoff", False),
     }
 
 
@@ -166,6 +168,11 @@ _DEFAULT_GENERATION = {
     # generator's own client. Recommended: a DIFFERENT model to avoid
     # shared biases between generator and judge.
     "validator": None,
+    # Patience (seconds) with cold models: 5xx within this window are treated
+    # as "model loading" and do not consume retries. null = disabled.
+    "model_load_wait": None,
+    # Concurrent generation workers (1 = sequential, current behaviour).
+    "workers": 1,
 }
 
 

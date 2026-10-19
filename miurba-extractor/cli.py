@@ -107,6 +107,9 @@ def cmd_extract(args):
         api_key=model_cfg.get("api_key"),
         structured_output=structured_mode,
         json_schema=json_schema,
+        model_load_wait=ext_cfg["model_load_wait"],
+        connection_backoff=model_cfg.get("connection_backoff", False),
+        extra_params=model_cfg.get("extra_params", {}),
     )
 
     # Stage-split: optional vision client for stage 1 (photo descriptions)
@@ -127,6 +130,9 @@ def cmd_extract(args):
                 api_key=v_cfg.get("api_key"),
                 structured_output=v_mode,
                 json_schema=get_image_description_json_schema(config) if v_mode == "json_schema" else None,
+                model_load_wait=ext_cfg["model_load_wait"],
+                connection_backoff=v_cfg.get("connection_backoff", False),
+                extra_params=v_cfg.get("extra_params", {}),
             )
         else:
             logger.warning("extraction.stage_split=true but extraction.vision_model is null — "
@@ -143,6 +149,7 @@ def cmd_extract(args):
     print(f"  Output:     {annotated_dir}/{paths['extractions_file']}")
     print(f"  Resume:     {ext_cfg['resume']}")
     print(f"  Constrained: {structured_mode or 'off'}")
+    print(f"  Workers:    {ext_cfg['workers']}")
     print(f"  Stage-split: {stage_split}" +
           (f" (vision: {ext_cfg['vision_model']})" if stage_split else ""))
     print(f"{'=' * 55}")
@@ -157,6 +164,7 @@ def cmd_extract(args):
         resume=ext_cfg["resume"],
         stage_split=stage_split,
         vision_client=vision_client,
+        num_workers=ext_cfg["workers"],
     )
 
     print(f"\n{'=' * 55}")

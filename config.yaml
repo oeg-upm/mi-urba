@@ -2,6 +2,9 @@ endpoints:
   ollama_cloud:
     base_url: http://localhost:11434
     description: Ollama cloud models
+    # Backoff generoso ante caídas del servidor (ConnectionError/Timeout):
+    # espera max(retry_delay, 20s) * intento. Default false = lineal.
+    connection_backoff: false
 models:
   kimi-k2.6:
     endpoint: ollama_cloud
@@ -53,6 +56,11 @@ generation:
   # Modelo juez (clave de models:). null = validar con el propio modelo
   # generador. Recomendado: un modelo DISTINTO para evitar sesgos compartidos.
   validator: null
+  # Paciencia (segundos) con modelos en frío: 5xx dentro de esta ventana son
+  # "cargando" y no consumen reintentos. null = desactivado.
+  model_load_wait: null
+  # Workers de generación en paralelo (1 = secuencial, comportamiento actual)
+  workers: 1
 
 extraction:
   # Modelo VLM (clave de models:). null → annotation.vision_model → annotation.model
@@ -76,6 +84,11 @@ extraction:
   stage_split: false
   # Modelo de visión para la etapa 1 (clave de models:) cuando stage_split: true
   vision_model: null
+  # Paciencia (segundos) con modelos en frío: 5xx dentro de esta ventana son
+  # "cargando" y no consumen reintentos. null = desactivado.
+  model_load_wait: null
+  # Workers de extracción en paralelo (1 = secuencial, comportamiento actual)
+  workers: 1
 annotation:
   model: kimi-k2.6
   temperature: 0.2
