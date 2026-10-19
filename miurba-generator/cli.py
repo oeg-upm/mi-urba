@@ -83,6 +83,20 @@ def cmd_generate(args):
     output_dir = gen_cfg["default_output_dir"]
     raw_subdir = paths["raw_subdir"]
 
+    # Optional judge model for 2-stage validation (None = generator itself)
+    validator_client = None
+    if gen_cfg.get("validate") and gen_cfg.get("validator"):
+        v_cfg = get_model_params(gen_cfg["validator"], config)
+        validator_client = LLMClient(
+            base_url=v_cfg["base_url"],
+            model=v_cfg["model"],
+            temperature=v_cfg["temperature"],
+            timeout=gen_cfg["timeout"],
+            max_retries=gen_cfg["max_retries"],
+            retry_delay=gen_cfg["retry_delay"],
+            api_key=v_cfg.get("api_key"),
+        )
+
     if gen_cfg["seed"] is not None:
         random.seed(gen_cfg["seed"])
 
@@ -93,6 +107,8 @@ def cmd_generate(args):
     print(f"  Images:     {'enabled (FLUX.2)' if enable_images else 'disabled'}")
     print(f"  Seed:       {gen_cfg['seed']}")
     print(f"  Resume:     {gen_cfg['resume']}")
+    print(f"  Validate:   {gen_cfg['validate']}" +
+          (f" (judge: {gen_cfg['validator']})" if gen_cfg.get("validate") and gen_cfg.get("validator") else ""))
     print(f"  Plan:       {', '.join(f'{m}×{c}' for m, c in plan)}")
     print("=" * 60)
 
@@ -133,6 +149,9 @@ def cmd_generate(args):
             resume=gen_cfg["resume"],
             enable_images=enable_images,
             ig_config=ig_config,
+            validate=gen_cfg["validate"],
+            max_validation_retries=gen_cfg["max_validation_retries"],
+            validator_client=validator_client,
         )
 
         stats["model"] = model_name

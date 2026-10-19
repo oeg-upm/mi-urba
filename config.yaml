@@ -45,6 +45,14 @@ generation:
   timeout: 300
   max_retries: 3
   retry_delay: 5.0
+  # Validación en 2ª pasada: tras generar, un LLM juez comprueba que el
+  # texto alinea con el escenario; si no, reintenta la generación hasta
+  # max_validation_retries veces (se conserva el último texto).
+  validate: false
+  max_validation_retries: 3
+  # Modelo juez (clave de models:). null = validar con el propio modelo
+  # generador. Recomendado: un modelo DISTINTO para evitar sesgos compartidos.
+  validator: null
 
 extraction:
   # Modelo VLM (clave de models:). null → annotation.vision_model → annotation.model

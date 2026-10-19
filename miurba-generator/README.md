@@ -51,6 +51,9 @@ en el propio `config.yaml`):
 | `seed` | Semilla de muestreo (`null` = no determinista) |
 | `resume` | Saltar registros ya generados |
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM |
+| `validate` | Validación en 2ª pasada (juez LLM verifica alineación texto/escenario) |
+| `max_validation_retries` | Regeneraciones máximas si el juez rechaza (se conserva el último texto) |
+| `validator` | Modelo juez (clave de `models:`); `null` = el propio generador. Recomendado: modelo distinto |
 
 Además: `paths:` (nombres de subdirs/ficheros) e `image_generation:`
 (`enabled: true/false`).

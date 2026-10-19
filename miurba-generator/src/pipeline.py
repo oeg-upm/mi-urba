@@ -35,6 +35,70 @@ from .sampling import (
 logger = logging.getLogger(__name__)
 
 
+# ── Validation (2-stage) ──────────────────────────────────────────────
+
+def _build_validation_prompt(user_text: str, problems: list[dict]) -> list[dict]:
+    """Build a prompt to validate that user_text faithfully describes the scenario."""
+    problem_descs = []
+    for i, p in enumerate(problems, 1):
+        desc = f"  {i}. {p['category']}/{p['subcategory']} en {p['location_zone']}"
+        if p.get("location_detail"):
+            desc += f", {p['location_detail']}"
+        desc += f" (urgencia: {p['urgency']})"
+        if p.get("affected_elements"):
+            elem_strs = [f"{e['principal']} ({e['subcategory']})" for e in p["affected_elements"]]
+            desc += f"\n     Elementos: {', '.join(elem_strs)}"
+        if p.get("risks") and p["risks"] != ["ninguno"]:
+            desc += f"\n     Riesgos: {', '.join(p['risks'])}"
+        problem_descs.append(desc)
+    problems_text = "\n".join(problem_descs)
+
+    system_msg = (
+        "Eres un validador de calidad de quejas sinteticas. Recibes un texto "
+        "generado por un vecino y el escenario que se le pidio que describiera. "
+        "Tu tarea es verificar que el texto ALINEA con el escenario en todos sus campos."
+    )
+
+    user_msg = (
+        f"ESCENARIO QUE SE LE PIDIO DESCRIBIR:\n{problems_text}\n\n"
+        f"TEXTO GENERADO POR EL VECINO:\n{user_text}\n\n"
+        f"Verifica si el texto alinea con el escenario en estos campos:\n"
+        f"1. category: El texto describe un problema de la categoria indicada?\n"
+        f"2. subcategory: El tipo de problema especifico es correcto?\n"
+        f"3. urgency: El tono del texto refleja el nivel de urgencia indicado?\n"
+        f"4. affected_elements: Menciona los elementos afectados indicados?\n"
+        f"5. risks: Los riesgos mencionados son coherentes con los indicados?\n"
+        f"6. location: La ubicacion mencionada es correcta?\n\n"
+        f"RESPONDE SOLO con JSON:\n"
+        f'{{"valid": true/false, "issues": ["lista de campos que no alinean, vacio si todo ok"]}}'
+    )
+
+    return [
+        {"role": "system", "content": system_msg},
+        {"role": "user", "content": user_msg},
+    ]
+
+
+def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str]]:
+    """Validate that user_text faithfully describes the scenario.
+
+    Fail-open: any validation error (LLM call, malformed JSON) counts as
+    valid so a broken judge never blocks dataset generation.
+
+    Returns (is_valid, issues_list).
+    """
+    messages = _build_validation_prompt(user_text, problems)
+    try:
+        response = client.chat(messages)
+        data = client.extract_json(response)
+        is_valid = data.get("valid", True)
+        issues = data.get("issues", [])
+        return bool(is_valid), issues if isinstance(issues, list) else []
+    except Exception as e:
+        logger.warning(f"Validation call failed: {e}, assuming valid")
+        return True, []
+
+
 def _stable_seed(record_id: str, index: int, seed_base: int) -> int:
     """Deterministic seed for reproducible image generation."""
     h = sum((i + 1) * ord(c) for i, c in enumerate(record_id))
@@ -50,6 +114,9 @@ def generate_complaint(
     image_gen=None,
     images_dir: str | Path | None = None,
     seed_base: int = 42,
+    validate: bool = False,
+    max_validation_retries: int = 3,
+    validator_client: LLMClient | None = None,
 ) -> tuple[dict, dict] | None:
     """
     Generate a single raw complaint record (and optionally its photos).
@@ -114,6 +181,32 @@ def generate_complaint(
     if not user_text:
         logger.warning(f"[{record_id}] No user_text in LLM output")
         return None
+
+    # 2-stage validation: judge LLM checks text/scenario alignment. On
+    # mismatch, REGENERATE (same scenario, new text) up to
+    # max_validation_retries times; the last text is always kept.
+    if validate:
+        judge = validator_client or client
+        for attempt in range(max_validation_retries):
+            is_valid, issues = validate_complaint(judge, user_text, problems)
+            if is_valid:
+                break
+            logger.warning(
+                f"[{record_id}] validation failed ({', '.join(map(str, issues)) or 'unknown'}); "
+                f"regenerating (attempt {attempt + 1}/{max_validation_retries})"
+            )
+            try:
+                response = client.chat(messages)
+                data = client.extract_json(response)
+                regen_text = data.get("user_text", "")
+                if not regen_text:
+                    logger.warning(f"[{record_id}] regeneration produced no user_text, keeping previous")
+                    break
+                user_text = regen_text
+                timestamp = data.get("timestamp", timestamp)
+            except RuntimeError as e:
+                logger.error(f"[{record_id}] regeneration LLM call failed: {e}, keeping previous text")
+                break
 
     # Photo filenames (.png); actual files generated below if enabled
     pic_names = [f"{record_id}_{i}.png" for i in range(1, num_pics + 1)]
@@ -186,6 +279,9 @@ def generate_dataset(
     resume: bool = True,
     enable_images: bool = False,
     ig_config: dict | None = None,
+    validate: bool = False,
+    max_validation_retries: int = 3,
+    validator_client: LLMClient | None = None,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -257,6 +353,9 @@ def generate_dataset(
             image_gen=image_gen,
             images_dir=images_dir,
             seed_base=seed_base,
+            validate=validate,
+            max_validation_retries=max_validation_retries,
+            validator_client=validator_client,
         )
 
         if result is None:

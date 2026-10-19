@@ -157,6 +157,15 @@ _DEFAULT_GENERATION = {
     "timeout": 300,
     "max_retries": 3,
     "retry_delay": 5.0,
+    # 2-stage validation: after generating, a judge LLM checks that the text
+    # aligns with the scenario; the generation is retried up to
+    # max_validation_retries times on mismatch (last text is kept).
+    "validate": False,
+    "max_validation_retries": 3,
+    # Judge model (key in models:) for validation. None = validate with the
+    # generator's own client. Recommended: a DIFFERENT model to avoid
+    # shared biases between generator and judge.
+    "validator": None,
 }
 
 
