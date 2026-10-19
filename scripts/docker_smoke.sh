@@ -12,9 +12,11 @@ PASS=0; FAIL=0
 ok()   { echo "  ✅ $1"; PASS=$((PASS+1)); }
 fail() { echo "  ❌ $1"; FAIL=$((FAIL+1)); }
 
+ENDPOINT="${MIURBA_SMOKE_ENDPOINT:-http://192.168.10.11:9292}"
+
 echo "── 0. Precondiciones"
-curl -s --max-time 5 http://192.168.10.11:9292/v1/models >/dev/null \
-  && ok "endpoint 192.168.10.11:9292 vivo" || { fail "endpoint caído — abortando"; exit 1; }
+curl -s --max-time 5 "$ENDPOINT/v1/models" >/dev/null \
+  && ok "endpoint $ENDPOINT vivo" || { fail "endpoint caído — abortando"; exit 1; }
 [ -f .env ] && echo "  (usando .env para secretos)" || cp .env.example .env
 rm -rf "$ROOT/data_test" "$ROOT/logs"   # smoke limpio: sin resume de runs anteriores
 
@@ -27,15 +29,19 @@ docker compose run --rm --no-deps --entrypoint python miurba-generator \
   && ok "config.yaml montado en /config.yaml" || fail "config mount"
 
 echo "── 3. Generación dockerizada (3 quejas, workers=3, juez externo)"
-GEN_OUT=$(docker compose run --rm miurba-generator \
-  generate --config /config/config.test.yaml 2>&1) || GEN_RC=$?
+if ! GEN_OUT=$(docker compose run --rm miurba-generator \
+  generate --config /config/config.test.yaml 2>&1); then
+  fail "generate: docker compose run terminó con error"; echo "$GEN_OUT" | tail -5; GEN_OUT="";
+fi
 EXPECTED=$(python3 -c "import yaml; print(sum(b['count'] for b in yaml.safe_load(open('config.test.yaml'))['generation']['batches']))")
 echo "$GEN_OUT" | grep -q "gen=$EXPECTED" && ok "generate: $EXPECTED/$EXPECTED" || { fail "generate"; echo "$GEN_OUT" | tail -5; }
 echo "$GEN_OUT" | grep -q "errors absorbed" && echo "  ⚠ errores absorbidos (revisar logs)" || ok "sin errores absorbidos"
 
 echo "── 4. Extracción dockerizada (stage-split + json_schema)"
-EXT_OUT=$(docker compose run --rm miurba-extractor \
-  extract --config /config/config.test.yaml 2>&1) || EXT_RC=$?
+if ! EXT_OUT=$(docker compose run --rm miurba-extractor \
+  extract --config /config/config.test.yaml 2>&1); then
+  fail "extract: docker compose run terminó con error"; echo "$EXT_OUT" | tail -5; EXT_OUT="";
+fi
 echo "$EXT_OUT" | grep -qE "Extracted:\s+$EXPECTED" && ok "extract: $EXPECTED/$EXPECTED" || { fail "extract"; echo "$EXT_OUT" | tail -5; }
 
 echo "── 5. Secretos: \${VAR} expandida desde .env (fail-fast si falta)"

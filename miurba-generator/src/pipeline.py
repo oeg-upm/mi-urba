@@ -307,6 +307,13 @@ def generate_dataset(
     metadata_path = Path(output_dir) / raw_subdir / metadata_file
     raw_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # resume=False means start fresh: truncate previous outputs
+    if not resume:
+        for f in (raw_path, ground_truth_path, metadata_path):
+            if f.exists():
+                f.write_text("")
+                logger.info(f"Start fresh: truncated {f}")
+
     # Optional image generation backend (loaded once)
     image_gen = None
     images_dir = Path(output_dir) / images_subdir
@@ -344,6 +351,7 @@ def generate_dataset(
 
     generated = 0
     failed = 0
+    last_logged = [0]
     validation_log: list = []
     write_lock = threading.Lock()
 
@@ -400,7 +408,8 @@ def generate_dataset(
             else:
                 failed += 1
 
-            if generated % 10 == 0:
+            if generated % 10 == 0 and generated != last_logged[0]:
+                last_logged[0] = generated
                 logger.info(
                     f"Progress: {generated}/{num_records} generated, "
                     f"{failed} failed, "
@@ -460,9 +469,15 @@ def merge_outputs(
                         if line.strip():
                             merged.append(json.loads(line))
 
-    merged_complaints.sort(key=lambda x: x["id"])
-    merged_ground_truth.sort(key=lambda x: x["complaint_id"])
-    merged_metadata.sort(key=lambda x: x["complaint_id"])
+    def _id_num(rec: dict) -> int:
+        try:
+            return int(rec.get("id", rec.get("complaint_id", "Q0")).lstrip("Q"))
+        except (ValueError, AttributeError):
+            return 0
+
+    merged_complaints.sort(key=_id_num)
+    merged_ground_truth.sort(key=_id_num)
+    merged_metadata.sort(key=_id_num)
 
     complaints_path = raw_out / complaints_file
     ground_truth_path = raw_out / ground_truth_file

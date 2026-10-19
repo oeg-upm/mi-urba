@@ -233,7 +233,6 @@ def main():
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--config", default=None,
                         help="Path to shared config.yaml (default: ../config.yaml at repo root)")
-    common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     subparsers.add_parser("generate", parents=[common],
                           help="Generate synthetic raw complaints (plan from config)")

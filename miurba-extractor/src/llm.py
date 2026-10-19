@@ -66,6 +66,10 @@ class LLMClient:
         # Provider-specific payload keys passed verbatim (enable_thinking,
         # chat_template_kwargs, ...). Merged into every request payload.
         self.extra_params = extra_params or {}
+        if max_retries < 1:
+            raise ValueError(f"max_retries must be >= 1, got {max_retries}")
+        if model_load_wait is not None and model_load_wait < 0:
+            raise ValueError(f"model_load_wait must be >= 0 or None, got {model_load_wait}")
         self.structured_output = structured_output
         self.json_schema = json_schema
         self._stats = {"calls": 0, "tokens_in": 0, "tokens_out": 0,
@@ -94,7 +98,7 @@ class LLMClient:
         payload: dict[str, Any] = {
             "model": model or self.model,
             "messages": messages,
-            "temperature": temperature or self.temperature,
+            "temperature": temperature if temperature is not None else self.temperature,
         }
 
         # Extra provider-specific params (verbatim merge)

@@ -116,7 +116,7 @@ def sample_photo_count(has_photos: bool) -> int:
     if not has_photos:
         return 0
     dist = cfg.get_weights()["photo_count"]
-    return random.choices(list(dist.keys()), weights=list(dist.values()), k=1)[0]
+    return int(random.choices(list(dist.keys()), weights=list(dist.values()), k=1)[0])
 
 
 def should_be_multi_problem() -> bool:

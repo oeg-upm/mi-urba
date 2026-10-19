@@ -198,7 +198,6 @@ def main():
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--config", default=None,
                         help="Path to shared config.yaml (default: ../config.yaml at repo root)")
-    common.add_argument("-v", "--verbose", action="store_true", help="Verbose logging")
 
     subparsers.add_parser("extract", parents=[common],
                           help="Extract structured data + image descriptions (config-only)")

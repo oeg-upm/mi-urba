@@ -58,3 +58,6 @@ data_test_b2/
 
 # Docker run logs
 logs/
+
+# Prompt iteration backups
+*.bak

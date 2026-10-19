@@ -8,6 +8,10 @@
 #   docker compose run --rm miurba-extractor extract --config /config/config.test.yaml
 #
 # Run logs land in ./logs/ via the logging.file key (e.g. /logs/run.log).
+#
+# Bootstrap (fresh clone): config.test.yaml and ./data_test are gitignored —
+# create config.test.yaml (copy of config.yaml with a test plan) before
+# running the smoke; ./data_test is created by the runs.
 
 services:
   miurba-generator:
