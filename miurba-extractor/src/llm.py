@@ -134,8 +134,6 @@ class LLMClient:
                 return data
 
             except (requests.RequestException, json.JSONDecodeError) as e:
-                self._stats["errors"] += 1
-
                 # 5xx within the model-load window: poll without consuming retries
                 is_load_error = (
                     load_deadline is not None
@@ -151,6 +149,7 @@ class LLMClient:
                     continue
 
                 attempt += 1
+                self._stats["errors"] += 1
                 last_error = e
                 logger.warning(
                     f"API call failed (attempt {attempt}/{self.max_retries}): {e}"
