@@ -70,6 +70,29 @@ def format_affected_elements(p: dict) -> str:
     return f"\n     Elementos afectados: {', '.join(strs)}"
 
 
+def validate_expression_sections() -> None:
+    """Fail fast when risk_expressions/urgency_expressions are empty.
+
+    Without them the strict generation prompt loses its mandatory
+    risk/urgency phrases and the ground truth degrades silently.
+    """
+    risk_expr = cfg.get_risk_expressions()
+    urg_expr = cfg.get_urgency_expressions()
+    risks = [r for r in cfg.get_risks() if r != "ninguno"]
+    missing_risk = [r for r in risks if r not in risk_expr]
+    missing_urg = [u for u in cfg.get_urgency_levels() if u not in urg_expr]
+    if missing_risk:
+        raise ValueError(
+            "config.yaml: risk_expressions is missing entries for: "
+            + ", ".join(missing_risk)
+        )
+    if missing_urg:
+        raise ValueError(
+            "config.yaml: urgency_expressions is missing entries for: "
+            + ", ".join(missing_urg)
+        )
+
+
 def format_risks(p: dict, risk_expr: dict[str, str] | None = None) -> str:
     """Render a problem's risks with their natural-language expressions.
 

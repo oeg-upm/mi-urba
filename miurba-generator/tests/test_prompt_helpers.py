@@ -86,3 +86,37 @@ def test_urgency_block_joins_levels_as_lines():
     assert block.count("\n") == 1  # two levels → two lines
     assert '"es importante"' in block
     assert '"para cuando haya tiempo"' in block
+
+
+# ── validate_expression_sections (code path) ─────────────────
+
+def test_validate_expression_sections_passes_with_full_coverage(monkeypatch):
+    from src import config as cfg
+    monkeypatch.setattr(cfg, "get_risks", lambda: ["incendio", "ninguno"])
+    monkeypatch.setattr(cfg, "get_risk_expressions", lambda: {"incendio": "riesgo de incendio"})
+    monkeypatch.setattr(cfg, "get_urgency_levels", lambda: ["alta"])
+    monkeypatch.setattr(cfg, "get_urgency_expressions", lambda: {"alta": ["expr"]})
+    from src.prompts import validate_expression_sections
+    validate_expression_sections()  # no raise
+
+
+def test_validate_expression_sections_fails_on_missing_risk(monkeypatch):
+    from src import config as cfg
+    monkeypatch.setattr(cfg, "get_risks", lambda: ["incendio", "raro"])
+    monkeypatch.setattr(cfg, "get_risk_expressions", lambda: {"incendio": "riesgo"})
+    monkeypatch.setattr(cfg, "get_urgency_levels", lambda: [])
+    monkeypatch.setattr(cfg, "get_urgency_expressions", lambda: {})
+    from src.prompts import validate_expression_sections
+    with pytest.raises(ValueError, match="raro"):
+        validate_expression_sections()
+
+
+def test_validate_expression_sections_fails_on_missing_urgency(monkeypatch):
+    from src import config as cfg
+    monkeypatch.setattr(cfg, "get_risks", lambda: [])
+    monkeypatch.setattr(cfg, "get_risk_expressions", lambda: {})
+    monkeypatch.setattr(cfg, "get_urgency_levels", lambda: ["alta", "baja"])
+    monkeypatch.setattr(cfg, "get_urgency_expressions", lambda: {"alta": ["x"]})
+    from src.prompts import validate_expression_sections
+    with pytest.raises(ValueError, match="baja"):
+        validate_expression_sections()
