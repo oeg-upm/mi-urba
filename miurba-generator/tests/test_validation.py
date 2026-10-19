@@ -50,20 +50,20 @@ PROBLEMS = [{"category": "cubierta", "subcategory": "tejas",
 
 def test_valid_verdict_returns_true():
     client = StubClient([_resp({"valid": True, "issues": []})])
-    is_valid, issues = validate_complaint(client, "texto", PROBLEMS)
-    assert is_valid is True and issues == []
+    is_valid, issues, degraded = validate_complaint(client, "texto", PROBLEMS)
+    assert is_valid is True and issues == [] and degraded is False
 
 
 def test_invalid_verdict_returns_false_with_issues():
     client = StubClient([_resp({"valid": False, "issues": ["urgency"]})])
-    is_valid, issues = validate_complaint(client, "texto", PROBLEMS)
-    assert is_valid is False and issues == ["urgency"]
+    is_valid, issues, degraded = validate_complaint(client, "texto", PROBLEMS)
+    assert is_valid is False and issues == ["urgency"] and degraded is False
 
 
 def test_malformed_json_fails_open():
     client = StubClient([{"choices": [{"message": {"content": "not json {"}}]}])
-    is_valid, issues = validate_complaint(client, "texto", PROBLEMS)
-    assert is_valid is True and issues == []
+    is_valid, issues, degraded = validate_complaint(client, "texto", PROBLEMS)
+    assert is_valid is True and issues == [] and degraded is True
 
 
 def test_validation_exception_fails_open():
@@ -74,20 +74,20 @@ def test_validation_exception_fails_open():
         def extract_json(self, response):  # pragma: no cover
             raise AssertionError("should not be reached")
 
-    is_valid, _ = validate_complaint(BrokenClient(), "texto", PROBLEMS)
-    assert is_valid is True
+    is_valid, _, degraded = validate_complaint(BrokenClient(), "texto", PROBLEMS)
+    assert is_valid is True and degraded is True
 
 
 def test_non_list_issues_coerced_to_empty():
     client = StubClient([_resp({"valid": False, "issues": "urgency"})])
-    is_valid, issues = validate_complaint(client, "texto", PROBLEMS)
+    is_valid, issues, _ = validate_complaint(client, "texto", PROBLEMS)
     assert is_valid is False and issues == []
 
 
 def test_missing_valid_key_defaults_to_valid():
     client = StubClient([_resp({"issues": []})])
-    is_valid, _ = validate_complaint(client, "texto", PROBLEMS)
-    assert is_valid is True
+    is_valid, _, degraded = validate_complaint(client, "texto", PROBLEMS)
+    assert is_valid is True and degraded is False
 
 
 # ── generate_complaint regeneration loop ──────────────────────

@@ -81,13 +81,14 @@ def _build_validation_prompt(user_text: str, problems: list[dict]) -> list[dict]
     ]
 
 
-def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str]]:
+def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str], bool]:
     """Validate that user_text faithfully describes the scenario.
 
     Fail-open: any validation error (LLM call, malformed JSON) counts as
-    valid so a broken judge never blocks dataset generation.
+    valid so a broken judge never blocks dataset generation. The third
+    return value flags that degradation so runs remain auditable.
 
-    Returns (is_valid, issues_list).
+    Returns (is_valid, issues_list, degraded).
     """
     messages = _build_validation_prompt(user_text, problems)
     try:
@@ -95,10 +96,10 @@ def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) 
         data = client.extract_json(response)
         is_valid = data.get("valid", True)
         issues = data.get("issues", [])
-        return bool(is_valid), issues if isinstance(issues, list) else []
+        return bool(is_valid), issues if isinstance(issues, list) else [], False
     except Exception as e:
-        logger.warning(f"Validation call failed: {e}, assuming valid")
-        return True, []
+        logger.warning(f"Validation call failed: {e}, assuming valid (DEGRADED)")
+        return True, [], True
 
 
 def _stable_seed(record_id: str, index: int, seed_base: int) -> int:
@@ -119,6 +120,7 @@ def generate_complaint(
     validate: bool = False,
     max_validation_retries: int = 3,
     validator_client: LLMClient | None = None,
+    validation_log: list | None = None,
 ) -> tuple[dict, dict] | None:
     """
     Generate a single raw complaint record (and optionally its photos).
@@ -190,7 +192,9 @@ def generate_complaint(
     if validate:
         judge = validator_client or client
         for attempt in range(max_validation_retries):
-            is_valid, issues = validate_complaint(judge, user_text, problems)
+            is_valid, issues, degraded = validate_complaint(judge, user_text, problems)
+            if validation_log is not None:
+                validation_log.append("degraded" if degraded else ("ok" if is_valid else "rejected"))
             if is_valid:
                 break
             logger.warning(
@@ -340,6 +344,7 @@ def generate_dataset(
 
     generated = 0
     failed = 0
+    validation_log: list = []
     write_lock = threading.Lock()
 
     def _generate_and_write(record_id: str) -> bool:
@@ -352,6 +357,7 @@ def generate_dataset(
             validate=validate,
             max_validation_retries=max_validation_retries,
             validator_client=validator_client,
+            validation_log=validation_log,
         )
         if result is None:
             logger.warning(f"[{record_id}] Generation failed")
@@ -402,6 +408,9 @@ def generate_dataset(
                     f"out={client.stats['tokens_out']:,}"
                 )
 
+    from collections import Counter
+    validation_counts = Counter(validation_log)
+
     return {
         "generated": generated,
         "failed": failed,
@@ -412,6 +421,7 @@ def generate_dataset(
         "ground_truth_path": str(ground_truth_path),
         "metadata_path": str(metadata_path),
         "images_dir": str(images_dir) if image_gen is not None else None,
+        "validation": dict(validation_counts) if validate else None,
     }
 
 

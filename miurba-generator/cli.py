@@ -179,6 +179,11 @@ def cmd_generate(args):
     for s in all_stats:
         print(f"  {s['model']:15s}  gen={s['generated']}  fail={s['failed']}  "
               f"tok_in={s['total_tokens_in']:>8,}  tok_out={s['total_tokens_out']:>8,}")
+        v = s.get("validation")
+        if v is not None:
+            print(f"  {'':15s}  validation: ok={v.get('ok', 0)}  rejected={v.get('rejected', 0)}  "
+                  f"degraded={v.get('degraded', 0)}"
+                  + ("  ⚠ JUDGE DEGRADED" if v.get("degraded") else ""))
     if client._stats.get("errors") or client._stats.get("load_waits"):
         print(f"  ⚠ errors absorbed: {client._stats['errors']}  "
               f"(load waits: {client._stats['load_waits']})")
