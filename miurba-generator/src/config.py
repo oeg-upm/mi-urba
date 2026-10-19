@@ -96,6 +96,18 @@ def get_urgency_levels(cfg: dict | None = None) -> list[str]:
     return cfg["urgency_levels"]
 
 
+def get_risk_expressions(cfg: dict | None = None) -> dict[str, str]:
+    """Natural-language expression per risk (drives the generation prompt)."""
+    cfg = cfg or get_config()
+    return cfg.get("risk_expressions", {})
+
+
+def get_urgency_expressions(cfg: dict | None = None) -> dict[str, list[str]]:
+    """Expressions the generated text must include, per urgency level."""
+    cfg = cfg or get_config()
+    return cfg.get("urgency_expressions", {})
+
+
 def get_communities(cfg: dict | None = None) -> list[dict]:
     cfg = cfg or get_config()
     return cfg["communities"]

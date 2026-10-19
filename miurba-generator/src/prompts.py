@@ -58,7 +58,31 @@ def _en(map_: dict, key: str) -> str:
     return map_.get(key, key.replace("_", " "))
 
 
-# ── Generation prompts (text LLM) ───────────────────────────────
+# ── Generation prompts (text LLM) ───────────────────────────────────
+
+
+def format_affected_elements(p: dict) -> str:
+    """Render a problem's affected elements as 'principal (subcategory)' list."""
+    elems = p.get("affected_elements") or []
+    if not elems:
+        return ""
+    strs = [f"{e['principal']} ({e['subcategory']})" for e in elems]
+    return f"\n     Elementos afectados: {', '.join(strs)}"
+
+
+def format_risks(p: dict, risk_expr: dict[str, str] | None = None) -> str:
+    """Render a problem's risks with their natural-language expressions.
+
+    Risks mapped in `risk_expr` use their expression; unknown risks pass
+    through verbatim. 'ninguno' (or an empty list) renders nothing.
+    """
+    risk_expr = risk_expr if risk_expr is not None else cfg.get_risk_expressions()
+    risks = p.get("risks") or []
+    if not risks or risks == ["ninguno"]:
+        return ""
+    strs = [risk_expr.get(r, r) for r in risks]
+    return f"\n     Riesgos: {', '.join(strs)} (el texto debe mencionarlos)"
+
 
 def build_generation_prompt(
     record_id: str,
@@ -79,13 +103,16 @@ def build_generation_prompt(
         persona: Optional persona dict with 'profile' and 'style' keys.
         modifier: Optional style modifier dict with 'description' and 'style_override'.
     """
-    # Describe problems in natural language
+    # Describe problems in natural language (incl. affected elements + risks
+    # so the generated text reflects the full ground-truth scenario)
     problem_descs = []
     for i, p in enumerate(problems, 1):
         desc = f"  {i}. {p['category']}/{p['subcategory']} en {p['location_zone']}"
         if p.get("location_detail"):
             desc += f", {p['location_detail']}"
         desc += f" (urgencia: {p['urgency']})"
+        desc += format_affected_elements(p)
+        desc += format_risks(p)
         problem_descs.append(desc)
     problems_text = "\n".join(problem_descs)
 
@@ -153,6 +180,15 @@ def build_generation_prompt(
                      "RESPONDE SOLO con JSON válido, sin markdown ni texto adicional.")
         system_msg = "\n".join(parts)
 
+    # Urgency expression rules (from config) rendered as prompt lines
+    urgency_expr = cfg.get_urgency_expressions()
+    urgency_lines = [
+        f"     * {level}: debe incluir alguna de " +
+        ", ".join(f'"{e}"' for e in exprs)
+        for level, exprs in urgency_expr.items()
+    ]
+    urgency_block = "\n".join(urgency_lines)
+
     user_msg = (
         f"PROBLEMA(S) A REPORTAR:\n"
         f"{problems_text}\n\n"
@@ -163,16 +199,53 @@ def build_generation_prompt(
         f"- ID: {record_id}\n\n"
         f"INSTRUCCIONES:\n"
         f"1. Escribe el user_text como lo expresaría este vecino REAL "
-        f"a través de una app de gestión de comunidades. Sé creativo: varía tono, "
-        f"extensión, nivel de detalle. A veces enfadado, a veces casual, "
-        f"a veces muy específico, a veces vago."
-        f" Si el vecino se identifica, inventa un nombre y apellidos "
-        f"realistas en español. NUNCA uses placeholders como "
-        f"[Nombre del vecino], [sin especificar] o similares."
-        f" Escribe EXCLUSIVAMENTE en español."
-        f" No mezcles palabras sueltas de otros idiomas"
-        f" (como 'many', 'this', etc.) dentro del texto en español."
-        f" Revisa la ortografía antes de finalizar.\n"
+        f"a través de una app de gestión de comunidades.\n\n"
+        f"CONTENIDO ESTRICTO (debe aparecer en el texto, sin excepción):\n"
+        f"   - Categoría y subcategoría: el problema descrito debe corresponder "
+        f"EXACTAMENTE con la categoría y subcategoría indicadas. No describas un "
+        f"problema distinto.\n"
+        f"   - Subcategoría reconocible: usa la palabra de la subcategoría o un "
+        f"sinónimo claro que un lector pueda identificar (p. ej. 'cristales' → "
+        f"'cristales' o 'vidrios'; 'tejas' → 'tejas' o 'tejado').\n"
+        f"   - Elementos afectados: menciona EXPLÍCITAMENTE cada elemento indicado, "
+        f"en lenguaje natural (un vecino no diría 'instalación_eléctrica' pero sí "
+        f"'la instalación eléctrica' o 'los cables'). Los elementos afectados son "
+        f"CONSECUENCIAS o PARTES del problema principal, NUNCA averías "
+        f"independientes: usa frases como 'además se ha afectado el canalón' o "
+        f"'también está dañado el muro cortafuegos'.\n"
+        f"   - Ubicación: la zona y el detalle deben coincidir con lo indicado.\n"
+        f"   - Urgencia: el tono debe reflejar el nivel asignado e incluir "
+        f"OBLIGATORIAMENTE alguna de las expresiones del nivel correspondiente:\n"
+        f"{urgency_block}\n"
+        f"   - Riesgos: si hay riesgos indicados (no 'ninguno'), el texto debe "
+        f"mencionarlos con la expresión indicada (p. ej. 'riesgo eléctrico', "
+        f"'peligro de caída').\n\n"
+        f"CONTENIDO PROHIBIDO:\n"
+        f"   - NO describas problemas, averías o incidencias que NO estén en la "
+        f"lista de problemas indicados arriba.\n"
+        f"   - Las menciones a elementos afectados deben enmarcarse como síntomas "
+        f"del problema, no como averías separadas.\n"
+        f"   - Si el vecino menciona algo colateral ('por cierto', 'también'), debe "
+        f"ser contexto, no una nueva incidencia.\n\n"
+        f"ESTRUCTURA GUIADA (flexible, no una plantilla rígida):\n"
+        f"   - Saludo inicial + ubicación: empieza mencionando DÓNDE está el "
+        f"problema (zona + detalle).\n"
+        f"   - Descripción del problema: nombra la subcategoría con palabras "
+        f"reconocibles al introducirlo.\n"
+        f"   - Elementos afectados: después del problema principal, como "
+        f"consecuencias ('además...', 'también se ha...').\n"
+        f"   - Urgencia al cierre: cierra con la expresión del nivel asignado.\n\n"
+        f"ESTILO FLEXIBLE (libertad creativa):\n"
+        f"   - Tono y extensión: varía. A veces enfadado, a veces casual, a veces "
+        f"muy específico, a veces vago. Depende de la personalidad y del "
+        f"modificador de estilo.\n"
+        f"   - Contexto adicional: el vecino puede añadir detalles sobre su vida, "
+        f"la comunidad o el historial del problema.\n"
+        f"   - Si el vecino se identifica, inventa un nombre y apellidos realistas "
+        f"en español. NUNCA uses placeholders como '[Nombre del vecino]', "
+        f"'[sin especificar]' o similares.\n"
+        f"   - Escribe EXCLUSIVAMENTE en español. No mezcles palabras sueltas de "
+        f"otros idiomas. Revisa la ortografía antes de finalizar.\n"
         f"2. El timestamp debe ser realista.\n\n"
         f"RESPONDE SOLO con JSON en este formato:\n"
         f"{json.dumps(json_template, indent=2, ensure_ascii=False)}"

@@ -315,6 +315,29 @@ risks:
 - accesibilidad
 - seguridad_persona
 - ninguno
+
+# Expresión en lenguaje natural de cada riesgo (para el prompt de generación).
+# Debe cubrir todos los riesgos de la lista anterior excepto "ninguno".
+risk_expressions:
+  eléctrico: "riesgo eléctrico"
+  estructural: "riesgo de derrumbe"
+  sanitario: "riesgo sanitario"
+  incendio: "riesgo de incendio"
+  inundación: "riesgo de inundación"
+  caída: "peligro de caída"
+  accesibilidad: "riesgo de accidente por accesibilidad"
+  seguridad_persona: "riesgo para las personas"
+
+# Expresiones que el texto generado DEBE incluir según el nivel de urgencia.
+# Debe cubrir todos los niveles de urgency_levels.
+urgency_expressions:
+  inmediata: ["es una emergencia", "peligro inminente", "necesito que vengan ya mismo"]
+  urgente: ["es urgente", "no puede esperar", "vengan cuanto antes"]
+  alta: ["es importante", "me preocupa", "deberían revisarlo pronto"]
+  media: ["cuando puedan", "no tiene prisa pero"]
+  baja: ["es una sugerencia", "para cuando haya tiempo"]
+  planificable: ["mantenimiento preventivo", "para revisar a largo plazo"]
+
 urgency_levels:
 - inmediata
 - urgente

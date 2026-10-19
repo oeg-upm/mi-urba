@@ -57,6 +57,12 @@ Además: `paths:` (nombres de subdirs/ficheros) e `image_generation:`
 
 Tests: `python -m pytest tests/` (no requieren red).
 
+> **Nota**: el prompt de generación es *scenario-faithful* — el texto debe
+> mencionar los elementos afectados, riesgos y expresión de urgencia del
+> escenario (expresiones configurables en `risk_expressions:` y
+> `urgency_expressions:` del config). Los datasets generados con versiones
+> anteriores del prompt no son comparables con los nuevos.
+
 ## Generación de imágenes (opcional)
 
 Se controla con la sección `image_generation` de la config compartida
