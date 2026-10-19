@@ -32,12 +32,13 @@ miurba-generator                                  miurba-extractor
   scenario ──► FLUX ──► PNGs (opcional)                                   │
       │                                                                   ▼
       ▼                                                  image_descriptions + extractions.jsonl
-  complaints.jsonl + scenarios.jsonl                    (conforme a extraction_schema.json)
-   (user_pics = nombres .png)
+  complaints.jsonl + ground_truth.jsonl + metadata.jsonl
+   (user_pics = nombres .png)                          (conforme a extraction_schema.json)
 ```
 
-- El generador produce `complaints.jsonl` + `scenarios.jsonl` (+ los PNG si la
-  generación de imágenes está activada). **No** produce `image_descriptions`.
+- El generador produce `complaints.jsonl`, `ground_truth.jsonl` y
+  `metadata.jsonl` (+ los PNG si la generación de imágenes está activada).
+  **No** produce `image_descriptions`.
 - El extractor consume `complaints.jsonl` + los PNG; **él** describe las
   imágenes (VLM) y extrae la estructura.
 
@@ -69,12 +70,12 @@ mi-urba/
 cd miurba-generator
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python cli.py generate -n 10
+python cli.py generate --config ../config.yaml
 
 # Generador con imágenes (requiere GPU + FLUX.2)
 pip install -r requirements-images.txt
 # en config.yaml: image_generation.enabled: true
-python cli.py generate -n 10
+python cli.py generate --config ../config.yaml
 
 # Extractor (VLM)
 cd ../miurba-extractor

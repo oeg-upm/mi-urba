@@ -19,11 +19,12 @@ Para cada queja:
 
 ## Salida
 
-- `data/raw/complaints.jsonl` — la queja (`id, user_text, user_pics, channel,
-  timestamp, community_ref, persona`). `user_pics` son nombres `.png`.
-- `data/raw/scenarios.jsonl` — ground truth del muestreo + `image_prompts` (los
-  prompts usados para generar las imágenes). **No** contiene
-  `image_descriptions`.
+- `data/raw/complaints.jsonl` — la queja (`id, user_text, user_pics, timestamp`).
+  `user_pics` son nombres `.png`.
+- `data/raw/ground_truth.jsonl` — extracciones esperadas (complaint_id +
+  `extractions`), conforme a `extraction_schema.json`.
+- `data/raw/metadata.jsonl` — persona, modifier, comunidad y `image_prompts`
+  (los prompts usados para generar las imágenes).
 - `data/images/*.png` — las fotos reales (solo si la generación de imágenes
   está activada).
 
@@ -80,17 +81,19 @@ pip install -r requirements-images.txt
 
 Activar solo en un host con GPUs. Si se activa sin GPU/deps, el pipeline lo
 detecta y **continúa sin imágenes** (no falla). También hay un CLI standalone
-`flux2_imagegen.py` (`--scenarios`, `--test`, 12 incidencias) que reutiliza el
+`flux2_imagegen.py` (`--metadata`, `--test`, 12 incidencias) que reutiliza el
 mismo backend.
 
 ## Configuración
 
 Toda la configuración se lee de la **config compartida** en la raíz del
 repositorio (`../config.yaml`). Secciones usadas: `endpoints`, `models`,
-`generation`, `paths`, `categories`, `affected_elements`, `location_zones`,
-`risks`, `urgency_levels`, `channels`, `communities`, `personas`, `weights`,
-`modifiers`, `modifier_prob`, `image_generation`. La sección `annotation` no la
-usa (es del extractor).
+`generation`, `paths`, `logging`, `categories`, `affected_elements`,
+`location_zones`, `risks`, `urgency_levels`, `risk_expressions`,
+`urgency_expressions`, `urgency_weights`, `category_elements`, `category_zones`,
+`category_risks`, `communities`, `personas`, `weights`, `modifiers`,
+`modifier_prob`, `image_generation`. La sección `annotation` no la usa (es del
+extractor).
 
 ### Parámetros por modelo y endpoint
 
