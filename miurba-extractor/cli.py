@@ -27,8 +27,7 @@ el config compartido en la raíz del repositorio). Toda la configuración
 pertinente se lee de tres secciones:
 
   extraction:
-    model              Modelo VLM (clave de models:). Si es null:
-                       annotation.vision_model → annotation.model
+    model              Modelo VLM (clave de models:). OBLIGATORIO.
     temperature        Temperatura de las llamadas de extracción
     default_output_dir Base de rutas por defecto (null = generation.
                        default_output_dir)
@@ -41,7 +40,6 @@ pertinente se lee de tres secciones:
     retry_delay        Espera base entre reintentos (segundos)
 
   paths:                 Nombres de subdirectorios y ficheros JSONL
-  annotation:            Fallback del modelo VLM (vision_model / model)
 """
 
 import argparse
@@ -85,14 +83,13 @@ def cmd_extract(args):
     paths = get_paths(config)
     ext_cfg = get_extraction_config(config)
 
-    # VLM model: extraction.model > annotation.vision_model > annotation.model
-    model_cfg = get_vision_model_params(ext_cfg["model"], config)
-    model_name = model_cfg["model"]
+    # VLM model: extraction.model (REQUIRED, no fallback)
+    model_name, model_cfg = get_vision_model_params(ext_cfg["model"], config)
 
     # Constrained decoding: per-model structured_output mode. json_schema
     # loads the extraction schema (enums synced from config) and the server
     # enforces it token-by-token. json_object only guarantees valid JSON.
-    structured_mode = config.get("models", {}).get(ext_cfg["model"], {}).get("structured_output")
+    structured_mode = config.get("models", {}).get(model_name, {}).get("structured_output")
     json_schema = get_extraction_json_schema(config) if structured_mode == "json_schema" else None
 
     fallback_base = config.get("generation", {}).get("default_output_dir", "data")

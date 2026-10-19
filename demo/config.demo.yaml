@@ -74,10 +74,6 @@ generation:
     count: 3
   - model: qwen3_local
     count: 3
-annotation:
-  model: kimi-k2.6
-  temperature: 0.2
-  vision_model: kimi-k2.6
 paths:
   raw_subdir: raw
   annotated_subdir: annotated

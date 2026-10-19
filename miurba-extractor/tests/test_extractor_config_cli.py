@@ -26,7 +26,7 @@ from src.llm import LLMClient  # noqa: E402
 
 @pytest.fixture
 def config_file(tmp_path):
-    """Minimal valid config.yaml with annotation fallback + extraction section."""
+    """Minimal valid config.yaml with a required extraction.model."""
     cfg = {
         "endpoints": {
             "test": {"base_url": "http://localhost:9999", "api_key": "sk-test"},
@@ -35,8 +35,7 @@ def config_file(tmp_path):
             "vlm-a": {"endpoint": "test", "model": "vlm-a-model", "temperature": 0.1},
             "vlm-b": {"endpoint": "test", "model": "vlm-b-model", "temperature": 0.2},
         },
-        "annotation": {"model": "vlm-a", "temperature": 0.2, "vision_model": None},
-        "extraction": {"model": None, "temperature": 0.2},
+        "extraction": {"model": "vlm-a", "temperature": 0.2},
         "generation": {"default_output_dir": str(tmp_path / "out")},
         "paths": {},
     }
@@ -50,7 +49,8 @@ def config_file(tmp_path):
 def test_extraction_defaults_fill_missing_keys(config_file):
     ext = get_extraction_config(get_config(config_file))
     for key, default in [
-        ("model", None), ("temperature", 0.2), ("default_output_dir", None),
+        # ("model", None) excluded: the fixture sets it (it is REQUIRED anyway)
+        ("temperature", 0.2), ("default_output_dir", None),
         ("raw_dir", None), ("annotated_dir", None), ("images_dir", None),
         ("resume", True), ("timeout", 300), ("max_retries", 3),
         ("retry_delay", 5.0),
@@ -66,26 +66,28 @@ def test_repo_config_extraction_section_fully_consumed():
     assert not unknown, f"config.yaml has extraction keys the code ignores: {unknown}"
 
 
-# ── VLM model fallback chain ──────────────────────────────────
+# ── VLM model resolution (required, no fallback) ──────────────
 
-def test_vlm_fallback_annotation_model(config_file):
-    """extraction.model=null, vision_model=null → annotation.model."""
+def test_vlm_resolves_extraction_model(config_file):
+    """extraction.model resolves to its models: entry."""
     cfg = get_config(config_file)
-    assert get_vision_model_params(None, cfg)["model"] == "vlm-a-model"
+    name, params = get_vision_model_params(None, cfg)
+    assert name == "vlm-a" and params["model"] == "vlm-a-model"
 
 
-def test_vlm_fallback_vision_model(config_file):
-    """annotation.vision_model wins over annotation.model."""
+def test_vlm_explicit_name_wins(config_file):
+    """An explicitly passed name overrides extraction.model."""
     cfg = get_config(config_file)
-    cfg["annotation"]["vision_model"] = "vlm-b"
-    assert get_vision_model_params(None, cfg)["model"] == "vlm-b-model"
+    name, params = get_vision_model_params("vlm-b", cfg)
+    assert name == "vlm-b" and params["model"] == "vlm-b-model"
 
 
-def test_vlm_extraction_model_wins(config_file):
-    """extraction.model wins over both annotation entries."""
+def test_vlm_missing_model_fails_fast(config_file):
+    """extraction.model missing/null → ValueError (required)."""
     cfg = get_config(config_file)
-    cfg["extraction"]["model"] = "vlm-b"
-    assert get_vision_model_params(None, cfg)["model"] == "vlm-b-model"
+    cfg["extraction"]["model"] = None
+    with pytest.raises(ValueError, match="extraction.model is required"):
+        get_vision_model_params(None, cfg)
 
 
 # ── Directory resolution ──────────────────────────────────────

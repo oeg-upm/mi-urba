@@ -178,31 +178,31 @@ def get_paths(cfg: dict | None = None) -> dict[str, str]:
     return {**_DEFAULT_PATHS, **cfg.get("paths", {})}
 
 
-def get_vision_model_params(name: str | None = None, cfg: dict | None = None) -> dict[str, Any]:
-    """Return model params for the VLM used to read images.
+def get_vision_model_params(name: str | None = None, cfg: dict | None = None) -> tuple[str, dict[str, Any]]:
+    """Return (resolved_name, model_params) for the VLM used to read images.
 
     Resolution order:
       1. explicit `name` argument
-      2. extraction.model in config (extraction-section override)
-      3. annotation.vision_model in config
-      4. annotation.model in config
+      2. extraction.model in config (REQUIRED — no fallback)
 
     The chosen model MUST be vision-capable (multimodal) so it can see the
-    attached photos.
+    attached photos. Fail fast when no model is configured.
     """
     cfg = cfg or get_config()
     ext = cfg.get("extraction", {})
-    ann = cfg.get("annotation", {})
-    model_name = (name or ext.get("model") or ann.get("vision_model")
-                  or ann.get("model", "kimi-k2.6"))
-    return get_model_params(model_name, cfg)
+    model_name = name or ext.get("model")
+    if not model_name:
+        raise ValueError(
+            "extraction.model is required (a key of models:) — set it in config.yaml"
+        )
+    return model_name, get_model_params(model_name, cfg)
 
 
 # ── Extraction section ─────────────────────────────────────────
 
 _DEFAULT_EXTRACTION = {
-    # Model name (key in models:) used for extraction. When None, falls
-    # back to annotation.vision_model, then annotation.model.
+    # Model name (key in models:) used for extraction. REQUIRED: the CLI
+    # fails fast when missing. No fallback chain.
     "model": None,
     # Sampling temperature for extraction calls.
     "temperature": 0.2,

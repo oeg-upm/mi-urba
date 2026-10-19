@@ -72,8 +72,8 @@ generation:
   workers: 1
 
 extraction:
-  # Modelo VLM (clave de models:). null → annotation.vision_model → annotation.model
-  model: null
+  # Modelo VLM (clave de models:). OBLIGATORIO: el extractor falla si falta.
+  model: kimi-k2.6
   # Temperatura de las llamadas de extracción
   temperature: 0.2
   # Base de rutas por defecto (null → generation.default_output_dir)
@@ -98,10 +98,6 @@ extraction:
   model_load_wait: null
   # Workers de extracción en paralelo (1 = secuencial, comportamiento actual)
   workers: 1
-annotation:
-  model: kimi-k2.6
-  temperature: 0.2
-  vision_model: null
 paths:
   raw_subdir: raw
   annotated_subdir: annotated
