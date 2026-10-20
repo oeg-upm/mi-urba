@@ -1,0 +1,132 @@
+[  1/97] FAIL agentica-deepcoder-14b         (  46.0s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[  2/97] FAIL apertus-8b                     (  25.1s): JSON parse: Extra data: line 1 column 135 (char 134). {"user_text": "PROBLEMA A REPORTAR: 1. f
+[  3/97] FAIL bloomz-3b                      (  12.0s): JSON parse: Expecting value: line 1 column 1 (char 0). PROBLEMA A REPORTAR:
+1. fontanería/fugas
+[  4/97] FAIL command-r-08-2024              (  59.5s): JSON parse: Extra data: line 4 column 2 (char 309). {
+    "user_text": "Hola, informes de un
+[  5/97] FAIL command-r-v01                  (  66.0s): JSON parse: Extra data: line 4 column 3 (char 337). {"response": {"content": 
+{"user_text": 
+[  6/97] OK   cydonia-24b-v4.3               (  73.5s): Hola, soy el vecino de la plaza 23 del garaje. Tengo un problema urgente: hay un
+[  7/97] OK   deepseek-r1-distill-llama-8b   (  28.0s): ¡Buenos días! Quiero informar sobre un problema de mantenimiento en el garaje de
+[  8/97] FAIL deepseek-r1-distill-qwen-14b   (  30.4s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[  9/97] FAIL deepseek-r1-distill-qwen-32b   (  71.0s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 10/97] FAIL deepseek-r1-distill-qwen-7b    (  27.3s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 11/97] FAIL deepseek-v4-flash-iq2          ( 528.6s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 12/97] OK   devstral-small-2507            (  67.6s): Hola a todos, les escribo para reportar una fuga de agua en el garaje, específic
+[ 13/97] FAIL falcon-7b-instruct             (  19.2s): JSON parse: Expecting value: line 1 column 1 (char 0). * [WARNING: THIS IS A WORKING TEXT. NOTE
+[ 14/97] OK   falcon3-10b-instruct           (  24.3s): URGENTE: Hay una fuga de agua en el garaje, plaza 23. Por favor, arreglen esto l
+[ 15/97] FAIL falcon3-1b-instruct            (   7.7s): JSON parse: Expecting ',' delimiter: line 3 column 3 (char 89). {
+  "user_text": "URGENT: FATANTERIA / F
+[ 16/97] OK   falcon3-7b-instruct            (  16.4s): Vecinos, hay una fuga importante en el garaje de la plaza 23. El agua está salie
+[ 17/97] OK   gemma-2-2b-it                  (  10.0s): Hola, hay una fontanería en la plaza 23 con fugas urgentes. Necesito que se solu
+[ 18/97] OK   gemma-2-9b-it                  (  19.5s): Hola, hay una fuga de agua en el garaje, plaza 23. Es urgente, necesito que la a
+[ 19/97] OK   gemma-3-12b-it                 (  33.9s): ¡URGENTE! Hay una fuga de agua importante en el garaje, plaza número 23. El agua
+[ 20/97] OK   gemma-3-1b-it                  (   9.3s): ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡STAY ALERT! ¡Fuga en el garaje de la plaza 23! ¡URGENTE!
+[ 21/97] OK   gemma-3-27b-it                 (  53.1s): ¡URGENTE! Tengo una fuga de agua importante en el garaje, en mi plaza, la 23. Es
+[ 22/97] OK   gemma-3-4b-it                  (  18.7s): Hola, soy Antonio, vecino de la plaza 23. Tengo un problema urgente de fontanerí
+[ 23/97] FAIL gemma-4-31B-it                 (  84.2s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 24/97] OK   gemma4-12b-awq                 ( 351.4s): Hola, buenas. Es que hay una fuga de agua importante en el garaje, justo en la p
+[ 25/97] ERR  gemma4-26b-awq                 ( 212.6s): {'message': "litellm.InternalServerError: Internal
+[ 26/97] OK   gemma4-31b-awq                 ( 391.6s): Hola, buenas. Hay una fuga de agua importante en el garaje, justo encima de la p
+[ 27/97] OK   glm-4-32b-0414                 ( 100.0s): ¡Hola comunidad! Es urgente: hay una fuga de fontanería en el garaje, plaza 23. 
+[ 28/97] OK   glm-4-9b-chat                  (  25.6s): Hola administrador, necesito que alguien revise de inmediato las fugas de agua e
+[ 29/97] OK   glm-4.5-air                    ( 341.3s): ¡Vecinos, por favor! Necesitamos ayuda urgente en el garaje, plaza 23. Hay una f
+[  1/59] FAIL glm-4.7-flash                  ( 108.9s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[  2/59] OK   granite-3.3-2b                 (  11.2s): Fugas en fontanería del garaje, Plaza 23. Problema urgente.
+[  3/59] OK   granite-3.3-8b                 (  17.6s): Hola, vecinos. Estoy reportando una fuga grave en la fontanería del garaje, plaz
+[  4/59] OK   hermes-3-llama-3.1-8b          (  19.4s): Hola, necesito ayuda urgentemente con un problema de fugas en el garaje de la pl
+[  5/59] OK   llama-3.1-8b-instruct          (  17.2s): Hola, necesito que se arregle la fontanería en el garaje de la plaza 23 lo antes
+[  6/59] FAIL llama-3.2-1b-instruct          (   8.1s): JSON parse: Expecting ',' delimiter: line 3 column 45 (char 217). {
+  "user_text": "Urgente, estoy solicit
+[  7/59] OK   llama-3.2-3b-instruct          (  16.2s): Hola, necesito que se reparen la fontanería en la plaza 23 del garaje lo antes p
+[  8/59] OK   ministral-8b-2410              (  17.2s): Hola, necesito informar sobre un problema urgente en el garaje de la plaza 23. H
+[  9/59] OK   mistral-7b-instruct-v0.3       (  15.5s): Hola, necesito informar que hay una fuente de agua en mi garaje en la plaza 23. 
+[ 10/59] OK   mistral-7b-v0.3-base           (  15.0s): Hay un problema en mi garaje en la plaza 23. Estoy experimentando fugas y/o prob
+[ 11/59] FAIL mistral-nemo-12b               (  22.5s): JSON parse: Unterminated string starting at: line 1 column 15 (char 14). {"user_text": "¡Tengo una fuga ur
+[ 12/59] OK   mistral-small-24b              (  76.2s): Hola, bueno pues aquí en la plaza 23 del garaje tenemos una fuga de agua que es 
+[ 13/59] FAIL mixtral-8x7b-instruct          (  75.5s): JSON parse: Invalid \escape: line 1 column 7 (char 6).  {"user\_text": "Hola, quisiera reportar
+[ 14/59] FAIL mn-velvetcafe-rp-12b           (  26.7s): JSON parse: Expecting value: line 1 column 1 (char 0). .py
+# Tekken Characters
+
+class Character
+[ 15/59] FAIL muse-glimmer-30b               (  62.4s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 16/59] OK   nous-hermes-2-mixtral-8x7b     (  77.3s): Hola comunidad, necesito reportar un problema en el garaje, en la plaza número 2
+[ 17/59] OK   olmo-2-13b-instruct            (  26.7s): Hola, necesito una atención inmediata urgente con un fuerte escape de agua en el
+[ 18/59] WEAK olmo-2-7b-instruct             (  15.9s): ...
+[ 19/59] OK   olmo-3-7b-instruct             (  16.2s): Se reporta urgente fuga en la fontanería del garaje (plaza 23). Ya ha empezado e
+[ 20/59] OK   openchat-3.5-0106              (  15.5s): Querida administración, me complace informar un problema que tiene mi comunidad 
+[ 21/59] FAIL orca-2-13b                     (  25.1s): JSON parse: Expecting value: line 1 column 1 (char 0). user_text: "Hola, soy vecino de la plaza
+[ 22/59] FAIL pantheon-rp-12b-nemo           (  25.8s): JSON parse: Expecting value: line 1 column 1 (char 0). ystemystem
+{
+  "user_text": "Hola, soy e
+[ 23/59] FAIL pantheon-rp-8b-llama3          (  18.9s): JSON parse: Expecting value: line 1 column 1 (char 0). AQUI VA TU RESPUESTA JSON:
+
+```json
+{
+  
+[ 24/59] OK   phi-3.5-mini-instruct          (  10.9s): Tengo un problema urgente de fontanería en garaje de la plaza 23. Hay fugas que 
+[ 25/59] OK   phi-4                          (  29.7s): Hola a todos en la comunidad de vecinos, espero que estén bien. Tengo que inform
+[ 26/59] FAIL phi-4-mini-instruct            (  12.0s): JSON parse: Extra data: line 1 column 202 (char 201). {"user_text": "¡Tengo un problema urgent
+[ 27/59] FAIL phi-4-reasoning                (  32.8s): JSON parse: Expecting value: line 1 column 1 (char 0). We are asked a conversation in Spanish, 
+[ 28/59] FAIL phi-4-reasoning-plus           (  28.9s): JSON parse: Expecting value: line 1 column 1 (char 0). We are asked: "Eres un vecino de una com
+[ 29/59] OK   qwen2.5-7b-instruct            (  18.6s): ¡URGENTE! Hay una fuga en la fontanería del garaje de la plaza 23. No puedo deja
+[ 30/59] OK   qwen3-0.6b                     (   5.7s): Problema: Urgencia: fontanería/fugas en garaje, plaza 23
+[ 31/59] OK   qwen3-1.7b                     (   7.6s): Habla con el personal de la plaza 23, necesito ayuda para el problema de fontane
+[ 32/59] OK   qwen3-14b                      (  26.4s): Urgente: Hay una fuga de fontanería en el garaje de la plaza 23. Por favor, que 
+[ 33/59] FAIL qwen3-30b-a3b-thinking         (  55.2s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 34/59] OK   qwen3-4b-instruct-awq          ( 186.5s): Urgente: hay una fuga de agua en el garaje, en la plaza 23. Ya está viendo agua 
+[ 35/59] OK   qwen3-8b                       (  20.5s): ¡Ayuda! Hay una fuga grave en el garaje de la plaza 23. El agua está inundando e
+[ 36/59] OK   qwen3-coder-30b-a3b            (  68.6s): ¡Hola! Tengo una emergencia en mi garaje, plaza 23. Hay una fuga de agua que est
+[ 37/59] ERR  qwen3.5-27b-awq                ( 600.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 38/59] ERR  qwen3.5-35b-a3b                ( 600.3s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 39/59] ERR  qwen3.5-4b-awq                 ( 600.1s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 40/59] ERR  qwen3.6-27b                    ( 600.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 41/59] ERR  qwen3.6-27b-thinking           ( 600.3s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 42/59] ERR  qwen3.6-35b-a3b                (  47.7s): {'message': 'litellm.InternalServerError: Internal
+[ 43/59] ERR  qwen3.6-35b-a3b-fast           (  21.6s): {'message': 'litellm.InternalServerError: Internal
+[ 44/59] ERR  qwen3.6-35b-awq                (  13.0s): {'message': 'litellm.InternalServerError: Internal
+[ 45/59] ERR  qwen3.8-27b                    (  13.0s): {'message': 'litellm.InternalServerError: Internal
+[ 46/59] ERR  qwen3.8-27b-herctic            (  13.1s): {'message': 'litellm.InternalServerError: Internal
+[ 47/59] ERR  seed-oss-36b                   (  13.3s): {'message': 'litellm.InternalServerError: Internal
+[ 48/59] ERR  skyfall-31b-v4y                (  11.7s): {'message': 'litellm.InternalServerError: Internal
+[ 49/59] ERR  smollm2-1.7b                   (  13.6s): {'message': 'litellm.InternalServerError: Internal
+[ 50/59] ERR  smollm3-3b                     (  10.4s): {'message': 'litellm.InternalServerError: Internal
+[ 51/59] ERR  solar-10.7b-instruct           (  10.3s): {'message': 'litellm.InternalServerError: Internal
+[ 52/59] ERR  stablelm-2-1.6b-chat           (  12.5s): {'message': 'litellm.InternalServerError: Internal
+[ 53/59] ERR  stheno-v3.4-8b                 (  13.3s): {'message': 'litellm.InternalServerError: Internal
+[ 54/59] ERR  tinyllama-1.1b-chat            (  12.7s): {'message': 'litellm.InternalServerError: Internal
+[ 55/59] ERR  vicuna-13b-v1.5                (  13.1s): {'message': 'litellm.InternalServerError: Internal
+[ 56/59] ERR  vicuna-7b-v1.5                 (  11.2s): {'message': 'litellm.InternalServerError: Internal
+[  1/33] ERR  gemma4-26b-awq                 ( 300.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[  2/33] ERR  gpt-oss-120b                   ( 300.1s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[  3/33] ERR  llama-3.1-nemotron-70b         ( 300.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[  4/33] OK   llama-3.3-70b-instruct         ( 144.9s): Tengo un problema urgente en el garaje de la plaza 23, hay una fuga de agua y ne
+[  5/33] FAIL qwen3.5-122b-a10b              ( 233.7s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[  6/33] OK   qwen3.5-122b-a10b-nothink      (  43.7s): Buenos días, necesito reportar con URGENCIA una fuga importante de agua en el ga
+[  7/33] FAIL qwen3.5-122b-a10b-q3           ( 224.8s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[  8/33] OK   qwen3.5-122b-a10b-q3-nothink   (  41.0s): Buenos días, tengo que reportar una urgencia grave. En el garaje, justo en la pl
+[  9/33] FAIL qwen3.5-122b-a10b-q4           ( 105.7s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 10/33] OK   qwen3.5-122b-a10b-q4-nothink   (  46.2s): Buenos días, tengo una fuga de agua grave en la plaza de garaje 23. El agua está
+[ 11/33] ERR  qwen3.5-27b-awq                ( 300.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 12/33] FAIL qwen3.5-35b-a3b                ( 241.0s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 13/33] ERR  qwen3.5-4b-awq                 ( 300.3s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 14/33] OK   qwen3.6-27b                    ( 209.1s): ¡Urgente! Hay una fuga de agua importante en el garaje, plaza 23. Está inundado 
+[ 15/33] FAIL qwen3.6-27b-thinking           (  27.8s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 16/33] FAIL qwen3.6-35b-a3b                (  85.3s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 17/33] FAIL qwen3.6-35b-a3b-fast           (  48.9s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 18/33] ERR  qwen3.6-35b-awq                ( 300.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 19/33] ERR  qwen3.8-27b                    ( 300.3s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 20/33] ERR  qwen3.8-27b-herctic            ( 300.1s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 21/33] FAIL seed-oss-36b                   ( 234.6s): JSON parse: Expecting value: line 1 column 1 (char 0). 
+[ 22/33] OK   skyfall-31b-v4y                ( 200.0s): Buenos días, soy el vecino de la plaza 23 del garaje. Les escribo porque hay una
+[ 23/33] OK   smollm2-1.7b                   (  14.7s): Il menaggio con le foschi e le fiosi repagliate nel garaje 23 è in esecutivo, li
+[ 24/33] OK   smollm3-3b                     (  14.1s): ¡Urgencia! Hay una fuente en el garaje, plaza 23 que está filtrando agua. Está e
+[ 25/33] OK   solar-10.7b-instruct           (  52.8s): Atención: tenemos una emergencia en la comunidad. Hemos detectado fugas en la fu
+[ 26/33] OK   stablelm-2-1.6b-chat           (   9.8s): 1. fontanería/ferozas en garaje, plaza atégica (urgencia: urgente)
+[ 27/33] OK   stheno-v3.4-8b                 (  30.5s): Estimado administrador de la comunidad, tengo un problema importante que necesit
+[ 28/33] FAIL tinyllama-1.1b-chat            (   7.2s): JSON parse: Expecting value: line 1 column 1 (char 0). Un vecino de una comunidad de vecinos es
+[ 29/33] FAIL vicuna-13b-v1.5                (  51.2s): JSON parse: Extra data: line 1 column 211 (char 210). {"user_text": "Hola, tengo un problema e
+[ 30/33] FAIL vicuna-7b-v1.5                 (  26.6s): JSON parse: Invalid \escape: line 1 column 7 (char 6). {"user\_text": "La fontanería del garaje
+[ 31/33] OK   vocalis-8b                     (  33.7s): Estimados responsables del mantenimiento, he notificado con anterioridad sobre p
+[ 32/33] OK   yi-34b-chat                    ( 135.5s): Hola, necesito reportar una urgente necesidad de reparación en mi casa. En la pl
+[ 33/33] OK   zephyr-7b-beta                 (  43.7s): Good afternoon, I am writing to report a significant issue in our community. The

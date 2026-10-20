@@ -1,0 +1,77 @@
+13:43:55 [INFO] src.pipeline: Generating 250 records with 32 workers...
+13:44:07 [INFO] src.pipeline: Progress: 10/250 generated, 0 failed, tokens: in=87,359, out=13,491
+13:44:18 [INFO] src.pipeline: Progress: 20/250 generated, 0 failed, tokens: in=161,945, out=27,302
+13:44:28 [INFO] src.pipeline: Progress: 30/250 generated, 0 failed, tokens: in=220,180, out=38,077
+13:44:39 [INFO] src.pipeline: Progress: 40/250 generated, 0 failed, tokens: in=282,528, out=48,256
+13:44:50 [INFO] src.pipeline: Progress: 50/250 generated, 0 failed, tokens: in=332,912, out=57,450
+13:45:06 [INFO] src.pipeline: Progress: 60/250 generated, 0 failed, tokens: in=351,163, out=60,762
+13:45:18 [WARNING] src.pipeline: [Q0051] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:20 [WARNING] src.pipeline: [Q0072] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:23 [INFO] src.pipeline: Progress: 70/250 generated, 0 failed, tokens: in=354,384, out=73,925
+13:45:34 [WARNING] src.pipeline: [Q0005] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:39 [INFO] src.pipeline: Progress: 80/250 generated, 0 failed, tokens: in=356,124, out=80,377
+13:45:40 [WARNING] src.pipeline: [Q0065] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:41 [WARNING] src.pipeline: [Q0207] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:41 [WARNING] src.pipeline: [Q0058] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:48 [WARNING] src.pipeline: [Q0077] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:50 [WARNING] src.pipeline: [Q0026] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:54 [WARNING] src.pipeline: [Q0044] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:56 [INFO] src.pipeline: Progress: 90/250 generated, 0 failed, tokens: in=365,865, out=119,788
+13:45:57 [WARNING] src.pipeline: [Q0141] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:45:57 [WARNING] src.pipeline: [Q0047] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:46:01 [WARNING] src.pipeline: [Q0071] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:46:04 [WARNING] src.pipeline: [Q0094] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:46:08 [WARNING] src.pipeline: [Q0131] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:46:11 [INFO] src.pipeline: Progress: 100/250 generated, 0 failed, tokens: in=374,006, out=152,607
+13:46:14 [WARNING] src.pipeline: [Q0223] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:46:20 [WARNING] src.pipeline: [Q0249] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:46:26 [INFO] src.pipeline: Progress: 110/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:46:41 [INFO] src.pipeline: Progress: 120/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:46:57 [INFO] src.pipeline: Progress: 130/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:47:13 [INFO] src.pipeline: Progress: 140/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:47:29 [INFO] src.pipeline: Progress: 150/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:47:45 [INFO] src.pipeline: Progress: 160/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:48:01 [INFO] src.pipeline: Progress: 170/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:48:19 [INFO] src.pipeline: Progress: 180/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:48:36 [INFO] src.pipeline: Progress: 190/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:48:52 [INFO] src.pipeline: Progress: 200/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:49:08 [INFO] src.pipeline: Progress: 210/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:49:23 [INFO] src.pipeline: Progress: 220/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:49:32 [INFO] src.pipeline: Progress: 230/250 generated, 0 failed, tokens: in=377,059, out=165,938
+13:49:40 [WARNING] src.pipeline: [Q0051] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0072] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0005] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0065] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0207] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0058] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0077] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0026] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0044] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0141] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0047] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0071] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0094] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0131] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0223] Generation failed
+13:49:40 [WARNING] src.pipeline: [Q0249] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_4b_instr_awq (qwen3-4b-instruct-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    250
+  IDs:        Q0001 — Q0250
+  Output:     ../eval/results/iter_3/gen_gen_qwen3_4b_instr_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  234
+  Failed:     16
+  Tokens in:  377,059
+  Tokens out: 165,938
+  Raw:        ../eval/results/iter_3/gen_gen_qwen3_4b_instr_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_3/gen_gen_qwen3_4b_instr_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_3/gen_gen_qwen3_4b_instr_awq/raw/metadata.jsonl
+  Images dir: None

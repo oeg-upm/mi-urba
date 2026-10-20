@@ -1,0 +1,202 @@
+11:02:48 [INFO] src.pipeline: Extracting 854 complaints with 32 workers...
+11:03:54 [INFO] src.pipeline: Progress: 10/854 done, 0 failed this pass, tokens: in=13,801, out=26,351
+11:04:21 [INFO] src.pipeline: Progress: 20/854 done, 0 failed this pass, tokens: in=28,274, out=64,369
+11:04:46 [INFO] src.pipeline: Progress: 30/854 done, 0 failed this pass, tokens: in=42,407, out=108,658
+11:05:13 [ERROR] src.pipeline: [Q0013] Worker error: 'NoneType' object has no attribute 'strip'
+11:05:14 [INFO] src.pipeline: Progress: 40/854 done, 1 failed this pass, tokens: in=58,187, out=154,258
+11:05:43 [INFO] src.pipeline: Progress: 50/854 done, 1 failed this pass, tokens: in=72,382, out=191,235
+11:06:03 [INFO] src.pipeline: Progress: 60/854 done, 1 failed this pass, tokens: in=86,748, out=226,002
+11:06:29 [INFO] src.pipeline: Progress: 70/854 done, 1 failed this pass, tokens: in=101,203, out=262,504
+11:06:34 [ERROR] src.pipeline: [Q0056] Worker error: 'NoneType' object has no attribute 'strip'
+11:06:42 [WARNING] src.pipeline: [Q0065] JSON parse failed: Expecting ',' delimiter: line 26 column 2 (char 578)
+11:06:42 [WARNING] src.pipeline: [Q0065] Extraction failed
+11:07:02 [INFO] src.pipeline: Progress: 80/854 done, 3 failed this pass, tokens: in=118,296, out=304,558
+11:07:38 [INFO] src.pipeline: Progress: 90/854 done, 3 failed this pass, tokens: in=132,272, out=339,883
+11:08:17 [INFO] src.pipeline: Progress: 100/854 done, 3 failed this pass, tokens: in=147,064, out=377,699
+11:08:50 [INFO] src.pipeline: Progress: 110/854 done, 3 failed this pass, tokens: in=161,196, out=422,920
+11:09:19 [INFO] src.pipeline: Progress: 120/854 done, 3 failed this pass, tokens: in=175,653, out=462,307
+11:09:33 [WARNING] src.pipeline: [Q0120] JSON parse failed: Unterminated string starting at: line 105 column 7 (char 2257)
+11:09:33 [WARNING] src.pipeline: [Q0120] Extraction failed
+11:09:47 [ERROR] src.pipeline: [Q0118] Worker error: 'NoneType' object has no attribute 'strip'
+11:09:52 [INFO] src.pipeline: Progress: 130/854 done, 5 failed this pass, tokens: in=193,459, out=512,744
+11:10:26 [INFO] src.pipeline: Progress: 140/854 done, 5 failed this pass, tokens: in=207,898, out=542,954
+11:11:00 [WARNING] src.pipeline: [Q0154] JSON parse failed: Unterminated string starting at: line 17 column 17 (char 351)
+11:11:00 [WARNING] src.pipeline: [Q0154] Extraction failed
+11:11:01 [INFO] src.pipeline: Progress: 150/854 done, 6 failed this pass, tokens: in=223,847, out=584,942
+11:11:36 [INFO] src.pipeline: Progress: 160/854 done, 6 failed this pass, tokens: in=237,353, out=619,454
+11:12:13 [INFO] src.pipeline: Progress: 170/854 done, 6 failed this pass, tokens: in=251,307, out=655,903
+11:12:30 [ERROR] src.pipeline: [Q0187] Worker error: 'NoneType' object has no attribute 'strip'
+11:12:32 [ERROR] src.pipeline: [Q0178] Worker error: 'NoneType' object has no attribute 'strip'
+11:12:46 [INFO] src.pipeline: Progress: 180/854 done, 8 failed this pass, tokens: in=268,475, out=703,474
+11:12:54 [ERROR] src.pipeline: [Q0190] Worker error: 'NoneType' object has no attribute 'strip'
+11:13:22 [INFO] src.pipeline: Progress: 190/854 done, 9 failed this pass, tokens: in=284,102, out=747,915
+11:13:55 [INFO] src.pipeline: Progress: 200/854 done, 9 failed this pass, tokens: in=298,384, out=783,838
+11:14:30 [INFO] src.pipeline: Progress: 210/854 done, 9 failed this pass, tokens: in=312,398, out=818,971
+11:15:00 [INFO] src.pipeline: Progress: 220/854 done, 9 failed this pass, tokens: in=326,759, out=861,718
+11:15:45 [INFO] src.pipeline: Progress: 230/854 done, 9 failed this pass, tokens: in=341,209, out=901,089
+11:16:08 [WARNING] src.pipeline: [Q0258] JSON parse failed: Unterminated string starting at: line 3 column 3 (char 31)
+11:16:08 [WARNING] src.pipeline: [Q0258] Extraction failed
+11:16:11 [WARNING] src.pipeline: [Q0254] JSON parse failed: Expecting property name enclosed in double quotes: line 75 column 48 (char 1590)
+11:16:11 [WARNING] src.pipeline: [Q0254] Extraction failed
+11:16:15 [WARNING] src.pipeline: [Q0282] JSON parse failed: Expecting ',' delimiter: line 33 column 2 (char 764)
+11:16:15 [WARNING] src.pipeline: [Q0282] Extraction failed
+11:16:34 [INFO] src.pipeline: Progress: 240/854 done, 12 failed this pass, tokens: in=359,774, out=954,456
+11:16:42 [ERROR] src.pipeline: [Q0265] Worker error: 'NoneType' object has no attribute 'strip'
+11:16:58 [INFO] src.pipeline: Progress: 250/854 done, 13 failed this pass, tokens: in=375,272, out=1,001,768
+11:17:29 [INFO] src.pipeline: Progress: 260/854 done, 13 failed this pass, tokens: in=389,582, out=1,041,888
+11:18:09 [INFO] src.pipeline: Progress: 270/854 done, 13 failed this pass, tokens: in=404,123, out=1,074,607
+11:18:43 [INFO] src.pipeline: Progress: 280/854 done, 13 failed this pass, tokens: in=418,627, out=1,110,675
+11:19:08 [ERROR] src.pipeline: [Q0324] Worker error: 'NoneType' object has no attribute 'strip'
+11:19:27 [INFO] src.pipeline: Progress: 290/854 done, 14 failed this pass, tokens: in=434,967, out=1,159,943
+11:19:47 [ERROR] src.pipeline: [Q0332] Worker error: 'NoneType' object has no attribute 'strip'
+11:19:50 [INFO] src.pipeline: Progress: 300/854 done, 15 failed this pass, tokens: in=450,771, out=1,201,870
+11:20:38 [INFO] src.pipeline: Progress: 310/854 done, 15 failed this pass, tokens: in=464,763, out=1,237,405
+11:20:39 [ERROR] src.pipeline: [Q0364] Worker error: 'NoneType' object has no attribute 'strip'
+11:21:08 [INFO] src.pipeline: Progress: 320/854 done, 16 failed this pass, tokens: in=480,645, out=1,278,115
+11:21:35 [INFO] src.pipeline: Progress: 330/854 done, 16 failed this pass, tokens: in=495,000, out=1,317,988
+11:22:22 [INFO] src.pipeline: Progress: 340/854 done, 16 failed this pass, tokens: in=509,448, out=1,357,430
+11:22:48 [WARNING] src.pipeline: [Q0425] JSON parse failed: Expecting ',' delimiter: line 38 column 2 (char 880)
+11:22:48 [WARNING] src.pipeline: [Q0425] Extraction failed
+11:23:02 [ERROR] src.pipeline: [Q0405] Worker error: 'NoneType' object has no attribute 'strip'
+11:23:03 [INFO] src.pipeline: Progress: 350/854 done, 18 failed this pass, tokens: in=526,892, out=1,407,223
+11:23:39 [INFO] src.pipeline: Progress: 360/854 done, 18 failed this pass, tokens: in=541,505, out=1,451,374
+11:23:55 [WARNING] src.pipeline: [Q0424] JSON parse failed: Expecting ',' delimiter: line 15 column 5 (char 293)
+11:23:55 [WARNING] src.pipeline: [Q0424] Extraction failed
+11:24:15 [INFO] src.pipeline: Progress: 370/854 done, 19 failed this pass, tokens: in=557,402, out=1,493,045
+11:24:25 [ERROR] src.pipeline: [Q0431] Worker error: 'NoneType' object has no attribute 'strip'
+11:24:58 [INFO] src.pipeline: Progress: 380/854 done, 20 failed this pass, tokens: in=572,964, out=1,539,324
+11:25:34 [INFO] src.pipeline: Progress: 390/854 done, 20 failed this pass, tokens: in=587,146, out=1,580,126
+11:26:04 [ERROR] src.pipeline: [Q0463] Worker error: 'NoneType' object has no attribute 'strip'
+11:26:17 [ERROR] src.pipeline: [Q0451] Worker error: 'NoneType' object has no attribute 'strip'
+11:26:19 [INFO] src.pipeline: Progress: 400/854 done, 22 failed this pass, tokens: in=604,342, out=1,632,173
+11:26:30 [WARNING] src.pipeline: [Q0502] JSON parse failed: Expecting property name enclosed in double quotes: line 5 column 1 (char 62)
+11:26:30 [WARNING] src.pipeline: [Q0502] Extraction failed
+11:26:58 [INFO] src.pipeline: Progress: 410/854 done, 23 failed this pass, tokens: in=619,925, out=1,674,638
+11:27:30 [INFO] src.pipeline: Progress: 420/854 done, 23 failed this pass, tokens: in=634,333, out=1,716,615
+11:27:33 [ERROR] src.pipeline: [Q0484] Worker error: 'NoneType' object has no attribute 'strip'
+11:28:11 [INFO] src.pipeline: Progress: 430/854 done, 24 failed this pass, tokens: in=649,563, out=1,765,200
+11:28:44 [INFO] src.pipeline: Progress: 440/854 done, 24 failed this pass, tokens: in=663,629, out=1,797,084
+11:28:46 [WARNING] src.pipeline: [Q0498] JSON parse failed: Expecting ',' delimiter: line 42 column 34 (char 909)
+11:28:46 [WARNING] src.pipeline: [Q0498] Extraction failed
+11:29:21 [INFO] src.pipeline: Progress: 450/854 done, 25 failed this pass, tokens: in=679,730, out=1,843,560
+11:29:47 [ERROR] src.pipeline: [Q0533] Worker error: 'NoneType' object has no attribute 'strip'
+11:30:04 [INFO] src.pipeline: Progress: 460/854 done, 26 failed this pass, tokens: in=694,897, out=1,890,575
+11:30:09 [WARNING] src.pipeline: [Q0540] JSON parse failed: Expecting value: line 72 column 29 (char 1525)
+11:30:09 [WARNING] src.pipeline: [Q0540] Extraction failed
+11:30:28 [INFO] src.pipeline: Progress: 470/854 done, 27 failed this pass, tokens: in=711,130, out=1,935,491
+11:31:16 [INFO] src.pipeline: Progress: 480/854 done, 27 failed this pass, tokens: in=725,556, out=1,972,513
+11:31:26 [ERROR] src.pipeline: [Q0567] Worker error: 'NoneType' object has no attribute 'strip'
+11:31:48 [INFO] src.pipeline: Progress: 490/854 done, 28 failed this pass, tokens: in=741,001, out=2,013,525
+11:32:15 [INFO] src.pipeline: Progress: 500/854 done, 28 failed this pass, tokens: in=755,615, out=2,052,441
+11:32:50 [WARNING] src.pipeline: [Q0595] JSON parse failed: Expecting property name enclosed in double quotes: line 44 column 20 (char 968)
+11:32:50 [WARNING] src.pipeline: [Q0595] Extraction failed
+11:33:01 [INFO] src.pipeline: Progress: 510/854 done, 29 failed this pass, tokens: in=771,019, out=2,093,908
+11:33:31 [INFO] src.pipeline: Progress: 520/854 done, 29 failed this pass, tokens: in=785,607, out=2,133,069
+11:34:12 [INFO] src.pipeline: Progress: 530/854 done, 29 failed this pass, tokens: in=800,198, out=2,175,551
+11:35:04 [WARNING] src.pipeline: [Q0622] JSON parse failed: Expecting value: line 20 column 15 (char 426)
+11:35:04 [WARNING] src.pipeline: [Q0622] Extraction failed
+11:35:07 [INFO] src.pipeline: Progress: 540/854 done, 30 failed this pass, tokens: in=816,585, out=2,220,737
+11:35:15 [WARNING] src.pipeline: [Q0681] JSON parse failed: Expecting ',' delimiter: line 26 column 2 (char 584)
+11:35:15 [WARNING] src.pipeline: [Q0681] Extraction failed
+11:35:41 [INFO] src.pipeline: Progress: 550/854 done, 31 failed this pass, tokens: in=832,835, out=2,263,155
+11:36:09 [ERROR] src.pipeline: [Q0659] Worker error: 'NoneType' object has no attribute 'strip'
+11:36:13 [ERROR] src.pipeline: [Q0662] Worker error: 'NoneType' object has no attribute 'strip'
+11:36:26 [INFO] src.pipeline: Progress: 560/854 done, 33 failed this pass, tokens: in=849,955, out=2,313,322
+11:36:34 [ERROR] src.pipeline: [Q0658] Worker error: 'NoneType' object has no attribute 'strip'
+11:36:57 [INFO] src.pipeline: Progress: 570/854 done, 34 failed this pass, tokens: in=865,895, out=2,360,729
+11:37:40 [INFO] src.pipeline: Progress: 580/854 done, 34 failed this pass, tokens: in=880,480, out=2,395,839
+11:38:15 [INFO] src.pipeline: Progress: 590/854 done, 34 failed this pass, tokens: in=894,949, out=2,435,994
+11:38:29 [WARNING] src.pipeline: [Q0742] JSON parse failed: Expecting ',' delimiter: line 30 column 2 (char 701)
+11:38:29 [WARNING] src.pipeline: [Q0742] Extraction failed
+11:38:46 [INFO] src.pipeline: Progress: 600/854 done, 35 failed this pass, tokens: in=911,010, out=2,477,299
+11:39:25 [INFO] src.pipeline: Progress: 610/854 done, 35 failed this pass, tokens: in=925,278, out=2,511,463
+11:39:54 [ERROR] src.pipeline: [Q0732] Worker error: 'NoneType' object has no attribute 'strip'
+11:40:09 [INFO] src.pipeline: Progress: 620/854 done, 36 failed this pass, tokens: in=941,418, out=2,555,638
+11:40:41 [INFO] src.pipeline: Progress: 630/854 done, 36 failed this pass, tokens: in=955,748, out=2,593,252
+11:41:18 [INFO] src.pipeline: Progress: 640/854 done, 36 failed this pass, tokens: in=969,651, out=2,630,626
+11:42:04 [INFO] src.pipeline: Progress: 650/854 done, 36 failed this pass, tokens: in=984,272, out=2,670,569
+11:42:40 [INFO] src.pipeline: Progress: 660/854 done, 36 failed this pass, tokens: in=998,307, out=2,705,198
+11:42:47 [ERROR] src.pipeline: [Q0776] Worker error: 'NoneType' object has no attribute 'strip'
+11:43:05 [ERROR] src.pipeline: [Q0775] Worker error: 'NoneType' object has no attribute 'strip'
+11:43:24 [ERROR] src.pipeline: [Q0797] Worker error: 'NoneType' object has no attribute 'strip'
+11:43:29 [INFO] src.pipeline: Progress: 670/854 done, 39 failed this pass, tokens: in=1,016,842, out=2,759,472
+11:43:45 [ERROR] src.pipeline: [Q0792] Worker error: 'NoneType' object has no attribute 'strip'
+11:44:13 [INFO] src.pipeline: Progress: 680/854 done, 40 failed this pass, tokens: in=1,032,211, out=2,804,806
+11:44:54 [INFO] src.pipeline: Progress: 690/854 done, 40 failed this pass, tokens: in=1,046,553, out=2,843,358
+11:45:16 [ERROR] src.pipeline: [Q0820] Worker error: 'NoneType' object has no attribute 'strip'
+11:45:32 [INFO] src.pipeline: Progress: 700/854 done, 41 failed this pass, tokens: in=1,062,250, out=2,888,026
+11:46:13 [INFO] src.pipeline: Progress: 710/854 done, 41 failed this pass, tokens: in=1,076,301, out=2,924,380
+11:46:45 [INFO] src.pipeline: Progress: 720/854 done, 41 failed this pass, tokens: in=1,090,338, out=2,964,410
+11:47:35 [INFO] src.pipeline: Progress: 730/854 done, 41 failed this pass, tokens: in=1,105,356, out=3,001,854
+11:47:43 [ERROR] src.pipeline: [Q0871] Worker error: 'NoneType' object has no attribute 'strip'
+11:48:23 [INFO] src.pipeline: Progress: 740/854 done, 42 failed this pass, tokens: in=1,121,110, out=3,053,674
+11:48:52 [ERROR] src.pipeline: [Q0893] Worker error: 'NoneType' object has no attribute 'strip'
+11:49:00 [INFO] src.pipeline: Progress: 750/854 done, 43 failed this pass, tokens: in=1,136,809, out=3,099,101
+11:50:03 [INFO] src.pipeline: Progress: 760/854 done, 43 failed this pass, tokens: in=1,150,836, out=3,141,876
+11:50:28 [INFO] src.pipeline: Progress: 770/854 done, 43 failed this pass, tokens: in=1,164,811, out=3,183,841
+11:50:35 [ERROR] src.pipeline: [Q0925] Worker error: 'NoneType' object has no attribute 'strip'
+11:51:06 [ERROR] src.pipeline: [Q0935] Worker error: 'NoneType' object has no attribute 'strip'
+11:51:12 [INFO] src.pipeline: Progress: 780/854 done, 45 failed this pass, tokens: in=1,181,959, out=3,234,328
+11:51:39 [INFO] src.pipeline: Progress: 790/854 done, 45 failed this pass, tokens: in=1,196,080, out=3,271,559
+11:52:03 [ERROR] src.pipeline: [Q0960] Worker error: 'NoneType' object has no attribute 'strip'
+11:52:03 [INFO] src.pipeline: Progress: 800/854 done, 46 failed this pass, tokens: in=1,211,718, out=3,312,346
+11:52:30 [INFO] src.pipeline: Pass 0 complete: 808 extracted, 46 failed. Retrying in 30s...
+11:53:00 [INFO] src.pipeline: Resuming: 808 extractions already exist
+11:53:00 [INFO] src.pipeline: === Retry 1/5: 46 pending, 46 failed so far ===
+11:53:00 [INFO] src.pipeline: Extracting 46 complaints with 32 workers...
+11:54:27 [INFO] src.pipeline: Progress: 810/854 done, 0 failed this pass, tokens: in=1,225,789, out=3,356,164
+11:55:00 [INFO] src.pipeline: Progress: 820/854 done, 0 failed this pass, tokens: in=1,240,526, out=3,392,268
+11:55:44 [INFO] src.pipeline: Progress: 830/854 done, 0 failed this pass, tokens: in=1,255,550, out=3,441,587
+11:56:09 [INFO] src.pipeline: Progress: 840/854 done, 0 failed this pass, tokens: in=1,270,262, out=3,492,480
+11:56:10 [ERROR] src.pipeline: [Q0154] Worker error: 'NoneType' object has no attribute 'strip'
+11:56:11 [ERROR] src.pipeline: [Q0463] Worker error: 'NoneType' object has no attribute 'strip'
+11:56:11 [ERROR] src.pipeline: [Q0659] Worker error: 'NoneType' object has no attribute 'strip'
+11:56:12 [ERROR] src.pipeline: [Q0265] Worker error: 'NoneType' object has no attribute 'strip'
+11:56:56 [ERROR] src.pipeline: [Q0925] Worker error: 'NoneType' object has no attribute 'strip'
+11:56:56 [ERROR] src.pipeline: [Q0935] Worker error: 'NoneType' object has no attribute 'strip'
+11:56:56 [INFO] src.pipeline: Pass 1 complete: 40 extracted, 6 failed. Retrying in 30s...
+11:57:26 [INFO] src.pipeline: Resuming: 848 extractions already exist
+11:57:26 [INFO] src.pipeline: === Retry 2/5: 6 pending, 52 failed so far ===
+11:57:26 [INFO] src.pipeline: Extracting 6 complaints with 32 workers...
+11:58:25 [INFO] src.pipeline: Progress: 850/854 done, 0 failed this pass, tokens: in=1,293,471, out=3,577,608
+11:58:36 [ERROR] src.pipeline: [Q0925] Worker error: 'NoneType' object has no attribute 'strip'
+11:58:36 [ERROR] src.pipeline: [Q0935] Worker error: 'NoneType' object has no attribute 'strip'
+11:58:37 [ERROR] src.pipeline: [Q0659] Worker error: 'NoneType' object has no attribute 'strip'
+11:58:37 [WARNING] src.pipeline: [Q0265] JSON parse failed: Expecting property name enclosed in double quotes: line 110 column 9 (char 2333)
+11:58:37 [WARNING] src.pipeline: [Q0265] Extraction failed
+11:58:37 [INFO] src.pipeline: Pass 2 complete: 2 extracted, 4 failed. Retrying in 30s...
+11:59:07 [INFO] src.pipeline: Resuming: 850 extractions already exist
+11:59:07 [INFO] src.pipeline: === Retry 3/5: 4 pending, 56 failed so far ===
+11:59:07 [INFO] src.pipeline: Extracting 4 complaints with 32 workers...
+12:00:05 [ERROR] src.pipeline: [Q0925] Worker error: 'NoneType' object has no attribute 'strip'
+12:00:05 [ERROR] src.pipeline: [Q0659] Worker error: 'NoneType' object has no attribute 'strip'
+12:00:05 [INFO] src.pipeline: Pass 3 complete: 2 extracted, 2 failed. Retrying in 30s...
+12:00:36 [INFO] src.pipeline: Resuming: 852 extractions already exist
+12:00:36 [INFO] src.pipeline: === Retry 4/5: 2 pending, 58 failed so far ===
+12:00:36 [INFO] src.pipeline: Extracting 2 complaints with 32 workers...
+12:01:26 [ERROR] src.pipeline: [Q0925] Worker error: 'NoneType' object has no attribute 'strip'
+12:01:26 [INFO] src.pipeline: Pass 4 complete: 1 extracted, 1 failed. Retrying in 30s...
+12:01:56 [INFO] src.pipeline: Resuming: 853 extractions already exist
+12:01:56 [INFO] src.pipeline: === Retry 5/5: 1 pending, 59 failed so far ===
+12:01:56 [INFO] src.pipeline: Extracting 1 complaints with 32 workers...
+12:02:42 [ERROR] src.pipeline: [Q0925] Worker error: 'NoneType' object has no attribute 'strip'
+miUrba — Extraction (raw + images → structured, VLM)
+=======================================================
+  Model (VLM): QuantTrio/Qwen3.6-35B-A3B-AWQ
+  Endpoint:   http://192.168.10.11:8000
+  Source:     ../eval/results/extractions/qwen3_local/raw/complaints.jsonl
+  Images:     ../eval/results/extractions/qwen3_local/images
+  Output:     ../eval/results/extractions/qwen3_local/annotated/extractions.jsonl
+  Resume:     False
+=======================================================
+
+=======================================================
+Extraction complete!
+  Extracted:  853
+  Failed:     1
+  Skipped:    0
+  Total:      854
+  Tokens in:  1,309,182
+  Tokens out: 3,645,965
+  Images dir: ../eval/results/extractions/qwen3_local/images
+  Output:     ../eval/results/extractions/qwen3_local/annotated/extractions.jsonl

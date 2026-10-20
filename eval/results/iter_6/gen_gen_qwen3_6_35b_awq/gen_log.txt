@@ -1,0 +1,83 @@
+06:58:31 [INFO] src.pipeline: Generating 250 records with 32 workers...
+06:58:58 [WARNING] src.pipeline: [Q0024] JSON parse failed: Invalid \escape: line 2 column 265 (char 266)
+06:59:03 [WARNING] src.pipeline: [Q0015] JSON parse failed: Invalid \escape: line 2 column 380 (char 381)
+06:59:03 [WARNING] src.pipeline: [Q0004] JSON parse failed: Invalid \escape: line 2 column 1167 (char 1168)
+06:59:05 [INFO] src.pipeline: Progress: 10/250 generated, 0 failed, tokens: in=49,266, out=6,061
+06:59:16 [WARNING] src.pipeline: [Q0024] Generation failed
+06:59:19 [INFO] src.pipeline: Progress: 20/250 generated, 1 failed, tokens: in=86,706, out=10,955
+06:59:24 [WARNING] src.pipeline: [Q0046] JSON parse failed: Invalid \escape: line 2 column 669 (char 670)
+06:59:28 [WARNING] src.pipeline: [Q0015] Generation failed
+06:59:28 [WARNING] src.pipeline: [Q0004] Generation failed
+06:59:32 [INFO] src.pipeline: Progress: 30/250 generated, 3 failed, tokens: in=125,853, out=16,786
+06:59:47 [INFO] src.pipeline: Progress: 40/250 generated, 3 failed, tokens: in=173,440, out=22,959
+06:59:49 [WARNING] src.pipeline: [Q0110] JSON parse failed: Invalid \escape: line 2 column 319 (char 320)
+06:59:56 [WARNING] src.pipeline: [Q0120] JSON parse failed: Invalid \escape: line 2 column 381 (char 382)
+06:59:59 [WARNING] src.pipeline: [Q0147] JSON parse failed: Invalid \escape: line 2 column 148 (char 149)
+07:00:03 [INFO] src.pipeline: Progress: 50/250 generated, 3 failed, tokens: in=222,805, out=30,769
+07:00:08 [WARNING] src.pipeline: [Q0113] JSON parse failed: Invalid control character at: line 2 column 1864 (char 1865)
+07:00:11 [WARNING] src.pipeline: [Q0156] JSON parse failed: Invalid \escape: line 2 column 130 (char 131)
+07:00:15 [INFO] src.pipeline: Progress: 60/250 generated, 3 failed, tokens: in=249,203, out=34,687
+07:00:16 [WARNING] src.pipeline: [Q0046] Generation failed
+07:00:20 [WARNING] src.pipeline: [Q0152] JSON parse failed: Invalid \escape: line 2 column 675 (char 676)
+07:00:21 [WARNING] src.pipeline: [Q0166] JSON parse failed: Invalid \escape: line 2 column 622 (char 623)
+07:00:21 [WARNING] src.pipeline: [Q0163] JSON parse failed: Invalid \escape: line 2 column 159 (char 160)
+07:00:29 [INFO] src.pipeline: Progress: 70/250 generated, 4 failed, tokens: in=293,510, out=40,444
+07:00:32 [WARNING] src.pipeline: [Q0174] JSON parse failed: Invalid control character at: line 2 column 1463 (char 1464)
+07:00:41 [WARNING] src.pipeline: [Q0211] JSON parse failed: Invalid \escape: line 2 column 337 (char 338)
+07:00:42 [INFO] src.pipeline: Progress: 80/250 generated, 4 failed, tokens: in=330,035, out=45,719
+07:00:44 [WARNING] src.pipeline: [Q0209] JSON parse failed: Invalid \escape: line 2 column 794 (char 795)
+07:00:49 [WARNING] src.pipeline: [Q0239] JSON parse failed: Invalid \escape: line 2 column 363 (char 364)
+07:00:50 [WARNING] src.pipeline: [Q0244] JSON parse failed: Invalid \escape: line 2 column 124 (char 125)
+07:00:51 [WARNING] src.pipeline: [Q0247] JSON parse failed: Invalid \escape: line 2 column 39 (char 40)
+07:00:54 [INFO] src.pipeline: Progress: 90/250 generated, 4 failed, tokens: in=386,021, out=53,769
+07:01:15 [INFO] src.pipeline: Progress: 100/250 generated, 4 failed, tokens: in=386,021, out=53,769
+07:01:32 [INFO] src.pipeline: Progress: 110/250 generated, 4 failed, tokens: in=386,021, out=53,769
+07:01:32 [WARNING] src.pipeline: [Q0110] Generation failed
+07:01:37 [WARNING] src.pipeline: [Q0228] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+07:01:49 [INFO] src.pipeline: Progress: 120/250 generated, 5 failed, tokens: in=387,473, out=58,461
+07:01:53 [WARNING] src.pipeline: [Q0120] Generation failed
+07:02:06 [WARNING] src.pipeline: [Q0147] Generation failed
+07:02:08 [INFO] src.pipeline: Progress: 130/250 generated, 7 failed, tokens: in=387,473, out=58,461
+07:02:24 [INFO] src.pipeline: Progress: 140/250 generated, 7 failed, tokens: in=387,473, out=58,461
+07:02:31 [WARNING] src.pipeline: [Q0113] Generation failed
+07:02:38 [WARNING] src.pipeline: [Q0156] Generation failed
+07:02:41 [INFO] src.pipeline: Progress: 150/250 generated, 9 failed, tokens: in=387,473, out=58,461
+07:03:00 [INFO] src.pipeline: Progress: 160/250 generated, 9 failed, tokens: in=387,473, out=58,461
+07:03:00 [WARNING] src.pipeline: [Q0152] Generation failed
+07:03:12 [WARNING] src.pipeline: [Q0166] Generation failed
+07:03:12 [WARNING] src.pipeline: [Q0163] Generation failed
+07:03:16 [INFO] src.pipeline: Progress: 170/250 generated, 12 failed, tokens: in=387,473, out=58,461
+07:03:32 [INFO] src.pipeline: Progress: 180/250 generated, 12 failed, tokens: in=387,473, out=58,461
+07:03:36 [WARNING] src.pipeline: [Q0174] Generation failed
+07:03:51 [INFO] src.pipeline: Progress: 190/250 generated, 13 failed, tokens: in=387,473, out=58,461
+07:04:02 [WARNING] src.pipeline: [Q0211] Generation failed
+07:04:08 [WARNING] src.pipeline: [Q0209] Generation failed
+07:04:10 [INFO] src.pipeline: Progress: 200/250 generated, 15 failed, tokens: in=387,473, out=58,461
+07:04:29 [INFO] src.pipeline: Progress: 210/250 generated, 15 failed, tokens: in=387,473, out=58,461
+07:04:47 [INFO] src.pipeline: Progress: 220/250 generated, 15 failed, tokens: in=387,473, out=58,461
+07:04:50 [WARNING] src.pipeline: [Q0239] Generation failed
+07:05:05 [INFO] src.pipeline: Progress: 230/250 generated, 16 failed, tokens: in=387,473, out=58,461
+07:05:05 [WARNING] src.pipeline: [Q0244] Generation failed
+07:05:05 [WARNING] src.pipeline: [Q0247] Generation failed
+07:05:06 [WARNING] src.pipeline: [Q0228] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_6_35b_awq (qwen3.6-35b-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    250
+  IDs:        Q0001 — Q0250
+  Output:     ../eval/results/iter_6/gen_gen_qwen3_6_35b_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  231
+  Failed:     19
+  Tokens in:  387,473
+  Tokens out: 58,461
+  Raw:        ../eval/results/iter_6/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_6/gen_gen_qwen3_6_35b_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_6/gen_gen_qwen3_6_35b_awq/raw/metadata.jsonl
+  Images dir: None

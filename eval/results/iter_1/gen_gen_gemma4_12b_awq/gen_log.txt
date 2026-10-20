@@ -1,0 +1,137 @@
+12:21:48 [INFO] src.pipeline: Generating 1000 records with 32 workers...
+12:22:04 [INFO] src.pipeline: Progress: 10/1000 generated, 0 failed, tokens: in=10,694, out=1,332
+12:22:07 [INFO] src.pipeline: Progress: 20/1000 generated, 0 failed, tokens: in=22,074, out=3,328
+12:22:12 [INFO] src.pipeline: Progress: 30/1000 generated, 0 failed, tokens: in=33,301, out=5,693
+12:22:17 [INFO] src.pipeline: Progress: 40/1000 generated, 0 failed, tokens: in=44,813, out=7,944
+12:22:21 [INFO] src.pipeline: Progress: 50/1000 generated, 0 failed, tokens: in=54,947, out=9,758
+12:22:26 [INFO] src.pipeline: Progress: 60/1000 generated, 0 failed, tokens: in=65,415, out=11,992
+12:22:31 [INFO] src.pipeline: Progress: 70/1000 generated, 0 failed, tokens: in=76,588, out=14,303
+12:22:35 [INFO] src.pipeline: Progress: 80/1000 generated, 0 failed, tokens: in=86,909, out=16,175
+12:22:39 [INFO] src.pipeline: Progress: 90/1000 generated, 0 failed, tokens: in=97,396, out=18,166
+12:22:44 [INFO] src.pipeline: Progress: 100/1000 generated, 0 failed, tokens: in=107,938, out=20,621
+12:22:48 [INFO] src.pipeline: Progress: 110/1000 generated, 0 failed, tokens: in=118,314, out=22,872
+12:22:53 [INFO] src.pipeline: Progress: 120/1000 generated, 0 failed, tokens: in=128,923, out=24,637
+12:22:57 [INFO] src.pipeline: Progress: 130/1000 generated, 0 failed, tokens: in=139,379, out=27,234
+12:23:01 [INFO] src.pipeline: Progress: 140/1000 generated, 0 failed, tokens: in=150,261, out=29,383
+12:23:06 [INFO] src.pipeline: Progress: 150/1000 generated, 0 failed, tokens: in=160,523, out=31,420
+12:23:10 [INFO] src.pipeline: Progress: 160/1000 generated, 0 failed, tokens: in=170,921, out=33,369
+12:23:15 [INFO] src.pipeline: Progress: 170/1000 generated, 0 failed, tokens: in=181,481, out=35,130
+12:23:19 [INFO] src.pipeline: Progress: 180/1000 generated, 0 failed, tokens: in=192,144, out=36,999
+12:23:23 [INFO] src.pipeline: Progress: 190/1000 generated, 0 failed, tokens: in=202,505, out=39,180
+12:23:28 [INFO] src.pipeline: Progress: 200/1000 generated, 0 failed, tokens: in=213,824, out=41,723
+12:23:33 [INFO] src.pipeline: Progress: 210/1000 generated, 0 failed, tokens: in=223,400, out=43,455
+12:23:37 [INFO] src.pipeline: Progress: 220/1000 generated, 0 failed, tokens: in=234,382, out=45,419
+12:23:42 [INFO] src.pipeline: Progress: 230/1000 generated, 0 failed, tokens: in=244,411, out=47,396
+12:23:47 [INFO] src.pipeline: Progress: 240/1000 generated, 0 failed, tokens: in=255,063, out=49,662
+12:23:52 [INFO] src.pipeline: Progress: 250/1000 generated, 0 failed, tokens: in=266,086, out=51,481
+12:23:56 [INFO] src.pipeline: Progress: 260/1000 generated, 0 failed, tokens: in=276,786, out=53,358
+12:24:01 [INFO] src.pipeline: Progress: 270/1000 generated, 0 failed, tokens: in=287,291, out=55,460
+12:24:06 [INFO] src.pipeline: Progress: 280/1000 generated, 0 failed, tokens: in=298,052, out=57,361
+12:24:11 [INFO] src.pipeline: Progress: 290/1000 generated, 0 failed, tokens: in=308,991, out=59,435
+12:24:16 [INFO] src.pipeline: Progress: 300/1000 generated, 0 failed, tokens: in=319,348, out=61,596
+12:24:21 [INFO] src.pipeline: Progress: 310/1000 generated, 0 failed, tokens: in=330,029, out=64,229
+12:24:26 [INFO] src.pipeline: Progress: 320/1000 generated, 0 failed, tokens: in=340,993, out=66,393
+12:24:31 [INFO] src.pipeline: Progress: 330/1000 generated, 0 failed, tokens: in=351,315, out=68,691
+12:24:36 [INFO] src.pipeline: Progress: 340/1000 generated, 0 failed, tokens: in=363,105, out=71,000
+12:24:42 [INFO] src.pipeline: Progress: 350/1000 generated, 0 failed, tokens: in=372,631, out=73,150
+12:24:46 [INFO] src.pipeline: Progress: 360/1000 generated, 0 failed, tokens: in=383,565, out=75,153
+12:24:48 [WARNING] src.pipeline: [Q0333] JSON parse failed: Invalid control character at: line 2 column 1956 (char 1957)
+12:24:48 [WARNING] src.pipeline: [Q0333] Generation failed
+12:24:52 [INFO] src.pipeline: Progress: 370/1000 generated, 1 failed, tokens: in=395,460, out=77,828
+12:24:56 [INFO] src.pipeline: Progress: 380/1000 generated, 1 failed, tokens: in=406,181, out=80,280
+12:25:02 [INFO] src.pipeline: Progress: 390/1000 generated, 1 failed, tokens: in=416,762, out=81,984
+12:25:06 [INFO] src.pipeline: Progress: 400/1000 generated, 1 failed, tokens: in=426,895, out=83,880
+12:25:11 [INFO] src.pipeline: Progress: 410/1000 generated, 1 failed, tokens: in=437,236, out=85,803
+12:25:17 [INFO] src.pipeline: Progress: 420/1000 generated, 1 failed, tokens: in=447,545, out=87,817
+12:25:22 [INFO] src.pipeline: Progress: 430/1000 generated, 1 failed, tokens: in=458,659, out=90,179
+12:25:27 [INFO] src.pipeline: Progress: 440/1000 generated, 1 failed, tokens: in=469,199, out=92,210
+12:25:32 [INFO] src.pipeline: Progress: 450/1000 generated, 1 failed, tokens: in=479,234, out=94,594
+12:25:37 [INFO] src.pipeline: Progress: 460/1000 generated, 1 failed, tokens: in=489,837, out=96,623
+12:25:43 [INFO] src.pipeline: Progress: 470/1000 generated, 1 failed, tokens: in=500,276, out=98,365
+12:25:48 [INFO] src.pipeline: Progress: 480/1000 generated, 1 failed, tokens: in=511,255, out=100,554
+12:25:53 [INFO] src.pipeline: Progress: 490/1000 generated, 1 failed, tokens: in=521,808, out=102,297
+12:25:59 [INFO] src.pipeline: Progress: 500/1000 generated, 1 failed, tokens: in=532,309, out=104,674
+12:26:03 [INFO] src.pipeline: Progress: 510/1000 generated, 1 failed, tokens: in=542,812, out=106,683
+12:26:09 [INFO] src.pipeline: Progress: 520/1000 generated, 1 failed, tokens: in=553,769, out=108,718
+12:26:14 [INFO] src.pipeline: Progress: 530/1000 generated, 1 failed, tokens: in=564,669, out=110,237
+12:26:19 [INFO] src.pipeline: Progress: 540/1000 generated, 1 failed, tokens: in=575,870, out=112,299
+12:26:24 [INFO] src.pipeline: Progress: 550/1000 generated, 1 failed, tokens: in=585,080, out=114,190
+12:26:31 [INFO] src.pipeline: Progress: 560/1000 generated, 1 failed, tokens: in=595,962, out=116,441
+12:26:37 [INFO] src.pipeline: Progress: 570/1000 generated, 1 failed, tokens: in=606,795, out=118,802
+12:26:42 [INFO] src.pipeline: Progress: 580/1000 generated, 1 failed, tokens: in=617,077, out=121,164
+12:26:47 [INFO] src.pipeline: Progress: 590/1000 generated, 1 failed, tokens: in=628,580, out=123,655
+12:26:54 [INFO] src.pipeline: Progress: 600/1000 generated, 1 failed, tokens: in=638,240, out=125,235
+12:26:59 [INFO] src.pipeline: Progress: 610/1000 generated, 1 failed, tokens: in=649,221, out=127,303
+12:27:05 [INFO] src.pipeline: Progress: 620/1000 generated, 1 failed, tokens: in=659,389, out=129,427
+12:27:10 [INFO] src.pipeline: Progress: 630/1000 generated, 1 failed, tokens: in=670,323, out=131,290
+12:27:17 [INFO] src.pipeline: Progress: 640/1000 generated, 1 failed, tokens: in=680,929, out=133,363
+12:27:23 [INFO] src.pipeline: Progress: 650/1000 generated, 1 failed, tokens: in=691,360, out=135,516
+12:27:30 [INFO] src.pipeline: Progress: 660/1000 generated, 1 failed, tokens: in=702,046, out=137,933
+12:27:36 [INFO] src.pipeline: Progress: 670/1000 generated, 1 failed, tokens: in=712,425, out=140,544
+12:27:43 [INFO] src.pipeline: Progress: 680/1000 generated, 1 failed, tokens: in=723,049, out=143,062
+12:27:48 [INFO] src.pipeline: Progress: 690/1000 generated, 1 failed, tokens: in=734,862, out=145,462
+12:27:55 [INFO] src.pipeline: Progress: 700/1000 generated, 1 failed, tokens: in=743,952, out=147,179
+12:28:02 [INFO] src.pipeline: Progress: 710/1000 generated, 1 failed, tokens: in=756,075, out=150,393
+12:28:08 [INFO] src.pipeline: Progress: 720/1000 generated, 1 failed, tokens: in=765,540, out=152,787
+12:28:15 [INFO] src.pipeline: Progress: 730/1000 generated, 1 failed, tokens: in=776,136, out=154,886
+12:28:19 [INFO] src.pipeline: Progress: 740/1000 generated, 1 failed, tokens: in=787,151, out=156,702
+12:28:26 [INFO] src.pipeline: Progress: 750/1000 generated, 1 failed, tokens: in=797,626, out=158,849
+12:28:33 [INFO] src.pipeline: Progress: 760/1000 generated, 1 failed, tokens: in=808,094, out=160,908
+12:28:38 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:28:38 [INFO] src.llm: Retrying in 5.0s...
+12:28:39 [INFO] src.pipeline: Progress: 770/1000 generated, 1 failed, tokens: in=818,494, out=163,219
+12:28:45 [INFO] src.pipeline: Progress: 780/1000 generated, 1 failed, tokens: in=830,033, out=165,282
+12:28:51 [INFO] src.pipeline: Progress: 790/1000 generated, 1 failed, tokens: in=840,611, out=167,266
+12:28:58 [INFO] src.pipeline: Progress: 800/1000 generated, 1 failed, tokens: in=851,233, out=169,138
+12:29:03 [INFO] src.pipeline: Progress: 810/1000 generated, 1 failed, tokens: in=861,936, out=171,077
+12:29:09 [INFO] src.pipeline: Progress: 820/1000 generated, 1 failed, tokens: in=872,185, out=173,201
+12:29:17 [INFO] src.pipeline: Progress: 830/1000 generated, 1 failed, tokens: in=882,376, out=175,280
+12:29:22 [INFO] src.pipeline: Progress: 840/1000 generated, 1 failed, tokens: in=893,026, out=177,136
+12:29:29 [INFO] src.pipeline: Progress: 850/1000 generated, 1 failed, tokens: in=903,911, out=179,030
+12:29:33 [INFO] src.pipeline: Progress: 860/1000 generated, 1 failed, tokens: in=914,740, out=181,223
+12:29:41 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:29:41 [INFO] src.llm: Retrying in 5.0s...
+12:29:41 [INFO] src.pipeline: Progress: 870/1000 generated, 1 failed, tokens: in=925,031, out=183,306
+12:29:47 [INFO] src.pipeline: Progress: 880/1000 generated, 1 failed, tokens: in=935,980, out=185,202
+12:29:53 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:29:53 [INFO] src.llm: Retrying in 5.0s...
+12:29:54 [INFO] src.pipeline: Progress: 890/1000 generated, 1 failed, tokens: in=946,457, out=187,309
+12:30:00 [INFO] src.pipeline: Progress: 900/1000 generated, 1 failed, tokens: in=956,891, out=189,676
+12:30:06 [INFO] src.pipeline: Progress: 910/1000 generated, 1 failed, tokens: in=967,320, out=191,641
+12:30:14 [INFO] src.pipeline: Progress: 920/1000 generated, 1 failed, tokens: in=977,905, out=193,951
+12:30:19 [INFO] src.pipeline: Progress: 930/1000 generated, 1 failed, tokens: in=988,459, out=196,145
+12:30:25 [INFO] src.pipeline: Progress: 940/1000 generated, 1 failed, tokens: in=999,654, out=198,318
+12:30:31 [INFO] src.pipeline: Progress: 950/1000 generated, 1 failed, tokens: in=1,010,314, out=200,188
+12:30:38 [INFO] src.pipeline: Progress: 960/1000 generated, 1 failed, tokens: in=1,021,213, out=202,060
+12:30:42 [INFO] src.pipeline: Progress: 970/1000 generated, 1 failed, tokens: in=1,032,074, out=204,377
+12:30:45 [INFO] src.pipeline: Progress: 980/1000 generated, 1 failed, tokens: in=1,042,432, out=206,495
+12:30:47 [INFO] src.pipeline: Progress: 990/1000 generated, 1 failed, tokens: in=1,053,035, out=208,397
+12:30:55 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:30:55 [INFO] src.llm: Retrying in 5.0s...
+12:32:02 [WARNING] src.pipeline: [Q0782] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:32:02 [WARNING] src.pipeline: [Q0782] Generation failed
+12:32:02 [WARNING] src.pipeline: [Q0760] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:32:02 [WARNING] src.pipeline: [Q0760] Generation failed
+12:32:39 [WARNING] src.pipeline: [Q0526] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:32:39 [WARNING] src.pipeline: [Q0526] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_gemma4_12b_awq (gemma4-12b-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    1000
+  IDs:        Q0001 — Q1000
+  Output:     ../eval/results/iter_1/gen_gen_gemma4_12b_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  996
+  Failed:     4
+  Tokens in:  1,062,805
+  Tokens out: 231,430
+  Raw:        ../eval/results/iter_1/gen_gen_gemma4_12b_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_1/gen_gen_gemma4_12b_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_1/gen_gen_gemma4_12b_awq/raw/metadata.jsonl
+  Images dir: None

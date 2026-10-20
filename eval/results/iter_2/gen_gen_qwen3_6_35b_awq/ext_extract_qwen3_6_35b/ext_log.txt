@@ -1,0 +1,153 @@
+04:59:38 [INFO] src.pipeline: Extracting 226 complaints with 32 workers...
+04:59:53 [WARNING] src.pipeline: [Q0016] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+04:59:54 [WARNING] src.pipeline: [Q0016] Extraction failed
+04:59:55 [WARNING] src.pipeline: [Q0020] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+04:59:55 [WARNING] src.pipeline: [Q0036] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+04:59:56 [INFO] src.pipeline: Progress: 10/226 done, 1 failed this pass, tokens: in=32,728, out=3,130
+04:59:57 [WARNING] src.pipeline: [Q0020] Extraction failed
+04:59:58 [WARNING] src.pipeline: [Q0036] Extraction failed
+04:59:59 [WARNING] src.pipeline: [Q0029] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+04:59:59 [WARNING] src.pipeline: [Q0029] Extraction failed
+05:00:00 [WARNING] src.pipeline: [Q0002] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:01 [WARNING] src.pipeline: [Q0002] Extraction failed
+05:00:01 [INFO] src.pipeline: Progress: 20/226 done, 5 failed this pass, tokens: in=51,314, out=5,728
+05:00:04 [WARNING] src.pipeline: [Q0045] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 481)
+05:00:04 [WARNING] src.pipeline: [Q0035] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:04 [WARNING] src.pipeline: [Q0045] Extraction failed
+05:00:05 [INFO] src.pipeline: Progress: 30/226 done, 6 failed this pass, tokens: in=78,115, out=9,211
+05:00:05 [WARNING] src.pipeline: [Q0035] Extraction failed
+05:00:07 [WARNING] src.pipeline: [Q0050] JSON parse failed: Expecting property name enclosed in double quotes: line 29 column 9 (char 611)
+05:00:07 [WARNING] src.pipeline: [Q0050] Extraction failed
+05:00:10 [INFO] src.pipeline: Progress: 40/226 done, 8 failed this pass, tokens: in=103,076, out=12,585
+05:00:14 [INFO] src.pipeline: Progress: 50/226 done, 8 failed this pass, tokens: in=123,675, out=15,534
+05:00:15 [WARNING] src.pipeline: [Q0058] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:15 [WARNING] src.pipeline: [Q0058] Extraction failed
+05:00:18 [WARNING] src.pipeline: [Q0093] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:19 [WARNING] src.pipeline: [Q0093] Extraction failed
+05:00:20 [INFO] src.pipeline: Progress: 60/226 done, 10 failed this pass, tokens: in=154,785, out=18,992
+05:00:23 [WARNING] src.pipeline: [Q0095] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:23 [WARNING] src.pipeline: [Q0086] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:24 [WARNING] src.pipeline: [Q0095] Extraction failed
+05:00:24 [INFO] src.pipeline: Progress: 70/226 done, 11 failed this pass, tokens: in=173,333, out=20,893
+05:00:25 [WARNING] src.pipeline: [Q0086] Extraction failed
+05:00:29 [INFO] src.pipeline: Progress: 80/226 done, 12 failed this pass, tokens: in=206,674, out=25,161
+05:00:32 [WARNING] src.pipeline: [Q0116] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 475)
+05:00:33 [INFO] src.pipeline: Progress: 90/226 done, 12 failed this pass, tokens: in=227,564, out=27,811
+05:00:34 [WARNING] src.pipeline: [Q0116] Extraction failed
+05:00:36 [WARNING] src.pipeline: [Q0148] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:37 [INFO] src.pipeline: Progress: 100/226 done, 13 failed this pass, tokens: in=254,623, out=30,806
+05:00:40 [WARNING] src.pipeline: [Q0148] Extraction failed
+05:00:41 [INFO] src.pipeline: Progress: 110/226 done, 14 failed this pass, tokens: in=277,398, out=33,224
+05:00:45 [WARNING] src.pipeline: [Q0187] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:45 [INFO] src.pipeline: Progress: 120/226 done, 14 failed this pass, tokens: in=302,435, out=35,578
+05:00:48 [WARNING] src.pipeline: [Q0181] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:48 [INFO] src.pipeline: Progress: 130/226 done, 14 failed this pass, tokens: in=310,791, out=36,568
+05:00:48 [WARNING] src.pipeline: [Q0187] Extraction failed
+05:00:49 [WARNING] src.pipeline: [Q0181] Extraction failed
+05:00:50 [WARNING] src.pipeline: [Q0192] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:50 [WARNING] src.pipeline: [Q0190] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:52 [INFO] src.pipeline: Progress: 140/226 done, 16 failed this pass, tokens: in=331,215, out=39,480
+05:00:52 [WARNING] src.pipeline: [Q0192] Extraction failed
+05:00:52 [WARNING] src.pipeline: [Q0190] Extraction failed
+05:00:52 [WARNING] src.pipeline: [Q0159] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:00:53 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 471)
+05:00:53 [WARNING] src.pipeline: [Q0159] Extraction failed
+05:00:55 [WARNING] src.pipeline: [Q0170] Extraction failed
+05:00:56 [WARNING] src.pipeline: [Q0158] JSON parse failed: Expecting ',' delimiter: line 39 column 7 (char 804)
+05:00:56 [INFO] src.pipeline: Progress: 150/226 done, 20 failed this pass, tokens: in=362,629, out=43,060
+05:00:57 [WARNING] src.pipeline: [Q0158] Extraction failed
+05:00:58 [WARNING] src.pipeline: [Q0185] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 836)
+05:00:59 [WARNING] src.pipeline: [Q0185] Extraction failed
+05:01:01 [INFO] src.pipeline: Progress: 160/226 done, 22 failed this pass, tokens: in=381,275, out=45,239
+05:01:05 [INFO] src.pipeline: Progress: 170/226 done, 22 failed this pass, tokens: in=401,891, out=47,384
+05:01:07 [WARNING] src.pipeline: [Q0222] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:08 [WARNING] src.pipeline: [Q0237] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:09 [WARNING] src.pipeline: [Q0222] Extraction failed
+05:01:09 [INFO] src.pipeline: Progress: 180/226 done, 23 failed this pass, tokens: in=447,819, out=53,760
+05:01:11 [WARNING] src.pipeline: [Q0237] Extraction failed
+05:01:13 [INFO] src.pipeline: Progress: 190/226 done, 24 failed this pass, tokens: in=468,877, out=58,260
+05:01:17 [INFO] src.pipeline: Progress: 200/226 done, 24 failed this pass, tokens: in=468,877, out=58,260
+05:01:18 [INFO] src.pipeline: Pass 0 complete: 202 extracted, 24 failed. Retrying in 30s...
+05:01:51 [INFO] src.pipeline: Resuming: 202 extractions already exist
+05:01:51 [INFO] src.pipeline: === Retry 1/3: 24 pending, 24 failed so far ===
+05:01:51 [INFO] src.pipeline: Extracting 24 complaints with 32 workers...
+05:01:59 [WARNING] src.pipeline: [Q0237] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:59 [WARNING] src.pipeline: [Q0237] Extraction failed
+05:01:59 [WARNING] src.pipeline: [Q0020] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:59 [WARNING] src.pipeline: [Q0058] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:59 [WARNING] src.pipeline: [Q0192] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:59 [WARNING] src.pipeline: [Q0036] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:59 [WARNING] src.pipeline: [Q0190] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:01:59 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 471)
+05:01:59 [WARNING] src.pipeline: [Q0159] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:00 [WARNING] src.pipeline: [Q0181] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:00 [WARNING] src.pipeline: [Q0020] Extraction failed
+05:02:01 [WARNING] src.pipeline: [Q0058] Extraction failed
+05:02:01 [WARNING] src.pipeline: [Q0192] Extraction failed
+05:02:01 [WARNING] src.pipeline: [Q0036] Extraction failed
+05:02:01 [WARNING] src.pipeline: [Q0002] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:01 [WARNING] src.pipeline: [Q0185] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 834)
+05:02:01 [INFO] src.pipeline: Progress: 210/226 done, 5 failed this pass, tokens: in=516,522, out=63,737
+05:02:01 [WARNING] src.pipeline: [Q0190] Extraction failed
+05:02:01 [WARNING] src.pipeline: [Q0170] Extraction failed
+05:02:01 [WARNING] src.pipeline: [Q0159] Extraction failed
+05:02:02 [WARNING] src.pipeline: [Q0181] Extraction failed
+05:02:03 [WARNING] src.pipeline: [Q0002] Extraction failed
+05:02:03 [WARNING] src.pipeline: [Q0185] Extraction failed
+05:02:03 [INFO] src.pipeline: Pass 1 complete: 13 extracted, 11 failed. Retrying in 30s...
+05:02:36 [INFO] src.pipeline: Resuming: 215 extractions already exist
+05:02:36 [INFO] src.pipeline: === Retry 2/3: 11 pending, 35 failed so far ===
+05:02:36 [INFO] src.pipeline: Extracting 11 complaints with 32 workers...
+05:02:41 [WARNING] src.pipeline: [Q0190] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:41 [WARNING] src.pipeline: [Q0190] Extraction failed
+05:02:41 [WARNING] src.pipeline: [Q0020] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:41 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 471)
+05:02:41 [WARNING] src.pipeline: [Q0159] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:41 [WARNING] src.pipeline: [Q0058] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:41 [WARNING] src.pipeline: [Q0036] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:41 [WARNING] src.pipeline: [Q0020] Extraction failed
+05:02:41 [WARNING] src.pipeline: [Q0170] Extraction failed
+05:02:41 [WARNING] src.pipeline: [Q0159] Extraction failed
+05:02:41 [WARNING] src.pipeline: [Q0058] Extraction failed
+05:02:41 [WARNING] src.pipeline: [Q0036] Extraction failed
+05:02:42 [WARNING] src.pipeline: [Q0181] JSON parse failed: Expecting ',' delimiter: line 18 column 9 (char 414)
+05:02:42 [WARNING] src.pipeline: [Q0181] Extraction failed
+05:02:43 [WARNING] src.pipeline: [Q0002] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:02:43 [WARNING] src.pipeline: [Q0002] Extraction failed
+05:02:43 [WARNING] src.pipeline: [Q0185] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 834)
+05:02:43 [WARNING] src.pipeline: [Q0185] Extraction failed
+05:02:43 [INFO] src.pipeline: Pass 2 complete: 2 extracted, 9 failed. Retrying in 30s...
+05:03:16 [INFO] src.pipeline: Resuming: 217 extractions already exist
+05:03:16 [INFO] src.pipeline: === Retry 3/3: 9 pending, 44 failed so far ===
+05:03:16 [INFO] src.pipeline: Extracting 9 complaints with 32 workers...
+05:03:21 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 471)
+05:03:21 [WARNING] src.pipeline: [Q0058] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:03:21 [WARNING] src.pipeline: [Q0181] JSON parse failed: Expecting ',' delimiter: line 18 column 9 (char 414)
+05:03:21 [WARNING] src.pipeline: [Q0170] Extraction failed
+05:03:22 [WARNING] src.pipeline: [Q0002] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+05:03:22 [INFO] src.pipeline: Progress: 220/226 done, 1 failed this pass, tokens: in=558,280, out=69,038
+05:03:22 [WARNING] src.pipeline: [Q0058] Extraction failed
+05:03:23 [WARNING] src.pipeline: [Q0185] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 834)
+05:03:23 [WARNING] src.pipeline: [Q0181] Extraction failed
+05:03:23 [WARNING] src.pipeline: [Q0002] Extraction failed
+05:03:23 [WARNING] src.pipeline: [Q0185] Extraction failed
+miUrba — Extraction (raw + images → structured, VLM)
+=======================================================
+  Model (VLM): qwen3.6-35b-awq
+  Endpoint:   http://192.168.10.11:9292
+  Source:     ../eval/results/iter_2/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Images:     data/images
+  Output:     eval/results/iter_2/gen_gen_qwen3_6_35b_awq/ext_extract_qwen3_6_35b/annotated/extractions.jsonl
+  Resume:     True
+=======================================================
+
+=======================================================
+Extraction complete!
+  Extracted:  221
+  Failed:     5
+  Skipped:    0
+  Total:      226
+  Tokens in:  560,307
+  Tokens out: 69,464
+  Images dir: data/images
+  Output:     eval/results/iter_2/gen_gen_qwen3_6_35b_awq/ext_extract_qwen3_6_35b/annotated/extractions.jsonl

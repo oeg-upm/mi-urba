@@ -1,0 +1,321 @@
+13:45:44 [INFO] src.pipeline: Generating 1000 records with 32 workers...
+13:47:26 [INFO] src.pipeline: Progress: 10/1000 generated, 0 failed, tokens: in=8,770, out=38,369
+13:47:45 [WARNING] src.pipeline: [Q0026] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 2442)
+13:47:45 [WARNING] src.pipeline: [Q0026] Generation failed
+13:47:55 [INFO] src.pipeline: Progress: 20/1000 generated, 1 failed, tokens: in=18,989, out=89,531
+13:48:41 [ERROR] src.pipeline: [Q0005] Worker error: 'NoneType' object has no attribute 'strip'
+13:48:42 [ERROR] src.pipeline: [Q0022] Worker error: 'NoneType' object has no attribute 'strip'
+13:48:43 [WARNING] src.pipeline: [Q0029] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:48:43 [WARNING] src.pipeline: [Q0029] Generation failed
+13:48:49 [ERROR] src.pipeline: [Q0008] Worker error: 'NoneType' object has no attribute 'strip'
+13:48:50 [INFO] src.pipeline: Progress: 30/1000 generated, 5 failed, tokens: in=32,837, out=168,584
+13:49:38 [INFO] src.pipeline: Progress: 40/1000 generated, 5 failed, tokens: in=41,741, out=212,676
+13:50:05 [INFO] src.pipeline: Progress: 50/1000 generated, 5 failed, tokens: in=51,055, out=260,614
+13:50:30 [ERROR] src.pipeline: [Q0040] Worker error: 'NoneType' object has no attribute 'strip'
+13:50:36 [WARNING] src.pipeline: [Q0069] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 587)
+13:50:36 [WARNING] src.pipeline: [Q0069] Generation failed
+13:51:16 [INFO] src.pipeline: Progress: 60/1000 generated, 7 failed, tokens: in=62,501, out=322,875
+13:51:22 [WARNING] src.pipeline: [Q0058] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:51:22 [WARNING] src.pipeline: [Q0058] Generation failed
+13:51:30 [WARNING] src.pipeline: [Q0071] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1838)
+13:51:30 [WARNING] src.pipeline: [Q0071] Generation failed
+13:51:50 [INFO] src.pipeline: Progress: 70/1000 generated, 9 failed, tokens: in=71,894, out=373,187
+13:52:29 [INFO] src.pipeline: Progress: 80/1000 generated, 9 failed, tokens: in=80,937, out=419,712
+13:52:32 [ERROR] src.pipeline: [Q0072] Worker error: 'NoneType' object has no attribute 'strip'
+13:52:37 [ERROR] src.pipeline: [Q0073] Worker error: 'NoneType' object has no attribute 'strip'
+13:52:40 [ERROR] src.pipeline: [Q0074] Worker error: 'NoneType' object has no attribute 'strip'
+13:52:57 [WARNING] src.pipeline: [Q0099] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 2117)
+13:52:57 [WARNING] src.pipeline: [Q0099] Generation failed
+13:53:16 [WARNING] src.pipeline: [Q0104] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 266)
+13:53:16 [WARNING] src.pipeline: [Q0104] Generation failed
+13:53:26 [INFO] src.pipeline: Progress: 90/1000 generated, 14 failed, tokens: in=94,326, out=489,952
+13:54:03 [WARNING] src.pipeline: [Q0124] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 697)
+13:54:03 [WARNING] src.pipeline: [Q0124] Generation failed
+13:54:09 [INFO] src.pipeline: Progress: 100/1000 generated, 15 failed, tokens: in=103,688, out=538,101
+13:54:50 [INFO] src.pipeline: Progress: 110/1000 generated, 15 failed, tokens: in=112,737, out=588,230
+13:55:31 [ERROR] src.pipeline: [Q0116] Worker error: 'NoneType' object has no attribute 'strip'
+13:55:43 [INFO] src.pipeline: Progress: 120/1000 generated, 16 failed, tokens: in=122,485, out=636,460
+13:56:10 [ERROR] src.pipeline: [Q0129] Worker error: 'NoneType' object has no attribute 'strip'
+13:56:12 [ERROR] src.pipeline: [Q0130] Worker error: 'NoneType' object has no attribute 'strip'
+13:56:15 [WARNING] src.pipeline: [Q0143] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 808)
+13:56:15 [WARNING] src.pipeline: [Q0143] Generation failed
+13:56:27 [INFO] src.pipeline: Progress: 130/1000 generated, 19 failed, tokens: in=134,275, out=700,474
+13:57:24 [WARNING] src.pipeline: [Q0167] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1218)
+13:57:24 [WARNING] src.pipeline: [Q0167] Generation failed
+13:57:28 [INFO] src.pipeline: Progress: 140/1000 generated, 20 failed, tokens: in=143,712, out=749,915
+13:57:37 [ERROR] src.pipeline: [Q0145] Worker error: 'NoneType' object has no attribute 'strip'
+13:58:14 [INFO] src.pipeline: Progress: 150/1000 generated, 21 failed, tokens: in=153,130, out=803,602
+13:58:20 [ERROR] src.pipeline: [Q0158] Worker error: 'NoneType' object has no attribute 'strip'
+13:58:25 [ERROR] src.pipeline: [Q0159] Worker error: 'NoneType' object has no attribute 'strip'
+13:58:54 [INFO] src.pipeline: Progress: 160/1000 generated, 23 failed, tokens: in=163,848, out=861,326
+13:59:42 [INFO] src.pipeline: Progress: 170/1000 generated, 23 failed, tokens: in=172,788, out=905,167
+13:59:52 [ERROR] src.pipeline: [Q0176] Worker error: 'NoneType' object has no attribute 'strip'
+14:00:41 [INFO] src.pipeline: Progress: 180/1000 generated, 24 failed, tokens: in=182,298, out=958,465
+14:01:21 [INFO] src.pipeline: Progress: 190/1000 generated, 24 failed, tokens: in=191,428, out=1,008,106
+14:02:07 [WARNING] src.pipeline: [Q0207] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:02:07 [WARNING] src.pipeline: [Q0207] Generation failed
+14:02:14 [INFO] src.pipeline: Progress: 200/1000 generated, 25 failed, tokens: in=201,070, out=1,061,215
+14:02:57 [ERROR] src.pipeline: [Q0220] Worker error: 'NoneType' object has no attribute 'strip'
+14:03:05 [INFO] src.pipeline: Progress: 210/1000 generated, 26 failed, tokens: in=210,497, out=1,112,926
+14:03:53 [INFO] src.pipeline: Progress: 220/1000 generated, 26 failed, tokens: in=219,486, out=1,159,299
+14:03:56 [WARNING] src.pipeline: [Q0251] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 611)
+14:03:56 [WARNING] src.pipeline: [Q0251] Generation failed
+14:04:15 [WARNING] src.pipeline: [Q0247] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1326)
+14:04:15 [WARNING] src.pipeline: [Q0247] Generation failed
+14:04:52 [WARNING] src.pipeline: [Q0257] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 778)
+14:04:52 [WARNING] src.pipeline: [Q0257] Generation failed
+14:04:56 [INFO] src.pipeline: Progress: 230/1000 generated, 29 failed, tokens: in=231,240, out=1,218,336
+14:05:06 [ERROR] src.pipeline: [Q0244] Worker error: 'NoneType' object has no attribute 'strip'
+14:06:05 [ERROR] src.pipeline: [Q0259] Worker error: 'NoneType' object has no attribute 'strip'
+14:06:10 [INFO] src.pipeline: Progress: 240/1000 generated, 31 failed, tokens: in=241,623, out=1,273,268
+14:06:25 [ERROR] src.pipeline: [Q0260] Worker error: 'NoneType' object has no attribute 'strip'
+14:06:36 [WARNING] src.pipeline: [Q0280] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1474)
+14:06:36 [WARNING] src.pipeline: [Q0280] Generation failed
+14:06:47 [WARNING] src.pipeline: [Q0279] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 2629)
+14:06:47 [WARNING] src.pipeline: [Q0279] Generation failed
+14:06:50 [WARNING] src.pipeline: [Q0266] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:06:50 [WARNING] src.pipeline: [Q0266] Generation failed
+14:06:58 [ERROR] src.pipeline: [Q0267] Worker error: 'NoneType' object has no attribute 'strip'
+14:07:29 [INFO] src.pipeline: Progress: 250/1000 generated, 36 failed, tokens: in=256,081, out=1,356,213
+14:07:46 [ERROR] src.pipeline: [Q0277] Worker error: 'NoneType' object has no attribute 'strip'
+14:08:14 [INFO] src.pipeline: Progress: 260/1000 generated, 37 failed, tokens: in=265,760, out=1,411,342
+14:08:21 [ERROR] src.pipeline: [Q0284] Worker error: 'NoneType' object has no attribute 'strip'
+14:08:51 [ERROR] src.pipeline: [Q0291] Worker error: 'NoneType' object has no attribute 'strip'
+14:08:56 [INFO] src.pipeline: Progress: 270/1000 generated, 39 failed, tokens: in=276,207, out=1,466,953
+14:10:03 [WARNING] src.pipeline: [Q0308] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1345)
+14:10:03 [WARNING] src.pipeline: [Q0308] Generation failed
+14:10:21 [ERROR] src.pipeline: [Q0306] Worker error: 'NoneType' object has no attribute 'strip'
+14:10:39 [ERROR] src.pipeline: [Q0311] Worker error: 'NoneType' object has no attribute 'strip'
+14:10:47 [ERROR] src.pipeline: [Q0312] Worker error: 'NoneType' object has no attribute 'strip'
+14:10:55 [INFO] src.pipeline: Progress: 280/1000 generated, 43 failed, tokens: in=288,946, out=1,541,642
+14:10:59 [ERROR] src.pipeline: [Q0315] Worker error: 'NoneType' object has no attribute 'strip'
+14:11:29 [ERROR] src.pipeline: [Q0318] Worker error: 'NoneType' object has no attribute 'strip'
+14:11:33 [INFO] src.pipeline: Progress: 290/1000 generated, 45 failed, tokens: in=299,508, out=1,609,829
+14:12:08 [WARNING] src.pipeline: [Q0347] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 879)
+14:12:08 [WARNING] src.pipeline: [Q0347] Generation failed
+14:12:17 [ERROR] src.pipeline: [Q0330] Worker error: 'NoneType' object has no attribute 'strip'
+14:12:19 [WARNING] src.pipeline: [Q0344] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1866)
+14:12:19 [WARNING] src.pipeline: [Q0344] Generation failed
+14:12:40 [ERROR] src.pipeline: [Q0337] Worker error: 'NoneType' object has no attribute 'strip'
+14:12:50 [INFO] src.pipeline: Progress: 300/1000 generated, 49 failed, tokens: in=312,249, out=1,680,897
+14:13:18 [WARNING] src.pipeline: [Q0363] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 764)
+14:13:18 [WARNING] src.pipeline: [Q0363] Generation failed
+14:13:35 [INFO] src.pipeline: Progress: 310/1000 generated, 50 failed, tokens: in=321,908, out=1,729,677
+14:13:38 [WARNING] src.pipeline: [Q0368] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 657)
+14:13:38 [WARNING] src.pipeline: [Q0368] Generation failed
+14:14:04 [WARNING] src.pipeline: [Q0356] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1197)
+14:14:04 [WARNING] src.pipeline: [Q0356] Generation failed
+14:14:34 [INFO] src.pipeline: Progress: 320/1000 generated, 52 failed, tokens: in=333,151, out=1,786,415
+14:15:04 [INFO] src.pipeline: Progress: 330/1000 generated, 52 failed, tokens: in=341,846, out=1,825,045
+14:15:54 [INFO] src.pipeline: Progress: 340/1000 generated, 52 failed, tokens: in=350,638, out=1,870,247
+14:16:15 [ERROR] src.pipeline: [Q0378] Worker error: 'NoneType' object has no attribute 'strip'
+14:16:22 [WARNING] src.pipeline: [Q0406] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 568)
+14:16:22 [WARNING] src.pipeline: [Q0406] Generation failed
+14:16:38 [INFO] src.pipeline: Progress: 350/1000 generated, 54 failed, tokens: in=361,182, out=1,929,548
+14:17:34 [ERROR] src.pipeline: [Q0401] Worker error: 'NoneType' object has no attribute 'strip'
+14:17:36 [INFO] src.pipeline: Progress: 360/1000 generated, 55 failed, tokens: in=370,657, out=1,980,142
+14:17:50 [WARNING] src.pipeline: [Q0422] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 373)
+14:17:50 [WARNING] src.pipeline: [Q0422] Generation failed
+14:18:22 [INFO] src.pipeline: Progress: 370/1000 generated, 56 failed, tokens: in=380,464, out=2,032,418
+14:19:20 [INFO] src.pipeline: Progress: 380/1000 generated, 56 failed, tokens: in=389,140, out=2,083,664
+14:19:44 [ERROR] src.pipeline: [Q0430] Worker error: 'NoneType' object has no attribute 'strip'
+14:20:00 [INFO] src.pipeline: Progress: 390/1000 generated, 57 failed, tokens: in=399,094, out=2,135,675
+14:20:50 [ERROR] src.pipeline: [Q0442] Worker error: 'NoneType' object has no attribute 'strip'
+14:21:06 [INFO] src.pipeline: Progress: 400/1000 generated, 58 failed, tokens: in=408,738, out=2,188,554
+14:21:10 [WARNING] src.pipeline: [Q0443] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:21:10 [WARNING] src.pipeline: [Q0443] Generation failed
+14:21:58 [INFO] src.pipeline: Progress: 410/1000 generated, 59 failed, tokens: in=418,289, out=2,241,833
+14:22:02 [ERROR] src.pipeline: [Q0454] Worker error: 'NoneType' object has no attribute 'strip'
+14:22:31 [ERROR] src.pipeline: [Q0460] Worker error: 'NoneType' object has no attribute 'strip'
+14:23:04 [INFO] src.pipeline: Progress: 420/1000 generated, 61 failed, tokens: in=428,827, out=2,295,544
+14:23:40 [ERROR] src.pipeline: [Q0470] Worker error: 'NoneType' object has no attribute 'strip'
+14:24:05 [ERROR] src.pipeline: [Q0477] Worker error: 'NoneType' object has no attribute 'strip'
+14:24:07 [ERROR] src.pipeline: [Q0473] Worker error: 'NoneType' object has no attribute 'strip'
+14:24:12 [INFO] src.pipeline: Progress: 430/1000 generated, 64 failed, tokens: in=440,728, out=2,360,873
+14:24:35 [ERROR] src.pipeline: [Q0482] Worker error: 'NoneType' object has no attribute 'strip'
+14:25:09 [INFO] src.pipeline: Progress: 440/1000 generated, 65 failed, tokens: in=450,472, out=2,414,420
+14:26:15 [WARNING] src.pipeline: [Q0499] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:26:15 [WARNING] src.pipeline: [Q0499] Generation failed
+14:26:27 [INFO] src.pipeline: Progress: 450/1000 generated, 66 failed, tokens: in=460,216, out=2,467,007
+14:26:32 [WARNING] src.pipeline: [Q0505] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:26:32 [WARNING] src.pipeline: [Q0505] Generation failed
+14:26:34 [WARNING] src.pipeline: [Q0530] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 700)
+14:26:34 [WARNING] src.pipeline: [Q0530] Generation failed
+14:26:54 [ERROR] src.pipeline: [Q0511] Worker error: 'NoneType' object has no attribute 'strip'
+14:27:12 [WARNING] src.pipeline: [Q0523] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 899)
+14:27:12 [WARNING] src.pipeline: [Q0523] Generation failed
+14:27:33 [INFO] src.pipeline: Progress: 460/1000 generated, 70 failed, tokens: in=473,113, out=2,535,908
+14:28:08 [ERROR] src.pipeline: [Q0517] Worker error: 'NoneType' object has no attribute 'strip'
+14:28:41 [INFO] src.pipeline: Progress: 470/1000 generated, 71 failed, tokens: in=482,889, out=2,590,931
+14:29:29 [INFO] src.pipeline: Progress: 480/1000 generated, 71 failed, tokens: in=491,545, out=2,633,853
+14:29:55 [ERROR] src.pipeline: [Q0539] Worker error: 'NoneType' object has no attribute 'strip'
+14:30:31 [INFO] src.pipeline: Progress: 490/1000 generated, 72 failed, tokens: in=501,158, out=2,687,518
+14:31:17 [INFO] src.pipeline: Progress: 500/1000 generated, 72 failed, tokens: in=509,867, out=2,734,612
+14:31:59 [WARNING] src.pipeline: [Q0578] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1830)
+14:31:59 [WARNING] src.pipeline: [Q0578] Generation failed
+14:32:22 [INFO] src.pipeline: Progress: 510/1000 generated, 73 failed, tokens: in=519,727, out=2,785,743
+14:33:11 [INFO] src.pipeline: Progress: 520/1000 generated, 73 failed, tokens: in=528,769, out=2,833,960
+14:33:27 [ERROR] src.pipeline: [Q0579] Worker error: 'NoneType' object has no attribute 'strip'
+14:33:46 [WARNING] src.pipeline: [Q0593] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 968)
+14:33:46 [WARNING] src.pipeline: [Q0593] Generation failed
+14:34:11 [INFO] src.pipeline: Progress: 530/1000 generated, 75 failed, tokens: in=539,441, out=2,891,038
+14:34:27 [WARNING] src.pipeline: [Q0603] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1640)
+14:34:27 [WARNING] src.pipeline: [Q0603] Generation failed
+14:34:42 [WARNING] src.pipeline: [Q0613] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 780)
+14:34:42 [WARNING] src.pipeline: [Q0613] Generation failed
+14:34:43 [WARNING] src.pipeline: [Q0616] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 684)
+14:34:43 [WARNING] src.pipeline: [Q0616] Generation failed
+14:35:25 [INFO] src.pipeline: Progress: 540/1000 generated, 78 failed, tokens: in=551,195, out=2,943,953
+14:36:16 [ERROR] src.pipeline: [Q0610] Worker error: 'NoneType' object has no attribute 'strip'
+14:36:23 [WARNING] src.pipeline: [Q0637] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 742)
+14:36:23 [WARNING] src.pipeline: [Q0637] Generation failed
+14:36:27 [INFO] src.pipeline: Progress: 550/1000 generated, 80 failed, tokens: in=561,621, out=3,004,560
+14:37:03 [ERROR] src.pipeline: [Q0619] Worker error: 'NoneType' object has no attribute 'strip'
+14:37:24 [ERROR] src.pipeline: [Q0623] Worker error: 'NoneType' object has no attribute 'strip'
+14:37:50 [INFO] src.pipeline: Progress: 560/1000 generated, 82 failed, tokens: in=572,502, out=3,063,812
+14:38:02 [ERROR] src.pipeline: [Q0633] Worker error: 'NoneType' object has no attribute 'strip'
+14:38:12 [ERROR] src.pipeline: [Q0636] Worker error: 'NoneType' object has no attribute 'strip'
+14:38:34 [WARNING] src.pipeline: [Q0656] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 704)
+14:38:34 [WARNING] src.pipeline: [Q0656] Generation failed
+14:39:03 [INFO] src.pipeline: Progress: 570/1000 generated, 85 failed, tokens: in=583,908, out=3,127,415
+14:39:07 [ERROR] src.pipeline: [Q0642] Worker error: 'NoneType' object has no attribute 'strip'
+14:39:35 [WARNING] src.pipeline: [Q0647] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:39:35 [WARNING] src.pipeline: [Q0647] Generation failed
+14:39:51 [ERROR] src.pipeline: [Q0648] Worker error: 'NoneType' object has no attribute 'strip'
+14:39:53 [ERROR] src.pipeline: [Q0649] Worker error: 'NoneType' object has no attribute 'strip'
+14:40:23 [INFO] src.pipeline: Progress: 580/1000 generated, 89 failed, tokens: in=596,707, out=3,200,959
+14:40:58 [ERROR] src.pipeline: [Q0661] Worker error: 'NoneType' object has no attribute 'strip'
+14:41:28 [INFO] src.pipeline: Progress: 590/1000 generated, 90 failed, tokens: in=606,506, out=3,255,528
+14:42:10 [ERROR] src.pipeline: [Q0672] Worker error: 'NoneType' object has no attribute 'strip'
+14:42:31 [INFO] src.pipeline: Progress: 600/1000 generated, 91 failed, tokens: in=616,137, out=3,310,275
+14:43:03 [ERROR] src.pipeline: [Q0682] Worker error: 'NoneType' object has no attribute 'strip'
+14:43:23 [INFO] src.pipeline: Progress: 610/1000 generated, 92 failed, tokens: in=625,646, out=3,358,923
+14:43:27 [WARNING] src.pipeline: [Q0697] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 719)
+14:43:27 [WARNING] src.pipeline: [Q0697] Generation failed
+14:44:08 [WARNING] src.pipeline: [Q0710] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 789)
+14:44:08 [WARNING] src.pipeline: [Q0710] Generation failed
+14:44:20 [WARNING] src.pipeline: [Q0717] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 895)
+14:44:20 [WARNING] src.pipeline: [Q0717] Generation failed
+14:44:36 [INFO] src.pipeline: Progress: 620/1000 generated, 95 failed, tokens: in=637,278, out=3,421,443
+14:45:01 [ERROR] src.pipeline: [Q0699] Worker error: 'NoneType' object has no attribute 'strip'
+14:46:11 [INFO] src.pipeline: Progress: 630/1000 generated, 96 failed, tokens: in=646,942, out=3,473,117
+14:46:20 [ERROR] src.pipeline: [Q0714] Worker error: 'NoneType' object has no attribute 'strip'
+14:46:24 [WARNING] src.pipeline: [Q0744] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 536)
+14:46:24 [WARNING] src.pipeline: [Q0744] Generation failed
+14:46:34 [ERROR] src.pipeline: [Q0716] Worker error: 'NoneType' object has no attribute 'strip'
+14:47:06 [WARNING] src.pipeline: [Q0737] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 656)
+14:47:06 [WARNING] src.pipeline: [Q0737] Generation failed
+14:47:11 [INFO] src.pipeline: Progress: 640/1000 generated, 100 failed, tokens: in=659,965, out=3,540,724
+14:47:33 [WARNING] src.pipeline: [Q0748] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1460)
+14:47:33 [WARNING] src.pipeline: [Q0748] Generation failed
+14:47:49 [ERROR] src.pipeline: [Q0729] Worker error: 'NoneType' object has no attribute 'strip'
+14:48:07 [WARNING] src.pipeline: [Q0755] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 800)
+14:48:07 [WARNING] src.pipeline: [Q0755] Generation failed
+14:48:22 [INFO] src.pipeline: Progress: 650/1000 generated, 103 failed, tokens: in=671,493, out=3,606,055
+14:48:24 [WARNING] src.pipeline: [Q0758] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1720)
+14:48:24 [WARNING] src.pipeline: [Q0758] Generation failed
+14:48:52 [ERROR] src.pipeline: [Q0741] Worker error: 'NoneType' object has no attribute 'strip'
+14:49:30 [INFO] src.pipeline: Progress: 660/1000 generated, 105 failed, tokens: in=681,996, out=3,659,333
+14:50:00 [WARNING] src.pipeline: [Q0772] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1342)
+14:50:00 [WARNING] src.pipeline: [Q0772] Generation failed
+14:50:31 [INFO] src.pipeline: Progress: 670/1000 generated, 106 failed, tokens: in=691,851, out=3,709,639
+14:51:22 [INFO] src.pipeline: Progress: 680/1000 generated, 106 failed, tokens: in=700,964, out=3,756,399
+14:51:43 [WARNING] src.pipeline: [Q0798] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 376)
+14:51:43 [WARNING] src.pipeline: [Q0798] Generation failed
+14:52:34 [INFO] src.pipeline: Progress: 690/1000 generated, 107 failed, tokens: in=710,771, out=3,806,122
+14:52:44 [ERROR] src.pipeline: [Q0784] Worker error: 'NoneType' object has no attribute 'strip'
+14:53:06 [ERROR] src.pipeline: [Q0789] Worker error: 'NoneType' object has no attribute 'strip'
+14:53:08 [ERROR] src.pipeline: [Q0791] Worker error: 'NoneType' object has no attribute 'strip'
+14:53:30 [ERROR] src.pipeline: [Q0795] Worker error: 'NoneType' object has no attribute 'strip'
+14:53:43 [INFO] src.pipeline: Progress: 700/1000 generated, 111 failed, tokens: in=723,781, out=3,883,068
+14:54:17 [INFO] src.pipeline: Progress: 710/1000 generated, 111 failed, tokens: in=732,265, out=3,931,059
+14:54:45 [ERROR] src.pipeline: [Q0809] Worker error: 'NoneType' object has no attribute 'strip'
+14:55:12 [INFO] src.pipeline: Progress: 720/1000 generated, 112 failed, tokens: in=741,674, out=3,982,028
+14:55:13 [ERROR] src.pipeline: [Q0817] Worker error: 'NoneType' object has no attribute 'strip'
+14:55:39 [WARNING] src.pipeline: [Q0851] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 632)
+14:55:39 [WARNING] src.pipeline: [Q0851] Generation failed
+14:55:40 [WARNING] src.pipeline: [Q0843] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1373)
+14:55:40 [WARNING] src.pipeline: [Q0843] Generation failed
+14:56:00 [ERROR] src.pipeline: [Q0823] Worker error: 'NoneType' object has no attribute 'strip'
+14:56:17 [INFO] src.pipeline: Progress: 730/1000 generated, 116 failed, tokens: in=754,136, out=4,045,661
+14:56:30 [WARNING] src.pipeline: [Q0836] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1708)
+14:56:30 [WARNING] src.pipeline: [Q0836] Generation failed
+14:57:31 [INFO] src.pipeline: Progress: 740/1000 generated, 117 failed, tokens: in=764,496, out=4,097,783
+14:57:42 [WARNING] src.pipeline: [Q0872] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 751)
+14:57:42 [WARNING] src.pipeline: [Q0872] Generation failed
+14:57:47 [ERROR] src.pipeline: [Q0845] Worker error: 'NoneType' object has no attribute 'strip'
+14:57:56 [WARNING] src.pipeline: [Q0874] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 689)
+14:57:56 [WARNING] src.pipeline: [Q0874] Generation failed
+14:57:58 [ERROR] src.pipeline: [Q0849] Worker error: 'NoneType' object has no attribute 'strip'
+14:58:17 [INFO] src.pipeline: Progress: 750/1000 generated, 121 failed, tokens: in=777,060, out=4,166,222
+14:58:46 [WARNING] src.pipeline: [Q0880] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1228)
+14:58:46 [WARNING] src.pipeline: [Q0880] Generation failed
+14:58:47 [WARNING] src.pipeline: [Q0856] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+14:58:47 [WARNING] src.pipeline: [Q0856] Generation failed
+14:58:48 [ERROR] src.pipeline: [Q0860] Worker error: 'NoneType' object has no attribute 'strip'
+14:59:24 [WARNING] src.pipeline: [Q0885] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 537)
+14:59:24 [WARNING] src.pipeline: [Q0885] Generation failed
+14:59:28 [ERROR] src.pipeline: [Q0868] Worker error: 'NoneType' object has no attribute 'strip'
+14:59:32 [ERROR] src.pipeline: [Q0869] Worker error: 'NoneType' object has no attribute 'strip'
+14:59:48 [INFO] src.pipeline: Progress: 760/1000 generated, 127 failed, tokens: in=791,424, out=4,247,036
+15:00:38 [INFO] src.pipeline: Progress: 770/1000 generated, 127 failed, tokens: in=800,412, out=4,293,719
+15:01:34 [WARNING] src.pipeline: [Q0908] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1309)
+15:01:34 [WARNING] src.pipeline: [Q0908] Generation failed
+15:02:15 [INFO] src.pipeline: Progress: 780/1000 generated, 128 failed, tokens: in=810,183, out=4,349,711
+15:03:08 [INFO] src.pipeline: Progress: 790/1000 generated, 128 failed, tokens: in=818,837, out=4,395,277
+15:03:22 [WARNING] src.pipeline: [Q0920] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1055)
+15:03:22 [WARNING] src.pipeline: [Q0920] Generation failed
+15:03:35 [WARNING] src.pipeline: [Q0929] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 641)
+15:03:35 [WARNING] src.pipeline: [Q0929] Generation failed
+15:04:06 [ERROR] src.pipeline: [Q0912] Worker error: 'NoneType' object has no attribute 'strip'
+15:04:16 [INFO] src.pipeline: Progress: 800/1000 generated, 131 failed, tokens: in=830,312, out=4,456,954
+15:04:41 [WARNING] src.pipeline: [Q0949] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 802)
+15:04:41 [WARNING] src.pipeline: [Q0949] Generation failed
+15:04:50 [INFO] src.pipeline: Progress: 810/1000 generated, 132 failed, tokens: in=839,955, out=4,503,394
+15:05:37 [WARNING] src.pipeline: [Q0943] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1745)
+15:05:37 [WARNING] src.pipeline: [Q0943] Generation failed
+15:06:06 [INFO] src.pipeline: Progress: 820/1000 generated, 133 failed, tokens: in=850,158, out=4,556,291
+15:06:08 [ERROR] src.pipeline: [Q0938] Worker error: 'NoneType' object has no attribute 'strip'
+15:06:47 [WARNING] src.pipeline: [Q0969] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 840)
+15:06:47 [WARNING] src.pipeline: [Q0969] Generation failed
+15:06:51 [WARNING] src.pipeline: [Q0957] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1183)
+15:06:51 [WARNING] src.pipeline: [Q0957] Generation failed
+15:06:58 [INFO] src.pipeline: Progress: 830/1000 generated, 136 failed, tokens: in=862,117, out=4,619,732
+15:07:06 [WARNING] src.pipeline: [Q0974] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 997)
+15:07:06 [WARNING] src.pipeline: [Q0974] Generation failed
+15:07:25 [WARNING] src.pipeline: [Q0973] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 558)
+15:07:25 [WARNING] src.pipeline: [Q0973] Generation failed
+15:07:27 [WARNING] src.pipeline: [Q0964] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1707)
+15:07:27 [WARNING] src.pipeline: [Q0964] Generation failed
+15:07:40 [INFO] src.pipeline: Progress: 840/1000 generated, 139 failed, tokens: in=873,698, out=4,684,218
+15:08:01 [WARNING] src.pipeline: [Q0963] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+15:08:01 [WARNING] src.pipeline: [Q0963] Generation failed
+15:08:27 [WARNING] src.pipeline: [Q0993] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 972)
+15:08:27 [WARNING] src.pipeline: [Q0993] Generation failed
+15:08:29 [INFO] src.pipeline: Progress: 850/1000 generated, 141 failed, tokens: in=884,239, out=4,739,282
+15:08:58 [ERROR] src.pipeline: [Q0989] Worker error: 'NoneType' object has no attribute 'strip'
+15:09:02 [ERROR] src.pipeline: [Q0991] Worker error: 'NoneType' object has no attribute 'strip'
+15:09:07 [ERROR] src.pipeline: [Q0996] Worker error: 'NoneType' object has no attribute 'strip'
+15:09:12 [ERROR] src.pipeline: [Q0999] Worker error: 'NoneType' object has no attribute 'strip'
+15:09:14 [ERROR] src.pipeline: [Q1000] Worker error: 'NoneType' object has no attribute 'strip'
+miUrba — Generation (single model)
+=======================================================
+  Model:      qwen3_local (QuantTrio/Qwen3.6-35B-A3B-AWQ)
+  Endpoint:   http://192.168.10.11:8000
+  Records:    1000
+  IDs:        Q0001 — Q1000
+  Output:     ../eval/results/dataset/raw/
+  Images:     disabled
+  Resume:     False
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  854
+  Failed:     146
+  Tokens in:  892,792
+  Tokens out: 4,792,610
+  Raw:        ../eval/results/dataset/raw/complaints.jsonl
+  Ground truth: ../eval/results/dataset/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/dataset/raw/metadata.jsonl
+  Images dir: None

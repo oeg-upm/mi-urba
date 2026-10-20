@@ -1,0 +1,43 @@
+=== 05:55:04 Waiting for inference server to recover ===
+[05:55:06] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[05:57:09] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[05:59:13] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:01:15] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:03:18] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:05:22] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:07:25] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:09:29] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:11:32] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:13:36] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:15:39] Server still down: {"error":"unspecific error: upstream command exited prematurely","src":"llama-swap"}
+[06:17:55] Server still down: 
+[06:20:57] Server still down: 
+=== 06:23:02 Server recovered! ===
+
+=== 06:23:04 Running iterations 6 and 7 ===
+
+================================================================
+  APPLYING PROMPT VARIANT FOR ITERATION 6
+================================================================
+Applied prompt variant iter_6 to:
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-generator/src/prompts.py
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-extractor/src/prompts.py
+
+  RUNNING ITERATION 6 (N=250)
+================================================================
+Iteration 6 finished (exit code 0).
+Report: eval/results/iter_6/report.md
+
+═══════════════════════════════════════════════════
+  ITERATION 6 COMPLETE
+═══════════════════════════════════════════════════
+
+================================================================
+  APPLYING PROMPT VARIANT FOR ITERATION 7
+================================================================
+Applied prompt variant iter_7 to:
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-generator/src/prompts.py
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-extractor/src/prompts.py
+
+  RUNNING ITERATION 7 (N=250)
+================================================================

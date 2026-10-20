@@ -1,0 +1,5 @@
+=== Final retest: 4 stubborn + 0 new ===
+FAIL phi-4-reasoning-plus         think_free  (  25.8s, finish=stop):  | RAW: 'We are Phi, need to produce answer with JSON valid. The instructions: "Eres un vecino de una comunidad de vecinos. Escribe lo que un vecino REAL escribiría para reportar un problema de mantenimiento.
+OK   deepseek-v4-flash-iq2        15min       ( 324.9s, finish=stop): ¡Buenos días! Soy el vecino de la plaza 23 del garaje. Hay una fuga de agua impo
+WEAK falcon-7b-instruct           15min       (  36.0s, finish=stop): ...
+FAIL mixtral-8x7b-instruct        15min       (  94.0s, finish=stop):  | RAW: ' {"user\\_text": "Hola, quisiera reportar una urgencia en la comunidad. En la plaza de garaje número 23, se está produciendo una fuga de agua de la fontanería. El agua está comenzando a formar un cha

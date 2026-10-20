@@ -1,0 +1,107 @@
+14:56:52 [INFO] src.pipeline: Extracting 868 complaints with 32 workers...
+14:57:10 [INFO] src.pipeline: Progress: 10/868 done, 0 failed this pass, tokens: in=16,776, out=1,894
+14:57:18 [INFO] src.pipeline: Progress: 20/868 done, 0 failed this pass, tokens: in=33,398, out=4,272
+14:57:24 [INFO] src.pipeline: Progress: 30/868 done, 0 failed this pass, tokens: in=50,329, out=7,299
+14:57:30 [INFO] src.pipeline: Progress: 40/868 done, 0 failed this pass, tokens: in=67,053, out=10,130
+14:57:37 [INFO] src.pipeline: Progress: 50/868 done, 0 failed this pass, tokens: in=83,495, out=12,286
+14:57:42 [INFO] src.pipeline: Progress: 60/868 done, 0 failed this pass, tokens: in=100,316, out=15,338
+14:57:49 [INFO] src.pipeline: Progress: 70/868 done, 0 failed this pass, tokens: in=117,251, out=17,834
+14:57:55 [INFO] src.pipeline: Progress: 80/868 done, 0 failed this pass, tokens: in=134,314, out=20,861
+14:58:01 [INFO] src.pipeline: Progress: 90/868 done, 0 failed this pass, tokens: in=150,727, out=23,258
+14:58:07 [INFO] src.pipeline: Progress: 100/868 done, 0 failed this pass, tokens: in=168,248, out=25,864
+14:58:13 [INFO] src.pipeline: Progress: 110/868 done, 0 failed this pass, tokens: in=184,993, out=28,200
+14:58:20 [INFO] src.pipeline: Progress: 120/868 done, 0 failed this pass, tokens: in=201,749, out=30,395
+14:58:25 [INFO] src.pipeline: Progress: 130/868 done, 0 failed this pass, tokens: in=218,454, out=32,489
+14:58:33 [INFO] src.pipeline: Progress: 140/868 done, 0 failed this pass, tokens: in=235,132, out=34,964
+14:58:40 [INFO] src.pipeline: Progress: 150/868 done, 0 failed this pass, tokens: in=251,765, out=37,732
+14:58:46 [INFO] src.pipeline: Progress: 160/868 done, 0 failed this pass, tokens: in=268,763, out=40,325
+14:58:55 [INFO] src.pipeline: Progress: 170/868 done, 0 failed this pass, tokens: in=285,394, out=42,971
+14:59:01 [INFO] src.pipeline: Progress: 180/868 done, 0 failed this pass, tokens: in=302,417, out=45,413
+14:59:08 [INFO] src.pipeline: Progress: 190/868 done, 0 failed this pass, tokens: in=319,097, out=47,999
+14:59:16 [INFO] src.pipeline: Progress: 200/868 done, 0 failed this pass, tokens: in=336,030, out=50,966
+14:59:22 [INFO] src.pipeline: Progress: 210/868 done, 0 failed this pass, tokens: in=353,927, out=53,517
+14:59:31 [INFO] src.pipeline: Progress: 220/868 done, 0 failed this pass, tokens: in=370,635, out=55,964
+14:59:38 [INFO] src.pipeline: Progress: 230/868 done, 0 failed this pass, tokens: in=387,163, out=58,638
+14:59:45 [INFO] src.pipeline: Progress: 240/868 done, 0 failed this pass, tokens: in=403,705, out=61,420
+14:59:54 [INFO] src.pipeline: Progress: 250/868 done, 0 failed this pass, tokens: in=420,858, out=63,893
+15:00:01 [INFO] src.pipeline: Progress: 260/868 done, 0 failed this pass, tokens: in=437,495, out=66,863
+15:00:09 [INFO] src.pipeline: Progress: 270/868 done, 0 failed this pass, tokens: in=454,275, out=69,426
+15:00:17 [INFO] src.pipeline: Progress: 280/868 done, 0 failed this pass, tokens: in=471,047, out=71,955
+15:00:25 [INFO] src.pipeline: Progress: 290/868 done, 0 failed this pass, tokens: in=488,146, out=74,411
+15:00:35 [INFO] src.pipeline: Progress: 300/868 done, 0 failed this pass, tokens: in=505,067, out=76,832
+15:00:43 [INFO] src.pipeline: Progress: 310/868 done, 0 failed this pass, tokens: in=521,892, out=79,371
+15:00:53 [INFO] src.pipeline: Progress: 320/868 done, 0 failed this pass, tokens: in=538,410, out=81,794
+15:01:00 [INFO] src.pipeline: Progress: 330/868 done, 0 failed this pass, tokens: in=555,224, out=84,284
+15:01:10 [INFO] src.pipeline: Progress: 340/868 done, 0 failed this pass, tokens: in=571,930, out=86,826
+15:01:19 [INFO] src.pipeline: Progress: 350/868 done, 0 failed this pass, tokens: in=588,916, out=89,802
+15:01:30 [INFO] src.pipeline: Progress: 360/868 done, 0 failed this pass, tokens: in=605,783, out=92,544
+15:01:38 [INFO] src.pipeline: Progress: 370/868 done, 0 failed this pass, tokens: in=622,840, out=94,984
+15:01:48 [INFO] src.pipeline: Progress: 380/868 done, 0 failed this pass, tokens: in=639,988, out=97,800
+15:01:56 [INFO] src.pipeline: Progress: 390/868 done, 0 failed this pass, tokens: in=656,606, out=100,650
+15:02:06 [INFO] src.pipeline: Progress: 400/868 done, 0 failed this pass, tokens: in=673,702, out=103,410
+15:02:16 [INFO] src.pipeline: Progress: 410/868 done, 0 failed this pass, tokens: in=690,540, out=105,950
+15:02:26 [INFO] src.pipeline: Progress: 420/868 done, 0 failed this pass, tokens: in=707,422, out=108,618
+15:02:35 [INFO] src.pipeline: Progress: 430/868 done, 0 failed this pass, tokens: in=724,430, out=111,100
+15:02:44 [INFO] src.pipeline: Progress: 440/868 done, 0 failed this pass, tokens: in=740,862, out=113,648
+15:02:52 [INFO] src.pipeline: Progress: 450/868 done, 0 failed this pass, tokens: in=757,598, out=116,189
+15:03:02 [INFO] src.pipeline: Progress: 460/868 done, 0 failed this pass, tokens: in=776,454, out=119,522
+15:03:10 [INFO] src.pipeline: Progress: 470/868 done, 0 failed this pass, tokens: in=791,478, out=121,524
+15:03:17 [INFO] src.pipeline: Progress: 480/868 done, 0 failed this pass, tokens: in=807,915, out=123,803
+15:03:29 [INFO] src.pipeline: Progress: 490/868 done, 0 failed this pass, tokens: in=824,687, out=126,693
+15:03:38 [INFO] src.pipeline: Progress: 500/868 done, 0 failed this pass, tokens: in=841,699, out=128,923
+15:03:47 [INFO] src.pipeline: Progress: 510/868 done, 0 failed this pass, tokens: in=858,430, out=131,524
+15:03:56 [INFO] src.pipeline: Progress: 520/868 done, 0 failed this pass, tokens: in=875,157, out=134,002
+15:04:05 [INFO] src.pipeline: Progress: 530/868 done, 0 failed this pass, tokens: in=892,074, out=136,202
+15:04:15 [INFO] src.pipeline: Progress: 540/868 done, 0 failed this pass, tokens: in=909,104, out=139,050
+15:04:26 [INFO] src.pipeline: Progress: 550/868 done, 0 failed this pass, tokens: in=925,777, out=141,474
+15:04:34 [INFO] src.pipeline: Progress: 560/868 done, 0 failed this pass, tokens: in=943,671, out=144,028
+15:04:45 [INFO] src.pipeline: Progress: 570/868 done, 0 failed this pass, tokens: in=960,536, out=146,851
+15:04:54 [INFO] src.pipeline: Progress: 580/868 done, 0 failed this pass, tokens: in=977,366, out=149,632
+15:05:05 [INFO] src.pipeline: Progress: 590/868 done, 0 failed this pass, tokens: in=994,650, out=152,324
+15:05:14 [INFO] src.pipeline: Progress: 600/868 done, 0 failed this pass, tokens: in=1,011,391, out=154,777
+15:05:22 [INFO] src.pipeline: Progress: 610/868 done, 0 failed this pass, tokens: in=1,028,776, out=157,251
+15:05:33 [INFO] src.pipeline: Progress: 620/868 done, 0 failed this pass, tokens: in=1,045,950, out=160,371
+15:05:42 [INFO] src.pipeline: Progress: 630/868 done, 0 failed this pass, tokens: in=1,063,050, out=162,701
+15:05:53 [INFO] src.pipeline: Progress: 640/868 done, 0 failed this pass, tokens: in=1,080,200, out=165,277
+15:06:01 [INFO] src.pipeline: Progress: 650/868 done, 0 failed this pass, tokens: in=1,098,889, out=167,911
+15:06:10 [INFO] src.pipeline: Progress: 660/868 done, 0 failed this pass, tokens: in=1,114,446, out=170,289
+15:06:19 [INFO] src.pipeline: Progress: 670/868 done, 0 failed this pass, tokens: in=1,131,272, out=172,836
+15:06:27 [INFO] src.pipeline: Progress: 680/868 done, 0 failed this pass, tokens: in=1,147,902, out=174,783
+15:06:38 [INFO] src.pipeline: Progress: 690/868 done, 0 failed this pass, tokens: in=1,164,650, out=177,627
+15:06:48 [INFO] src.pipeline: Progress: 700/868 done, 0 failed this pass, tokens: in=1,180,941, out=179,849
+15:06:57 [INFO] src.pipeline: Progress: 710/868 done, 0 failed this pass, tokens: in=1,197,686, out=182,164
+15:07:08 [INFO] src.pipeline: Progress: 720/868 done, 0 failed this pass, tokens: in=1,214,627, out=185,241
+15:07:16 [INFO] src.pipeline: Progress: 730/868 done, 0 failed this pass, tokens: in=1,231,250, out=187,544
+15:07:26 [INFO] src.pipeline: Progress: 740/868 done, 0 failed this pass, tokens: in=1,248,252, out=190,462
+15:07:35 [INFO] src.pipeline: Progress: 750/868 done, 0 failed this pass, tokens: in=1,264,986, out=193,244
+15:07:45 [INFO] src.pipeline: Progress: 760/868 done, 0 failed this pass, tokens: in=1,282,015, out=195,251
+15:07:50 [INFO] src.pipeline: Progress: 770/868 done, 0 failed this pass, tokens: in=1,299,134, out=197,848
+15:08:04 [INFO] src.pipeline: Progress: 780/868 done, 0 failed this pass, tokens: in=1,316,050, out=200,088
+15:08:15 [INFO] src.pipeline: Progress: 790/868 done, 0 failed this pass, tokens: in=1,332,775, out=202,609
+15:08:24 [INFO] src.pipeline: Progress: 800/868 done, 0 failed this pass, tokens: in=1,349,403, out=205,550
+15:08:33 [INFO] src.pipeline: Progress: 810/868 done, 0 failed this pass, tokens: in=1,366,167, out=208,296
+15:08:43 [INFO] src.pipeline: Progress: 820/868 done, 0 failed this pass, tokens: in=1,383,149, out=211,274
+15:08:52 [INFO] src.pipeline: Progress: 830/868 done, 0 failed this pass, tokens: in=1,399,768, out=213,230
+15:09:00 [INFO] src.pipeline: Progress: 840/868 done, 0 failed this pass, tokens: in=1,417,057, out=215,767
+15:09:04 [INFO] src.pipeline: Progress: 850/868 done, 0 failed this pass, tokens: in=1,433,783, out=218,225
+15:09:06 [INFO] src.pipeline: Progress: 860/868 done, 0 failed this pass, tokens: in=1,450,630, out=221,190
+miUrba — Extraction (raw + images → structured, VLM)
+=======================================================
+  Model (VLM): gemma4-12b-awq
+  Endpoint:   http://192.168.10.11:9292
+  Source:     ../eval/results/iter_1/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Images:     data/images
+  Output:     eval/results/iter_1/gen_gen_qwen3_6_35b_awq/ext_extract_gemma4_12b/annotated/extractions.jsonl
+  Resume:     True
+=======================================================
+
+=======================================================
+Extraction complete!
+  Extracted:  868
+  Failed:     0
+  Skipped:    0
+  Total:      868
+  Tokens in:  1,464,679
+  Tokens out: 223,925
+  Images dir: data/images
+  Output:     eval/results/iter_1/gen_gen_qwen3_6_35b_awq/ext_extract_gemma4_12b/annotated/extractions.jsonl

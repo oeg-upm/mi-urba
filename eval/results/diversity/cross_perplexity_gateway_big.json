@@ -1,0 +1,198 @@
+{
+  "llama-3.3-70b-instruct-xppl": {
+    "llama-3.3-70b-instruct-xppl": {
+      "mean_ppl": 1.0984946383549712,
+      "mean_logprob": -0.09394073195211944,
+      "n_scenarios": 3,
+      "n_tokens": 422,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -0.09607039868445118,
+          "n_tokens": 102
+        },
+        "Q0002": {
+          "mean_logprob": -0.12152796073351604,
+          "n_tokens": 146
+        },
+        "Q0003": {
+          "mean_logprob": -0.06954440201659218,
+          "n_tokens": 174
+        }
+      }
+    },
+    "qwen3.5-122b-a10b-xppl": {
+      "mean_ppl": 2.701579288943176,
+      "mean_logprob": -0.9938365238409931,
+      "n_scenarios": 3,
+      "n_tokens": 3240,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -1.0158993784198966,
+          "n_tokens": 1080
+        },
+        "Q0002": {
+          "mean_logprob": -0.9390830119716204,
+          "n_tokens": 1098
+        },
+        "Q0003": {
+          "mean_logprob": -1.0280092856934933,
+          "n_tokens": 1062
+        }
+      }
+    },
+    "gemma-3-27b-it-xppl": {
+      "mean_ppl": 2.7825593194659834,
+      "mean_logprob": -1.0233711227061733,
+      "n_scenarios": 3,
+      "n_tokens": 632,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -1.0705985354390632,
+          "n_tokens": 137
+        },
+        "Q0002": {
+          "mean_logprob": -0.8978876238366345,
+          "n_tokens": 260
+        },
+        "Q0003": {
+          "mean_logprob": -1.1346713531813828,
+          "n_tokens": 235
+        }
+      }
+    }
+  },
+  "qwen3.5-122b-a10b-xppl": {
+    "llama-3.3-70b-instruct-xppl": {
+      "mean_ppl": 1.7286751740960413,
+      "mean_logprob": -0.5473553198184596,
+      "n_scenarios": 1,
+      "n_tokens": 172,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0003": {
+          "mean_logprob": -0.5473553198184596,
+          "n_tokens": 172
+        }
+      }
+    },
+    "qwen3.5-122b-a10b-xppl": {
+      "mean_ppl": 1.16200494110644,
+      "mean_logprob": -0.15014691066374242,
+      "n_scenarios": 3,
+      "n_tokens": 3197,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -0.15890474123091083,
+          "n_tokens": 1063
+        },
+        "Q0002": {
+          "mean_logprob": -0.12657350002674142,
+          "n_tokens": 1093
+        },
+        "Q0003": {
+          "mean_logprob": -0.16595494518184242,
+          "n_tokens": 1041
+        }
+      }
+    },
+    "gemma-3-27b-it-xppl": {
+      "mean_ppl": 2.6049104036968815,
+      "mean_logprob": -0.9573982806395183,
+      "n_scenarios": 3,
+      "n_tokens": 601,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -0.9235515518932617,
+          "n_tokens": 135
+        },
+        "Q0002": {
+          "mean_logprob": -0.8952698900549946,
+          "n_tokens": 239
+        },
+        "Q0003": {
+          "mean_logprob": -1.042940103240601,
+          "n_tokens": 227
+        }
+      }
+    }
+  },
+  "gemma-3-27b-it-xppl": {
+    "llama-3.3-70b-instruct-xppl": {
+      "mean_ppl": 3.183990819246605,
+      "mean_logprob": -1.1581353845755313,
+      "n_scenarios": 3,
+      "n_tokens": 406,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -1.2477555482447251,
+          "n_tokens": 99
+        },
+        "Q0002": {
+          "mean_logprob": -1.2243988727892088,
+          "n_tokens": 135
+        },
+        "Q0003": {
+          "mean_logprob": -1.0545425525284577,
+          "n_tokens": 172
+        }
+      }
+    },
+    "qwen3.5-122b-a10b-xppl": {
+      "mean_ppl": 2.8931100506658893,
+      "mean_logprob": -1.062332065597441,
+      "n_scenarios": 3,
+      "n_tokens": 3170,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -1.1039048986344824,
+          "n_tokens": 1053
+        },
+        "Q0002": {
+          "mean_logprob": -0.9976558581060683,
+          "n_tokens": 1072
+        },
+        "Q0003": {
+          "mean_logprob": -1.0867882390354766,
+          "n_tokens": 1045
+        }
+      }
+    },
+    "gemma-3-27b-it-xppl": {
+      "mean_ppl": 1.2313466595207447,
+      "mean_logprob": -0.2081084156173036,
+      "n_scenarios": 3,
+      "n_tokens": 601,
+      "n_misses": 0,
+      "method": "gateway-prompt_logprobs",
+      "scenarios": {
+        "Q0001": {
+          "mean_logprob": -0.15340341135781413,
+          "n_tokens": 135
+        },
+        "Q0002": {
+          "mean_logprob": -0.22493644711204297,
+          "n_tokens": 239
+        },
+        "Q0003": {
+          "mean_logprob": -0.22292460966042413,
+          "n_tokens": 227
+        }
+      }
+    }
+  }
+}

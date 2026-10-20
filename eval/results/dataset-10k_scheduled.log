@@ -1,0 +1,156 @@
+[2026-09-07 20:34:16] sleeping 12344s until 2026-09-08 00:00:00 before starting 10K generation
+[2026-09-08 00:00:00] launching generate_10k_dataset.py
+[00:00:01] [ 1/10] gen_qwen3.5-122b-a10b (0/1000 done)
+[00:20:02]   warmup TIMEOUT after 1200s (qwen3.5-122b-a10b)
+[00:20:02]   ABORTED for this model (warmup failed)
+[00:20:02] [ 2/10] gen_devstral-small-2507 (0/1000 done)
+[00:40:03]   warmup TIMEOUT after 1200s (devstral-small-2507)
+[00:40:03]   ABORTED for this model (warmup failed)
+[00:40:03] [ 3/10] gen_agentica-deepcoder-14b (0/1000 done)
+nuevo PID: 1107394
+[00:56:12] [ 1/10] gen_qwen3.5-122b-a10b (0/1000 done)
+PID: 1108712
+[01:16:04] [ 1/10] gen_qwen3.5-122b-a10b (0/1000 done)
+[01:36:05]   warmup TIMEOUT after 1200s (qwen3.5-122b-a10b)
+[01:36:05]   ABORTED for this model (warmup failed)
+[01:36:05] [ 2/10] gen_devstral-small-2507 (0/1000 done)
+PID 1112756
+[01:54:57] [ 1/10] gen_qwen3.5-122b-a10b (0/1000 done)
+[01:55:21]   warmup OK (qwen3.5-122b-a10b) in 24s
+[01:55:21]   DONE 0/1000 in 0s (rc=1)
+[01:55:21] [ 2/10] gen_devstral-small-2507 (0/1000 done)
+PID 1113588
+[01:56:04] [ 1/10] gen_qwen3.5-122b-a10b (0/1000 done)
+[01:56:27]   warmup OK (qwen3.5-122b-a10b) in 24s
+PID 1149505
+[02:33:17] [ 1/10] gen_qwen3.5-122b-a10b (208/1000 done)
+[02:33:25]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:33:47]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:34:10]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:34:32]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:34:54]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:35:16]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:35:39]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:36:01]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:36:25]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:36:47]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:37:09]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:37:32]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:37:55]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:38:17]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:38:39]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:39:01]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:39:23]   warmup probe: HTTP 500 (qwen3.5-122b-a10b)
+[02:39:38]   warmup TIMEOUT after 360s (qwen3.5-122b-a10b)
+[02:39:38]   ABORTED for this model (warmup failed)
+[02:39:38] [ 2/10] gen_devstral-small-2507 (0/1000 done)
+[02:39:47]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:40:10]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:40:32]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:40:56]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:41:19]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:41:41]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:42:04]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:42:27]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:42:49]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:43:12]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:43:36]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:43:58]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:44:21]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:44:43]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:45:06]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:45:28]   warmup probe: HTTP 500 (devstral-small-2507)
+[02:45:43]   warmup TIMEOUT after 360s (devstral-small-2507)
+[02:45:43]   ABORTED for this model (warmup failed)
+[02:45:43] [ 3/10] gen_agentica-deepcoder-14b (0/1000 done)
+[02:45:52]   warmup OK (agentica-deepcoder-14b) in 9s
+PID 1182804
+[03:53:54] [ 1/10] gen_olmo-2-13b-instruct (0/1000 done)
+[04:00:55]   warmup TIMEOUT after 360s (olmo-2-13b-instruct)
+[04:00:55]   ABORTED for this model (warmup failed)
+[04:00:55] [ 2/10] gen_gemma-3-12b-it (0/1000 done)
+[04:07:55]   warmup TIMEOUT after 360s (gemma-3-12b-it)
+[04:07:55]   ABORTED for this model (warmup failed)
+[04:07:55] [ 3/10] gen_falcon3-10b-instruct (0/1000 done)
+[04:13:43]   warmup OK (falcon3-10b-instruct) in 348s
+PID 1227058
+[08:56:44] [ 1/10] gen_olmo-2-13b-instruct (0/1000 done)
+[08:57:13]   warmup OK (olmo-2-13b-instruct) in 28s
+runner PID 1263374
+[10:07:29] [ 1/8] gen_falcon3-10b-instruct (244/1000 done)
+[10:07:41]   warmup OK (falcon3-10b-instruct) in 12s
+[10:08:06]   DONE 248/1000 in 25s (rc=137)
+[10:08:06] [ 2/8] gen_glm-4.5-air (0/1000 done)
+[10:08:30]   warmup OK (glm-4.5-air) in 24s
+[11:42:59]   DONE 1000/1000 in 5670s
+[11:42:59] [ 3/8] gen_olmo-2-13b-instruct (67/1000 done)
+[11:43:09]   warmup OK (olmo-2-13b-instruct) in 9s
+[13:17:26]   DONE 983/1000 in 5657s
+[13:17:26] [ 4/8] gen_qwen3.5-122b-a10b (208/1000 done)
+[13:18:14]   warmup OK (qwen3.5-122b-a10b) in 48s
+[14:52:17]   DONE 999/1000 in 5643s
+[14:52:17] [ 5/8] gen_devstral-small-2507 (0/1000 done)
+[14:52:46]   warmup OK (devstral-small-2507) in 29s
+[17:04:42]   DONE 999/1000 in 7917s
+[17:04:43] [ 6/8] gen_gemma-3-12b-it (0/1000 done)
+[17:05:16]   warmup OK (gemma-3-12b-it) in 33s
+[19:43:23]   DONE 993/1000 in 9488s
+[19:43:23] [ 7/8] gen_gpt-oss-120b (0/1000 done)
+[19:43:58]   warmup OK (gpt-oss-120b) in 35s
+[22:28:57]   DONE 1000/1000 in 9899s
+[22:28:57] [ 8/8] gen_openchat-3.5-0106 (0/1000 done)
+[22:29:15]   warmup OK (openchat-3.5-0106) in 17s
+[00:50:56]   DONE 874/1000 in 8502s
+=== 10K GENERATION COMPLETE ===
+PID 1493942
+[09:35:08] [ 1/4] gen_falcon3-10b-instruct (248/1000 done)
+[09:35:24]   warmup OK (falcon3-10b-instruct) in 16s
+[10:27:57]   DONE 950/1000 in 3153s
+[10:27:57] [ 2/4] gen_openchat-3.5-0106 (874/1000 done)
+[10:28:03]   warmup OK (openchat-3.5-0106) in 6s
+[10:45:16]   DONE 984/1000 in 1033s
+[10:45:16] [ 3/4] gen_gemma-3-12b-it (993/1000 done)
+[10:45:24]   warmup OK (gemma-3-12b-it) in 8s
+[10:46:31]   DONE 1000/1000 in 68s
+[10:46:31] [ 4/4] gen_olmo-2-13b-instruct (983/1000 done)
+[10:46:58]   warmup OK (olmo-2-13b-instruct) in 27s
+[10:48:32]   DONE 999/1000 in 94s
+=== 10K GENERATION COMPLETE ===
+PID 1649683
+[11:29:42] --- pass 1: 3 incomplete: ['gen_falcon3-10b-instruct', 'gen_openchat-3.5-0106', 'gen_olmo-2-13b-instruct']
+[11:29:42] [p1  1/4] gen_falcon3-10b-instruct (950/1000 done)
+[11:29:57]   warmup OK (falcon3-10b-instruct) in 15s
+[11:33:28]   DONE 998/1000 in 211s
+[11:33:28] [p1  2/4] gen_openchat-3.5-0106 (984/1000 done)
+[11:33:33]   warmup OK (openchat-3.5-0106) in 5s
+[11:35:50]   DONE 1000/1000 in 137s
+[11:35:50] [p1  3/4] gen_gemma-3-12b-it (1000/1000 done)
+[11:35:50]   SKIP (already complete)
+[11:35:50] [p1  4/4] gen_olmo-2-13b-instruct (999/1000 done)
+[11:35:57]   warmup OK (olmo-2-13b-instruct) in 7s
+[11:36:05]   DONE 1000/1000 in 8s
+[11:36:05] --- pass 2: 1 incomplete: ['gen_falcon3-10b-instruct']
+[11:36:05] [p2  1/4] gen_falcon3-10b-instruct (998/1000 done)
+[11:36:11]   warmup OK (falcon3-10b-instruct) in 7s
+[11:36:21]   DONE 1000/1000 in 10s
+[11:36:21] [p2  2/4] gen_openchat-3.5-0106 (1000/1000 done)
+[11:36:21]   SKIP (already complete)
+[11:36:21] [p2  3/4] gen_gemma-3-12b-it (1000/1000 done)
+[11:36:21]   SKIP (already complete)
+[11:36:21] [p2  4/4] gen_olmo-2-13b-instruct (1000/1000 done)
+[11:36:21]   SKIP (already complete)
+[11:36:21] ALL MODELS COMPLETE (pass 3)
+=== 10K GENERATION COMPLETE ===
+PID 1687256
+[12:37:23] ALL MODELS COMPLETE (pass 1)
+=== 10K GENERATION COMPLETE ===
+PID 1691568
+[13:02:52] --- pass 1: 2 incomplete: ['gen_devstral-small-2507', 'gen_qwen3.5-122b-a10b']
+[13:02:52] [p1  1/2] gen_devstral-small-2507 (999/1000 done)
+[13:03:03]   warmup OK (devstral-small-2507) in 11s
+[13:03:10]   DONE 1000/1000 in 7s
+[13:03:10] [p1  2/2] gen_qwen3.5-122b-a10b (999/1000 done)
+[13:04:10]   warmup OK (qwen3.5-122b-a10b) in 60s
+[13:04:17]   DONE 1000/1000 in 6s
+[13:04:17] ALL MODELS COMPLETE (pass 2)
+=== 10K GENERATION COMPLETE ===

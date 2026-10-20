@@ -1,0 +1,250 @@
+12:35:05 [INFO] src.pipeline: Generating 1000 records with 32 workers...
+12:35:09 [INFO] src.pipeline: Progress: 10/1000 generated, 0 failed, tokens: in=12,321, out=1,402
+12:35:11 [INFO] src.pipeline: Progress: 20/1000 generated, 0 failed, tokens: in=24,552, out=4,025
+12:35:12 [INFO] src.pipeline: Progress: 30/1000 generated, 0 failed, tokens: in=37,673, out=7,150
+12:35:15 [INFO] src.pipeline: Progress: 40/1000 generated, 0 failed, tokens: in=49,045, out=10,091
+12:35:16 [INFO] src.pipeline: Progress: 50/1000 generated, 0 failed, tokens: in=60,808, out=12,782
+12:35:18 [INFO] src.pipeline: Progress: 60/1000 generated, 0 failed, tokens: in=72,522, out=15,397
+12:35:20 [INFO] src.pipeline: Progress: 70/1000 generated, 0 failed, tokens: in=84,012, out=18,113
+12:35:22 [INFO] src.pipeline: Progress: 80/1000 generated, 0 failed, tokens: in=95,304, out=20,691
+12:35:24 [INFO] src.pipeline: Progress: 90/1000 generated, 0 failed, tokens: in=106,734, out=23,111
+12:35:27 [INFO] src.pipeline: Progress: 100/1000 generated, 0 failed, tokens: in=118,245, out=25,566
+12:35:30 [INFO] src.pipeline: Progress: 110/1000 generated, 0 failed, tokens: in=130,125, out=28,223
+12:35:33 [INFO] src.pipeline: Progress: 120/1000 generated, 0 failed, tokens: in=141,366, out=30,954
+12:35:37 [INFO] src.pipeline: Progress: 130/1000 generated, 0 failed, tokens: in=152,834, out=33,720
+12:35:40 [INFO] src.pipeline: Progress: 140/1000 generated, 0 failed, tokens: in=164,572, out=36,440
+12:35:44 [INFO] src.pipeline: Progress: 150/1000 generated, 0 failed, tokens: in=177,276, out=39,808
+12:35:47 [INFO] src.pipeline: Progress: 160/1000 generated, 0 failed, tokens: in=187,434, out=42,361
+12:35:49 [INFO] src.pipeline: Progress: 170/1000 generated, 0 failed, tokens: in=199,133, out=44,879
+12:35:53 [INFO] src.pipeline: Progress: 180/1000 generated, 0 failed, tokens: in=210,605, out=46,617
+12:35:57 [INFO] src.pipeline: Progress: 190/1000 generated, 0 failed, tokens: in=222,179, out=49,141
+12:36:00 [INFO] src.pipeline: Progress: 200/1000 generated, 0 failed, tokens: in=233,925, out=52,056
+12:36:04 [INFO] src.pipeline: Progress: 210/1000 generated, 0 failed, tokens: in=245,308, out=54,598
+12:36:07 [INFO] src.pipeline: Progress: 220/1000 generated, 0 failed, tokens: in=257,770, out=57,521
+12:36:12 [INFO] src.pipeline: Progress: 230/1000 generated, 0 failed, tokens: in=269,183, out=59,983
+12:36:16 [INFO] src.pipeline: Progress: 240/1000 generated, 0 failed, tokens: in=280,904, out=62,573
+12:36:21 [INFO] src.pipeline: Progress: 250/1000 generated, 0 failed, tokens: in=292,686, out=65,020
+12:36:27 [INFO] src.pipeline: Progress: 260/1000 generated, 0 failed, tokens: in=305,031, out=67,451
+12:36:29 [WARNING] src.pipeline: [Q0098] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:36:29 [WARNING] src.pipeline: [Q0098] Generation failed
+12:36:33 [INFO] src.pipeline: Progress: 270/1000 generated, 1 failed, tokens: in=318,134, out=77,064
+12:36:36 [WARNING] src.pipeline: [Q0129] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:36:36 [WARNING] src.pipeline: [Q0129] Generation failed
+12:36:41 [INFO] src.pipeline: Progress: 280/1000 generated, 2 failed, tokens: in=331,077, out=87,004
+12:36:48 [INFO] src.pipeline: Progress: 290/1000 generated, 2 failed, tokens: in=342,924, out=90,908
+12:36:55 [INFO] src.pipeline: Progress: 300/1000 generated, 2 failed, tokens: in=354,636, out=93,642
+12:37:06 [INFO] src.pipeline: Progress: 310/1000 generated, 2 failed, tokens: in=366,059, out=96,609
+12:37:07 [WARNING] src.pipeline: [Q0005] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:07 [WARNING] src.pipeline: [Q0005] Generation failed
+12:37:15 [INFO] src.pipeline: Progress: 320/1000 generated, 3 failed, tokens: in=379,241, out=106,208
+12:37:20 [WARNING] src.pipeline: [Q0026] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:20 [WARNING] src.pipeline: [Q0026] Generation failed
+12:37:23 [WARNING] src.pipeline: [Q0072] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:23 [WARNING] src.pipeline: [Q0072] Generation failed
+12:37:23 [WARNING] src.pipeline: [Q0071] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:23 [WARNING] src.pipeline: [Q0071] Generation failed
+12:37:24 [INFO] src.pipeline: Progress: 330/1000 generated, 6 failed, tokens: in=395,427, out=129,421
+12:37:29 [WARNING] src.pipeline: [Q0047] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:29 [WARNING] src.pipeline: [Q0047] Generation failed
+12:37:31 [INFO] src.pipeline: Progress: 340/1000 generated, 7 failed, tokens: in=408,850, out=140,171
+12:37:34 [WARNING] src.pipeline: [Q0058] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:34 [WARNING] src.pipeline: [Q0058] Generation failed
+12:37:36 [INFO] src.pipeline: Progress: 350/1000 generated, 8 failed, tokens: in=421,548, out=150,124
+12:37:38 [WARNING] src.pipeline: [Q0141] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:37:38 [WARNING] src.pipeline: [Q0141] Generation failed
+12:37:42 [INFO] src.pipeline: Progress: 360/1000 generated, 9 failed, tokens: in=435,394, out=159,670
+12:37:48 [INFO] src.pipeline: Progress: 370/1000 generated, 9 failed, tokens: in=445,826, out=161,747
+12:37:52 [INFO] src.pipeline: Progress: 380/1000 generated, 9 failed, tokens: in=457,212, out=164,333
+12:37:56 [INFO] src.pipeline: Progress: 390/1000 generated, 9 failed, tokens: in=468,632, out=167,319
+12:38:03 [INFO] src.pipeline: Progress: 400/1000 generated, 9 failed, tokens: in=480,656, out=170,150
+12:38:11 [WARNING] src.pipeline: [Q0130] JSON parse failed: Unterminated string starting at: line 1 column 14 (char 13)
+12:38:11 [WARNING] src.pipeline: [Q0130] Generation failed
+12:38:11 [WARNING] src.pipeline: [Q0220] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:38:11 [WARNING] src.pipeline: [Q0220] Generation failed
+12:38:12 [INFO] src.pipeline: Progress: 410/1000 generated, 11 failed, tokens: in=494,844, out=186,827
+12:38:17 [INFO] src.pipeline: Progress: 420/1000 generated, 11 failed, tokens: in=506,196, out=189,721
+12:38:24 [INFO] src.pipeline: Progress: 430/1000 generated, 11 failed, tokens: in=517,876, out=192,446
+12:38:29 [INFO] src.pipeline: Progress: 440/1000 generated, 11 failed, tokens: in=529,516, out=195,265
+12:38:31 [WARNING] src.pipeline: [Q0269] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:38:31 [WARNING] src.pipeline: [Q0269] Generation failed
+12:38:37 [INFO] src.pipeline: Progress: 450/1000 generated, 12 failed, tokens: in=542,138, out=204,732
+12:38:44 [INFO] src.pipeline: Progress: 460/1000 generated, 12 failed, tokens: in=553,942, out=207,490
+12:38:52 [INFO] src.pipeline: Progress: 470/1000 generated, 12 failed, tokens: in=565,431, out=209,573
+12:39:00 [WARNING] src.pipeline: [Q0344] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:39:00 [WARNING] src.pipeline: [Q0344] Generation failed
+12:39:01 [INFO] src.pipeline: Progress: 480/1000 generated, 13 failed, tokens: in=578,624, out=219,941
+12:39:09 [INFO] src.pipeline: Progress: 490/1000 generated, 13 failed, tokens: in=590,124, out=222,069
+12:39:16 [WARNING] src.pipeline: [Q0378] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:39:16 [WARNING] src.pipeline: [Q0378] Generation failed
+12:39:17 [INFO] src.pipeline: Progress: 500/1000 generated, 14 failed, tokens: in=603,068, out=231,369
+12:39:22 [INFO] src.pipeline: Progress: 510/1000 generated, 14 failed, tokens: in=614,774, out=234,233
+12:39:30 [INFO] src.pipeline: Progress: 520/1000 generated, 14 failed, tokens: in=626,276, out=236,312
+12:39:32 [WARNING] src.pipeline: [Q0485] JSON parse failed: Unterminated string starting at: line 1 column 14 (char 13)
+12:39:32 [WARNING] src.pipeline: [Q0485] Generation failed
+12:39:37 [WARNING] src.pipeline: [Q0228] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:39:37 [WARNING] src.pipeline: [Q0228] Generation failed
+12:39:38 [INFO] src.pipeline: Progress: 530/1000 generated, 16 failed, tokens: in=640,775, out=253,219
+12:39:44 [WARNING] src.pipeline: [Q0499] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:39:44 [WARNING] src.pipeline: [Q0499] Generation failed
+12:39:45 [INFO] src.pipeline: Progress: 540/1000 generated, 17 failed, tokens: in=653,997, out=263,136
+12:39:48 [WARNING] src.pipeline: [Q0249] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:39:48 [WARNING] src.pipeline: [Q0249] Generation failed
+12:39:53 [INFO] src.pipeline: Progress: 550/1000 generated, 18 failed, tokens: in=666,713, out=272,675
+12:39:59 [WARNING] src.pipeline: [Q0482] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:39:59 [WARNING] src.pipeline: [Q0482] Generation failed
+12:40:01 [INFO] src.pipeline: Progress: 560/1000 generated, 19 failed, tokens: in=679,353, out=282,965
+12:40:04 [WARNING] src.pipeline: [Q0279] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:40:04 [WARNING] src.pipeline: [Q0279] Generation failed
+12:40:07 [INFO] src.pipeline: Progress: 570/1000 generated, 20 failed, tokens: in=693,051, out=292,682
+12:40:08 [WARNING] src.pipeline: [Q0274] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:40:08 [WARNING] src.pipeline: [Q0274] Generation failed
+12:40:12 [INFO] src.pipeline: Progress: 580/1000 generated, 21 failed, tokens: in=706,013, out=301,733
+12:40:13 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:40:13 [INFO] src.llm: Retrying in 5.0s...
+12:40:16 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:40:16 [INFO] src.llm: Retrying in 5.0s...
+12:40:16 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:40:16 [INFO] src.llm: Retrying in 5.0s...
+12:40:17 [INFO] src.pipeline: Progress: 590/1000 generated, 21 failed, tokens: in=717,079, out=304,833
+12:40:19 [WARNING] src.pipeline: [Q0292] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:40:19 [WARNING] src.pipeline: [Q0292] Generation failed
+12:40:22 [INFO] src.pipeline: Progress: 600/1000 generated, 22 failed, tokens: in=730,359, out=314,896
+12:40:24 [WARNING] src.pipeline: [Q0517] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:40:24 [WARNING] src.pipeline: [Q0517] Generation failed
+12:40:26 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:40:26 [INFO] src.llm: Retrying in 5.0s...
+12:40:27 [INFO] src.pipeline: Progress: 610/1000 generated, 23 failed, tokens: in=743,484, out=324,535
+12:40:29 [WARNING] src.pipeline: [Q0312] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:40:29 [WARNING] src.pipeline: [Q0312] Generation failed
+12:40:34 [INFO] src.pipeline: Progress: 620/1000 generated, 24 failed, tokens: in=756,202, out=334,270
+12:40:36 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:40:36 [INFO] src.llm: Retrying in 5.0s...
+12:40:39 [INFO] src.pipeline: Progress: 630/1000 generated, 24 failed, tokens: in=767,808, out=336,825
+12:40:44 [INFO] src.pipeline: Progress: 640/1000 generated, 24 failed, tokens: in=779,234, out=339,654
+12:40:51 [INFO] src.pipeline: Progress: 650/1000 generated, 24 failed, tokens: in=790,864, out=342,597
+12:40:56 [INFO] src.pipeline: Progress: 660/1000 generated, 24 failed, tokens: in=802,232, out=345,618
+12:41:03 [INFO] src.pipeline: Progress: 670/1000 generated, 24 failed, tokens: in=814,193, out=348,486
+12:41:09 [INFO] src.pipeline: Progress: 680/1000 generated, 24 failed, tokens: in=826,072, out=351,794
+12:41:10 [WARNING] src.pipeline: [Q0404] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:41:10 [WARNING] src.pipeline: [Q0404] Generation failed
+12:41:17 [INFO] src.pipeline: Progress: 690/1000 generated, 25 failed, tokens: in=838,990, out=361,658
+12:41:21 [INFO] src.pipeline: Progress: 700/1000 generated, 25 failed, tokens: in=850,767, out=365,359
+12:41:22 [WARNING] src.pipeline: [Q0438] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:41:22 [WARNING] src.pipeline: [Q0438] Generation failed
+12:41:25 [INFO] src.pipeline: Progress: 710/1000 generated, 26 failed, tokens: in=863,975, out=374,240
+12:41:26 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:41:26 [INFO] src.llm: Retrying in 5.0s...
+12:41:30 [INFO] src.pipeline: Progress: 720/1000 generated, 26 failed, tokens: in=875,372, out=377,381
+12:41:36 [INFO] src.pipeline: Progress: 730/1000 generated, 26 failed, tokens: in=886,813, out=379,866
+12:41:40 [INFO] src.pipeline: Progress: 740/1000 generated, 26 failed, tokens: in=898,861, out=382,156
+12:41:42 [WARNING] src.pipeline: [Q0654] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:41:42 [WARNING] src.pipeline: [Q0654] Generation failed
+12:41:46 [INFO] src.pipeline: Progress: 750/1000 generated, 27 failed, tokens: in=912,312, out=391,389
+12:41:52 [INFO] src.pipeline: Progress: 760/1000 generated, 27 failed, tokens: in=924,077, out=394,304
+12:41:53 [WARNING] src.pipeline: [Q0636] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:41:53 [WARNING] src.pipeline: [Q0636] Generation failed
+12:41:55 [INFO] src.pipeline: Progress: 770/1000 generated, 28 failed, tokens: in=937,343, out=403,468
+12:42:01 [INFO] src.pipeline: Progress: 780/1000 generated, 28 failed, tokens: in=948,554, out=405,824
+12:42:05 [INFO] src.pipeline: Progress: 790/1000 generated, 28 failed, tokens: in=959,819, out=408,419
+12:42:09 [WARNING] src.pipeline: [Q0648] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:09 [WARNING] src.pipeline: [Q0648] Generation failed
+12:42:10 [WARNING] src.pipeline: [Q0685] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:10 [WARNING] src.pipeline: [Q0685] Generation failed
+12:42:11 [INFO] src.pipeline: Progress: 800/1000 generated, 30 failed, tokens: in=974,420, out=424,628
+12:42:16 [WARNING] src.pipeline: [Q0077] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:16 [WARNING] src.pipeline: [Q0077] Generation failed
+12:42:17 [INFO] src.pipeline: Progress: 810/1000 generated, 31 failed, tokens: in=987,667, out=434,396
+12:42:21 [WARNING] src.pipeline: [Q0661] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:21 [WARNING] src.pipeline: [Q0661] Generation failed
+12:42:21 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:42:21 [INFO] src.llm: Retrying in 5.0s...
+12:42:23 [WARNING] src.pipeline: [Q0664] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:23 [WARNING] src.pipeline: [Q0664] Generation failed
+12:42:24 [INFO] src.pipeline: Progress: 820/1000 generated, 33 failed, tokens: in=1,001,886, out=450,742
+12:42:27 [WARNING] src.pipeline: [Q0672] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:27 [WARNING] src.pipeline: [Q0672] Generation failed
+12:42:28 [INFO] src.pipeline: Progress: 830/1000 generated, 34 failed, tokens: in=1,014,530, out=460,604
+12:42:34 [INFO] src.pipeline: Progress: 840/1000 generated, 34 failed, tokens: in=1,026,403, out=463,230
+12:42:38 [INFO] src.pipeline: Progress: 850/1000 generated, 34 failed, tokens: in=1,037,593, out=465,648
+12:42:43 [INFO] src.pipeline: Progress: 860/1000 generated, 34 failed, tokens: in=1,049,383, out=468,321
+12:42:45 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:42:45 [INFO] src.llm: Retrying in 5.0s...
+12:42:46 [WARNING] src.pipeline: [Q0082] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:42:46 [WARNING] src.pipeline: [Q0082] Generation failed
+12:42:48 [INFO] src.pipeline: Progress: 870/1000 generated, 35 failed, tokens: in=1,062,577, out=478,112
+12:42:53 [INFO] src.pipeline: Progress: 880/1000 generated, 35 failed, tokens: in=1,074,052, out=480,793
+12:43:01 [INFO] src.pipeline: Progress: 890/1000 generated, 35 failed, tokens: in=1,085,588, out=483,271
+12:43:06 [INFO] src.pipeline: Progress: 900/1000 generated, 35 failed, tokens: in=1,097,867, out=486,264
+12:43:13 [INFO] src.pipeline: Progress: 910/1000 generated, 35 failed, tokens: in=1,109,625, out=488,716
+12:43:15 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:43:15 [INFO] src.llm: Retrying in 5.0s...
+12:43:18 [INFO] src.pipeline: Progress: 920/1000 generated, 35 failed, tokens: in=1,121,249, out=491,413
+12:43:21 [WARNING] src.pipeline: [Q0775] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:43:21 [WARNING] src.pipeline: [Q0775] Generation failed
+12:43:27 [INFO] src.pipeline: Progress: 930/1000 generated, 36 failed, tokens: in=1,134,651, out=500,999
+12:43:31 [WARNING] src.pipeline: [Q0725] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:43:31 [WARNING] src.pipeline: [Q0725] Generation failed
+12:43:33 [INFO] src.pipeline: Progress: 940/1000 generated, 37 failed, tokens: in=1,147,417, out=511,360
+12:43:34 [WARNING] src.pipeline: [Q0789] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 19)
+12:43:34 [WARNING] src.pipeline: [Q0789] Generation failed
+12:43:45 [WARNING] src.pipeline: [Q0942] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:43:45 [WARNING] src.pipeline: [Q0942] Generation failed
+12:44:06 [WARNING] src.pipeline: [Q0795] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 19)
+12:44:06 [WARNING] src.pipeline: [Q0795] Generation failed
+12:44:20 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:44:20 [INFO] src.llm: Retrying in 5.0s...
+12:44:22 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:44:22 [INFO] src.llm: Retrying in 5.0s...
+12:44:28 [WARNING] src.pipeline: [Q0869] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:44:28 [WARNING] src.pipeline: [Q0869] Generation failed
+12:44:33 [WARNING] src.pipeline: [Q0852] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:44:33 [WARNING] src.pipeline: [Q0852] Generation failed
+12:44:39 [WARNING] src.pipeline: [Q0880] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:44:39 [WARNING] src.pipeline: [Q0880] Generation failed
+12:44:42 [WARNING] src.pipeline: [Q0884] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:44:42 [WARNING] src.pipeline: [Q0884] Generation failed
+12:45:06 [WARNING] src.pipeline: [Q0460] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:45:06 [WARNING] src.pipeline: [Q0460] Generation failed
+12:45:09 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+12:45:09 [INFO] src.llm: Retrying in 5.0s...
+12:45:09 [WARNING] src.pipeline: [Q0931] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:45:09 [WARNING] src.pipeline: [Q0931] Generation failed
+12:45:11 [WARNING] src.pipeline: [Q0938] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:45:11 [WARNING] src.pipeline: [Q0938] Generation failed
+12:45:16 [WARNING] src.pipeline: [Q0407] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:45:16 [WARNING] src.pipeline: [Q0407] Generation failed
+12:45:16 [WARNING] src.pipeline: [Q0944] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:45:16 [WARNING] src.pipeline: [Q0944] Generation failed
+12:45:33 [WARNING] src.pipeline: [Q0999] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:45:33 [WARNING] src.pipeline: [Q0999] Generation failed
+12:46:00 [WARNING] src.pipeline: [Q0557] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:46:00 [WARNING] src.pipeline: [Q0557] Generation failed
+12:46:03 [WARNING] src.pipeline: [Q0807] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:46:03 [WARNING] src.pipeline: [Q0807] Generation failed
+12:46:11 [WARNING] src.pipeline: [Q0881] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:46:11 [WARNING] src.pipeline: [Q0881] Generation failed
+12:46:19 [WARNING] src.pipeline: [Q0927] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:46:19 [WARNING] src.pipeline: [Q0927] Generation failed
+12:46:29 [WARNING] src.pipeline: [Q0984] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:46:29 [WARNING] src.pipeline: [Q0984] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_4b_instr_awq (qwen3-4b-instruct-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    1000
+  IDs:        Q0001 — Q1000
+  Output:     ../eval/results/iter_1/gen_gen_qwen3_4b_instr_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  945
+  Failed:     55
+  Tokens in:  1,176,313
+  Tokens out: 638,188
+  Raw:        ../eval/results/iter_1/gen_gen_qwen3_4b_instr_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_1/gen_gen_qwen3_4b_instr_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_1/gen_gen_qwen3_4b_instr_awq/raw/metadata.jsonl
+  Images dir: None

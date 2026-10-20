@@ -1,0 +1,92 @@
+13:13:41 [INFO] src.pipeline: Generating 250 records with 32 workers...
+13:13:55 [WARNING] src.pipeline: [Q0006] JSON parse failed: Invalid \escape: line 2 column 470 (char 471)
+13:13:56 [WARNING] src.pipeline: [Q0008] JSON parse failed: Invalid \escape: line 2 column 379 (char 380)
+13:13:57 [WARNING] src.pipeline: [Q0010] JSON parse failed: Invalid \escape: line 2 column 386 (char 387)
+13:14:02 [INFO] src.pipeline: Progress: 10/250 generated, 0 failed, tokens: in=62,733, out=8,630
+13:14:07 [WARNING] src.pipeline: [Q0052] JSON parse failed: Invalid control character at: line 2 column 100 (char 101)
+13:14:12 [WARNING] src.pipeline: [Q0006] Generation failed
+13:14:12 [WARNING] src.pipeline: [Q0076] JSON parse failed: Invalid \escape: line 2 column 388 (char 389)
+13:14:13 [WARNING] src.pipeline: [Q0008] Generation failed
+13:14:14 [WARNING] src.pipeline: [Q0086] JSON parse failed: Invalid \escape: line 2 column 355 (char 356)
+13:14:14 [WARNING] src.pipeline: [Q0046] JSON parse failed: Invalid control character at: line 2 column 1791 (char 1792)
+13:14:14 [WARNING] src.pipeline: [Q0066] JSON parse failed: Invalid \escape: line 2 column 360 (char 361)
+13:14:15 [INFO] src.pipeline: Progress: 20/250 generated, 2 failed, tokens: in=115,805, out=17,247
+13:14:21 [WARNING] src.pipeline: [Q0010] Generation failed
+13:14:24 [WARNING] src.pipeline: [Q0122] JSON parse failed: Invalid \escape: line 2 column 96 (char 97)
+13:14:24 [WARNING] src.pipeline: [Q0115] JSON parse failed: Invalid \escape: line 2 column 578 (char 579)
+13:14:25 [WARNING] src.pipeline: [Q0120] JSON parse failed: Invalid \escape: line 2 column 279 (char 280)
+13:14:26 [INFO] src.pipeline: Progress: 30/250 generated, 3 failed, tokens: in=166,902, out=24,132
+13:14:26 [WARNING] src.pipeline: [Q0099] JSON parse failed: Invalid \escape: line 2 column 491 (char 492)
+13:14:29 [WARNING] src.pipeline: [Q0109] JSON parse failed: Invalid \escape: line 2 column 811 (char 812)
+13:14:30 [WARNING] src.pipeline: [Q0127] JSON parse failed: Invalid \escape: line 2 column 975 (char 976)
+13:14:33 [WARNING] src.pipeline: [Q0149] JSON parse failed: Invalid \escape: line 2 column 474 (char 475)
+13:14:34 [WARNING] src.pipeline: [Q0151] JSON parse failed: Invalid \escape: line 2 column 337 (char 338)
+13:14:35 [WARNING] src.pipeline: [Q0121] JSON parse failed: Invalid \escape: line 2 column 736 (char 737)
+13:14:36 [WARNING] src.pipeline: [Q0156] JSON parse failed: Invalid \escape: line 2 column 779 (char 780)
+13:14:37 [INFO] src.pipeline: Progress: 40/250 generated, 3 failed, tokens: in=213,996, out=32,010
+13:14:39 [WARNING] src.pipeline: [Q0152] JSON parse failed: Invalid \escape: line 2 column 1286 (char 1287)
+13:14:49 [INFO] src.pipeline: Progress: 50/250 generated, 3 failed, tokens: in=270,280, out=39,646
+13:14:51 [WARNING] src.pipeline: [Q0178] JSON parse failed: Invalid \escape: line 2 column 886 (char 887)
+13:14:55 [WARNING] src.pipeline: [Q0052] Generation failed
+13:15:02 [INFO] src.pipeline: Progress: 60/250 generated, 4 failed, tokens: in=341,112, out=51,092
+13:15:18 [INFO] src.pipeline: Progress: 70/250 generated, 4 failed, tokens: in=342,615, out=53,775
+13:15:18 [WARNING] src.pipeline: [Q0076] Generation failed
+13:15:22 [WARNING] src.pipeline: [Q0086] Generation failed
+13:15:22 [WARNING] src.pipeline: [Q0046] Generation failed
+13:15:23 [WARNING] src.pipeline: [Q0066] Generation failed
+13:15:24 [WARNING] src.pipeline: [Q0047] JSON parse failed: Invalid \escape: line 2 column 575 (char 576)
+13:15:25 [WARNING] src.pipeline: [Q0072] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:15:25 [WARNING] src.pipeline: [Q0082] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+13:15:28 [WARNING] src.pipeline: [Q0141] JSON parse failed: Expecting property name enclosed in double quotes: line 2 column 892 (char 893)
+13:15:33 [INFO] src.pipeline: Progress: 80/250 generated, 8 failed, tokens: in=348,723, out=72,243
+13:15:49 [INFO] src.pipeline: Progress: 90/250 generated, 8 failed, tokens: in=348,723, out=72,243
+13:16:06 [INFO] src.pipeline: Progress: 100/250 generated, 8 failed, tokens: in=348,723, out=72,243
+13:16:09 [WARNING] src.pipeline: [Q0122] Generation failed
+13:16:15 [WARNING] src.pipeline: [Q0115] Generation failed
+13:16:17 [WARNING] src.pipeline: [Q0120] Generation failed
+13:16:22 [INFO] src.pipeline: Progress: 110/250 generated, 11 failed, tokens: in=348,723, out=72,243
+13:16:25 [WARNING] src.pipeline: [Q0099] Generation failed
+13:16:31 [WARNING] src.pipeline: [Q0109] Generation failed
+13:16:33 [WARNING] src.pipeline: [Q0127] Generation failed
+13:16:37 [INFO] src.pipeline: Progress: 120/250 generated, 14 failed, tokens: in=348,723, out=72,243
+13:16:50 [WARNING] src.pipeline: [Q0149] Generation failed
+13:16:55 [INFO] src.pipeline: Progress: 130/250 generated, 15 failed, tokens: in=348,723, out=72,243
+13:16:59 [WARNING] src.pipeline: [Q0151] Generation failed
+13:17:01 [WARNING] src.pipeline: [Q0121] Generation failed
+13:17:03 [WARNING] src.pipeline: [Q0156] Generation failed
+13:17:12 [INFO] src.pipeline: Progress: 140/250 generated, 18 failed, tokens: in=348,723, out=72,243
+13:17:20 [WARNING] src.pipeline: [Q0152] Generation failed
+13:17:28 [INFO] src.pipeline: Progress: 150/250 generated, 19 failed, tokens: in=348,723, out=72,243
+13:17:44 [INFO] src.pipeline: Progress: 160/250 generated, 19 failed, tokens: in=348,723, out=72,243
+13:18:01 [INFO] src.pipeline: Progress: 170/250 generated, 19 failed, tokens: in=348,723, out=72,243
+13:18:17 [INFO] src.pipeline: Progress: 180/250 generated, 19 failed, tokens: in=348,723, out=72,243
+13:18:27 [WARNING] src.pipeline: [Q0178] Generation failed
+13:18:31 [INFO] src.pipeline: Progress: 190/250 generated, 20 failed, tokens: in=348,723, out=72,243
+13:18:47 [INFO] src.pipeline: Progress: 200/250 generated, 20 failed, tokens: in=348,723, out=72,243
+13:18:59 [INFO] src.pipeline: Progress: 210/250 generated, 20 failed, tokens: in=348,723, out=72,243
+13:19:16 [INFO] src.pipeline: Progress: 220/250 generated, 20 failed, tokens: in=348,723, out=72,243
+13:19:28 [WARNING] src.pipeline: [Q0047] Generation failed
+13:19:28 [WARNING] src.pipeline: [Q0072] Generation failed
+13:19:28 [WARNING] src.pipeline: [Q0082] Generation failed
+13:19:28 [WARNING] src.pipeline: [Q0141] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_6_35b_awq (qwen3.6-35b-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    250
+  IDs:        Q0001 — Q0250
+  Output:     ../eval/results/iter_3/gen_gen_qwen3_6_35b_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  226
+  Failed:     24
+  Tokens in:  348,723
+  Tokens out: 72,243
+  Raw:        ../eval/results/iter_3/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_3/gen_gen_qwen3_6_35b_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_3/gen_gen_qwen3_6_35b_awq/raw/metadata.jsonl
+  Images dir: None

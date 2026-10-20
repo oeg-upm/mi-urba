@@ -1,0 +1,86 @@
+=== Isolated retest ===
+OK   agentica-deepcoder-14b         A_mt2000     (  73.5s): Estimados responsables del mantenimiento,
+
+Quiero informarles de una rotura en l
+FAIL apertus-8b                     A_mt2000     (  41.8s): 
+FAIL bloomz-3b                      A_mt2000     (  14.6s): 
+OK   command-r-08-2024              A_mt2000     (  70.9s): Atención, hay una fuga en la plaza 23 del garaje. Es urgente, necesita arreglars
+FAIL command-r-v01                  A_mt2000     ( 139.2s): 
+OK   deepseek-r1-distill-qwen-14b   A_mt2000     (  38.6s): Hola,牒n comunidad. Quiero informar de una fuga en la fontanería del garaje, conc
+OK   deepseek-r1-distill-qwen-32b   A_mt2000     (  82.4s): Urgente: Tengo una fuga en la fontanería de mi garaje en la plaza 23. Por favor,
+OK   deepseek-r1-distill-qwen-7b    A_mt2000     (  23.1s): Me pregunto si<span> el garajón<span> en la plaza 23 necesita reparación. Hay re
+ERR  deepseek-v4-flash-iq2          A_mt2000     ( 300.1s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+FAIL falcon-7b-instruct             A_mt2000     (  28.5s): 
+WEAK falcon3-1b-instruct            A_mt2000     (   9.3s): ...
+OK   gemma-4-31B-it                 A_mt2000     (  32.1s): Hola, buenas. Hay una fuga de agua importante en el garaje, justo en la plaza 23
+OK   glm-4.7-flash                  A_mt2000     ( 106.3s): Ay, urgentísimo. Hay una fuga de agua grande en la plaza 23 del garaje, está inu
+OK   llama-3.2-1b-instruct          A_mt2000     (   8.3s): Pollo, pido que se realice un check de la fontanería en la plaza 23 a la vez que
+OK   mistral-nemo-12b               A_mt2000     (  28.9s): Buenos días, soy el vecino de la plaza 23 y quiero reportar una fuga de agua en 
+FAIL mixtral-8x7b-instruct          A_mt2000     (  95.6s): 
+FAIL mn-velvetcafe-rp-12b           A_mt2000     (  40.8s): 
+OK   muse-glimmer-30b               A_mt2000     (  81.4s): Buenos días, en la plaza 23 del garaje hay una fuga de fontanería importante. Se
+FAIL orca-2-13b                     A_mt2000     (  32.7s): 
+OK   pantheon-rp-12b-nemo           A_mt2000     (  32.2s): Hola, soy el vecino de la plaza 23 y hay una fuga grave de agua en el garaje. Es
+OK   pantheon-rp-8b-llama3          A_mt2000     (  23.5s): Hay agua corriendo en el garaje de la plazuela 23, no se puede usar. Es urgente,
+FAIL phi-4-mini-instruct            A_mt2000     (  14.3s): 
+FAIL phi-4-reasoning                A_mt2000     (  48.6s): 
+FAIL phi-4-reasoning-plus           A_mt2000     (  59.3s): 
+OK   qwen3-30b-a3b-thinking         A_mt2000     (  77.6s): ¡URGENTE! En el garaje de la plaza 23 hay una fuga de agua que está saliendo a b
+OK   qwen3.5-122b-a10b              A_mt2000     ( 251.1s): Hola, os escribo para avisar de una urgencia en el garaje. Hay una fuga de agua 
+OK   qwen3.5-122b-a10b-q3           A_mt2000     ( 253.9s): Buenas, aviso urgente. Hay una fuga de agua importante en el garaje, plaza 23. S
+OK   qwen3.5-122b-a10b-q4           A_mt2000     (  71.1s): Buenos días, es urgente. Hay una fuga grave en la plaza 23 del garaje. El agua e
+OK   qwen3.5-35b-a3b                A_mt2000     (  57.7s): Hola, urgencia en garaje. Hay una fuga importante en la plaza 23. No se puede es
+OK   qwen3.6-27b-thinking           A_mt2000     ( 128.3s): Buenos días, les escribo con urgencia porque en la plaza 23 del garaje se ha rot
+OK   qwen3.6-35b-a3b                A_mt2000     ( 101.1s): Buenas. Les aviso porque hay una fuga de agua importante en el garaje, frente a 
+OK   qwen3.6-35b-a3b-fast           A_mt2000     (  58.3s): Buenas, soy el vecino de la plaza 23 del garaje. Les escribo porque acabo de det
+OK   seed-oss-36b                   A_mt2000     ( 125.1s): Hola, quiero reportar un problema urgentísimo en el garaje de la plaza 23: hay u
+OK   tinyllama-1.1b-chat            A_mt2000     (  11.7s): Eva, es urgent que el garaje de la Fontaneria de la plaza 23 se rehaya y afronte
+FAIL vicuna-13b-v1.5                A_mt2000     (  31.7s): 
+FAIL vicuna-7b-v1.5                 A_mt2000     (  23.1s): 
+FAIL agentica-deepcoder-14b         B_nothink    (  60.9s): 
+FAIL apertus-8b                     B_nothink    (  30.4s): 
+FAIL bloomz-3b                      B_nothink    (  15.4s): 
+OK   command-r-08-2024              B_nothink    (  76.7s): Señores, tengo un problema muy serio en el garaje. Hay una fuga importante en la
+OK   command-r-v01                  B_nothink    (  82.0s): {
+    "community": "Barcelo", 
+    "street": "C/Mar de Alboran",
+    "floor": 4,
+FAIL deepseek-r1-distill-qwen-14b   B_nothink    (  38.0s): 
+FAIL deepseek-r1-distill-qwen-32b   B_nothink    (  77.4s): 
+FAIL deepseek-r1-distill-qwen-7b    B_nothink    (  28.0s): 
+ERR  deepseek-v4-flash-iq2          B_nothink    ( 300.2s): HTTPConnectionPool(host='192.168.10.1', port=4000)
+FAIL falcon-7b-instruct             B_nothink    (  31.5s): 
+WEAK falcon3-1b-instruct            B_nothink    (   8.7s): ...
+OK   gemma-4-31B-it                 B_nothink    (  72.0s): Hola, buenas. Hay una fuga de agua importante en el garaje, justo por la plaza 2
+OK   glm-4.7-flash                  B_nothink    ( 120.0s): Muy urgente, la fontanería del garaje de la plaza 23 se está inundando. Hay una 
+OK   llama-3.2-1b-instruct          B_nothink    (   9.3s): Es urgente la reparación de la fontanería/fuga en la plaza 23. Esta es la situac
+OK   mistral-nemo-12b               B_nothink    (  30.7s): Tengo una fuga de agua en el garaje de mi plaza de parking, la número 23. Es urg
+FAIL mixtral-8x7b-instruct          B_nothink    (  96.2s): 
+FAIL mn-velvetcafe-rp-12b           B_nothink    (  32.3s): 
+FAIL muse-glimmer-30b               B_nothink    (  78.0s): 
+OK   orca-2-13b                     B_nothink    (  32.0s): Esta mañana me di cuenta de que hay una fuga en la tubería de agua en el garaje.
+OK   pantheon-rp-12b-nemo           B_nothink    (  31.0s): Hola a todos, tengo un problema urgente en la fontanería del garaje. Hay una fug
+OK   pantheon-rp-8b-llama3          B_nothink    (  21.5s): ¡Hola! Hay una fuga de agua en el garaje de la plaza 23 que está inundando el pa
+OK   phi-4-mini-instruct            B_nothink    (  14.2s): ¡Necesito ayuda urgente! Hay una fuga en el garaje en plaza 23 y es esencial ate
+WEAK phi-4-reasoning                B_nothink    (  39.1s): ...
+FAIL phi-4-reasoning-plus           B_nothink    (  37.3s): 
+FAIL qwen3-30b-a3b-thinking         B_nothink    (  70.3s): 
+OK   qwen3.5-122b-a10b              B_nothink    ( 227.2s): ¡Buenos días! Reclamación urgente: hay una fuga de agua importante en la fontane
+OK   qwen3.5-122b-a10b-q3           B_nothink    ( 222.9s): Hola, tengo que reportar una urgencia grave: hay una fuga de agua importante en 
+OK   qwen3.5-122b-a10b-q4           B_nothink    ( 219.9s): ¡Buenos días! Tengo que reportar una urgencia grave: hay una fuga de agua import
+OK   qwen3.5-35b-a3b                B_nothink    (  47.1s): Urgente: hay una fuga de agua importante en el garaje, plaza 23. Necesitamos int
+OK   qwen3.6-27b-thinking           B_nothink    ( 104.5s): BUENAS! URGENCIA EN EL GARAJE. HAY UNA FUGA DE AGUA CONSIDERABLE EN LA PLAZA 23.
+OK   qwen3.6-35b-a3b                B_nothink    (  85.0s): Urgente: hay una fuerte fuga de agua en el garaje, plaza 23. Se está inundando y
+OK   qwen3.6-35b-a3b-fast           B_nothink    (  46.6s): URGENTE: Hay una fuga de agua importante en el garaje, en la plaza 23. Parece qu
+FAIL seed-oss-36b                   B_nothink    ( 121.4s): 
+FAIL tinyllama-1.1b-chat            B_nothink    (   7.9s): 
+OK   vicuna-13b-v1.5                B_nothink    (  31.5s): Hola, soy el vecino del garaje 23 de la plaza y tengo un problema de fontanería 
+OK   vicuna-7b-v1.5                 B_nothink    (  18.9s): La fontanería del garaje en la plaza 23 está rota y hay agua filtrando en el pis
+OK   gemma4-26b-awq                 C_15min      ( 598.7s): ¡Hola! Por favor, necesito que alguien venga cuanto antes al garaje. Hay una fug
+OK   gpt-oss-120b                   C_15min      ( 232.7s): Buenas, soy el vecino de la plaza 23 del garaje. Hay una fuga de agua muy fuerte
+OK   llama-3.1-nemotron-70b         C_15min      ( 149.4s): ¡Emergencia! Hay una fuga de agua en el garaje, plaza 23. Está perjudicando mi v
+OK   qwen3.5-27b-awq                C_15min      ( 542.5s): ¡Atención! Hay una fuga de agua muy fuerte en el garaje, plaza 23. Está encharca
+OK   qwen3.5-4b-awq                 C_15min      ( 411.2s): ¡Atención! Hay una fuga de agua muy urgente en el garaje de la plaza 23. Está in
+OK   qwen3.6-35b-awq                C_15min      ( 589.0s): Hola, urgencia total en el garaje, plaza 23. Hay una fuga fuerte de agua que ya 
+OK   qwen3.8-27b                    C_15min      ( 101.5s): Hola, es una emergencia. En mi plaza 23 del garaje hay una fuga de agua importan
+OK   qwen3.8-27b-herctic            C_15min      (  83.6s): Hola, tengo una urgencia en la plaza 23 del garaje. Me está cayendo agua del tec

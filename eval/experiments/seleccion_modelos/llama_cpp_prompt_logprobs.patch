@@ -1,0 +1,164 @@
+diff --git a/tools/server/server-context.cpp b/tools/server/server-context.cpp
+index a9edbd7..89217c0 100644
+--- a/tools/server/server-context.cpp
++++ b/tools/server/server-context.cpp
+@@ -236,6 +236,7 @@ struct server_slot {
+     size_t n_sent_text = 0; // number of sent text character (i.e. handle partial UTF-8 on streaming)
+ 
+     std::vector<completion_token_output> generated_token_probs;
++    std::vector<completion_token_output> prompt_token_probs;
+ 
+     bool has_next_token = true;
+     bool has_new_line   = false;
+@@ -340,6 +341,7 @@ struct server_slot {
+         }
+         generated_tokens.clear();
+         generated_token_probs.clear();
++        prompt_token_probs.clear();
+         json_schema = json();
+ 
+         task_prev = std::move(task);
+@@ -967,6 +969,17 @@ private:
+         params_base.n_outputs_max = output_limits.total;
+         params_base.n_outputs_max_per_seq = output_limits.per_seq;
+ 
++        // prompt_logprobs needs logits for all prompt tokens in a single decode,
++        // so we must reserve enough output slots per sequence.
++        // prompt_logprobs needs logits for all prompt tokens in a single decode,
++        // so we must reserve enough output slots per sequence and in total.
++        if (params_base.n_outputs_max_per_seq < params_base.n_batch) {
++            params_base.n_outputs_max_per_seq = params_base.n_batch;
++        }
++        if (params_base.n_outputs_max < params_base.n_batch) {
++            params_base.n_outputs_max = params_base.n_batch;
++        }
++
+         const bool has_mmproj = !params.mmproj.path.empty();
+         const bool has_draft = params.speculative.has_dft();
+         const bool spec_mtp = std::find(params_base.speculative.types.begin(),
+@@ -2044,6 +2057,10 @@ private:
+             }
+         }
+ 
++        if (slot.task->params.prompt_logprobs) {
++            res->prompt_probs_output = slot.prompt_token_probs;
++        }
++
+         res->generation_params = slot.task->params; // copy the parameters
+ 
+         queue_results.send(std::move(res));
+@@ -3426,7 +3443,7 @@ private:
+                         add_ok &= batch.add(slot.id,
+                             cur_tok,
+                             /* pos       = */ slot.prompt.tokens.pos_next(),
+-                            /* output    = */ slot.need_embd(),
++                            /* output    = */ slot.need_embd() || (slot.task->params.prompt_logprobs && slot.task->params.sampling.n_probs > 0),
+                             /* is_prompt = */ true);
+                         slot.prompt.tokens.push_back(cur_tok);
+ 
+@@ -3686,6 +3703,39 @@ private:
+                 slot.task->params.sampling.preserved_tokens.find(token) != slot.task->params.sampling.preserved_tokens.end();
+         };
+ 
++        // prompt logprobs: collect entries for this sub-batch BEFORE the i_batch
++        // gate, because slots still filling their prompt have i_batch == -1 (or a
++        // batch index that only exists in the final view once DONE_PROMPT).
++        // Each prompt token is part of exactly one successful decode+view, so
++        // appending here accumulates the full prompt exactly once.
++        // Requires n_outputs_max >= n_batch so every batch token has logits
++        // (enforced in load_model).
++        iterate(slots, [&](server_slot & slot) {
++            if (!slot.task || slot.task->type != SERVER_TASK_TYPE_COMPLETION) {
++                return;
++            }
++            if (!(slot.task->params.prompt_logprobs && slot.task->params.sampling.n_probs > 0)) {
++                return;
++            }
++            if (slot.state != SLOT_STATE_PROCESSING_PROMPT && slot.state != SLOT_STATE_DONE_PROMPT) {
++                return;
++            }
++            for (int j = 0; j < batch_view.n_tokens; ++j) {
++                if (!batch_view.logits[j] || batch_view.seq_id[j][0] != slot.id) {
++                    continue;
++                }
++                const int next_pos = batch_view.pos[j] + 1;
++                if (next_pos < slot.task->n_tokens()) {
++                    completion_token_output presult;
++                    presult.tok          = slot.task->tokens[next_pos];
++                    presult.text_to_send = common_token_to_piece(ctx_tgt, presult.tok, params_base.special);
++                    presult.prob         = 1.0f;
++                    populate_token_probs(slot, presult, false, params_base.special, j);
++                    slot.prompt_token_probs.push_back(presult);
++                }
++            }
++        });
++
+         iterate(slots, [&](server_slot & slot) {
+             // optionally send prompt processing progress
+             if (slot.state == SLOT_STATE_PROCESSING_PROMPT || slot.state == SLOT_STATE_DONE_PROMPT) {
+@@ -3717,7 +3767,9 @@ private:
+ 
+                 GGML_ASSERT(slot.task->need_sampling());
+ 
+-                // prompt evaluated for next-token prediction
++                // prompt evaluated for next-token prediction.
++                // prompt logprobs were already collected per sub-batch before the
++                // i_batch gate (cumulative in slot.prompt_token_probs).
+                 slot.state = SLOT_STATE_GENERATING;
+ 
+                 if (slot.can_speculate()) {
+diff --git a/tools/server/server-schema.cpp b/tools/server/server-schema.cpp
+index 64b9251..1810cb0 100644
+--- a/tools/server/server-schema.cpp
++++ b/tools/server/server-schema.cpp
+@@ -189,6 +189,8 @@ std::vector<std::unique_ptr<field>> make_llama_cmpl_schema(const common_params &
+ 
+     add((new field_bool("post_sampling_probs", params.post_sampling_probs))
+         ->set_desc("Return probabilities of top n_probs tokens after applying the sampling chain"));
++    add((new field_bool("prompt_logprobs", params.prompt_logprobs))
++        ->set_desc("Return logprobs for prompt tokens too"));
+ 
+     //
+     // Speculative decoding params
+diff --git a/tools/server/server-task.cpp b/tools/server/server-task.cpp
+index 0d3beb3..d14f642 100644
+--- a/tools/server/server-task.cpp
++++ b/tools/server/server-task.cpp
+@@ -81,6 +81,7 @@ json task_params::to_json(bool only_metrics) const {
+             {"speculative.types",         common_speculative_type_name_str(speculative.types)},
+             {"timings_per_token",         timings_per_token},
+             {"post_sampling_probs",       post_sampling_probs},
++            {"prompt_logprobs",           prompt_logprobs},
+             {"backend_sampling",          sampling.backend_sampling},
+             {"lora",                      lora},
+         };
+@@ -359,6 +360,9 @@ json server_task_result_cmpl_final::to_json_non_oaicompat() {
+     if (!stream && !probs_output.empty()) {
+         res["completion_probabilities"] = completion_token_output::probs_vector_to_json(probs_output, post_sampling_probs);
+     }
++    if (!stream && !prompt_probs_output.empty()) {
++        res["prompt_probabilities"] = completion_token_output::probs_vector_to_json(prompt_probs_output, post_sampling_probs);
++    }
+     return response_fields.empty() ? res : json_get_nested_values(response_fields, res);
+ }
+ 
+diff --git a/tools/server/server-task.h b/tools/server/server-task.h
+index 9c99143..727d41b 100644
+--- a/tools/server/server-task.h
++++ b/tools/server/server-task.h
+@@ -74,6 +74,7 @@ struct task_params {
+ 
+     bool timings_per_token   = false;
+     bool post_sampling_probs = false;
++    bool prompt_logprobs      = false;
+ 
+     struct common_params_sampling sampling;
+     struct common_params_speculative speculative;
+@@ -337,6 +338,7 @@ struct server_task_result_cmpl_final : server_task_result {
+ 
+     bool post_sampling_probs;
+     std::vector<completion_token_output> probs_output;
++    std::vector<completion_token_output> prompt_probs_output;
+     std::vector<std::string>  response_fields;
+ 
+     task_params generation_params;

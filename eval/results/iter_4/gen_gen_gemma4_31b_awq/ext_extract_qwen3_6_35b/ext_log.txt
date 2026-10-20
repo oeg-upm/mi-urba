@@ -1,0 +1,602 @@
+18:01:26 [INFO] src.pipeline: Extracting 250 complaints with 32 workers...
+18:01:41 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:01:41 [INFO] src.llm: Retrying in 5.0s...
+18:01:41 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:01:41 [INFO] src.llm: Retrying in 5.0s...
+18:01:41 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:01:41 [INFO] src.llm: Retrying in 5.0s...
+18:01:50 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:01:50 [INFO] src.llm: Retrying in 10.0s...
+18:01:53 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:01:53 [INFO] src.llm: Retrying in 10.0s...
+18:01:56 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:01:56 [INFO] src.llm: Retrying in 10.0s...
+18:02:03 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:03 [ERROR] src.pipeline: [Q0028] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:03 [WARNING] src.pipeline: [Q0028] Extraction failed
+18:02:06 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:06 [ERROR] src.pipeline: [Q0021] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:06 [WARNING] src.pipeline: [Q0021] Extraction failed
+18:02:06 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:06 [INFO] src.llm: Retrying in 5.0s...
+18:02:06 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:06 [INFO] src.llm: Retrying in 5.0s...
+18:02:06 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:06 [INFO] src.llm: Retrying in 5.0s...
+18:02:06 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:06 [INFO] src.llm: Retrying in 5.0s...
+18:02:09 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:09 [ERROR] src.pipeline: [Q0002] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:09 [WARNING] src.pipeline: [Q0002] Extraction failed
+18:02:09 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:09 [INFO] src.llm: Retrying in 5.0s...
+18:02:12 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:12 [INFO] src.llm: Retrying in 5.0s...
+18:02:15 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:15 [INFO] src.llm: Retrying in 10.0s...
+18:02:15 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:15 [INFO] src.llm: Retrying in 10.0s...
+18:02:19 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:19 [INFO] src.llm: Retrying in 10.0s...
+18:02:19 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:19 [INFO] src.llm: Retrying in 10.0s...
+18:02:19 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:19 [INFO] src.llm: Retrying in 10.0s...
+18:02:22 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:22 [INFO] src.llm: Retrying in 10.0s...
+18:02:29 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:29 [ERROR] src.pipeline: [Q0011] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:29 [WARNING] src.pipeline: [Q0011] Extraction failed
+18:02:29 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:29 [ERROR] src.pipeline: [Q0024] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:29 [WARNING] src.pipeline: [Q0024] Extraction failed
+18:02:32 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:32 [INFO] src.llm: Retrying in 5.0s...
+18:02:35 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:35 [ERROR] src.pipeline: [Q0045] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:35 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:35 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:35 [ERROR] src.pipeline: [Q0001] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:35 [INFO] src.llm: Retrying in 5.0s...
+18:02:35 [WARNING] src.pipeline: [Q0045] Extraction failed
+18:02:35 [WARNING] src.pipeline: [Q0001] Extraction failed
+18:02:38 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:38 [INFO] src.llm: Retrying in 5.0s...
+18:02:38 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:38 [INFO] src.llm: Retrying in 5.0s...
+18:02:41 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:41 [INFO] src.llm: Retrying in 10.0s...
+18:02:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:45 [INFO] src.llm: Retrying in 10.0s...
+18:02:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:45 [INFO] src.llm: Retrying in 10.0s...
+18:02:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:45 [INFO] src.llm: Retrying in 10.0s...
+18:02:52 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:52 [ERROR] src.pipeline: [Q0027] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:52 [WARNING] src.pipeline: [Q0027] Extraction failed
+18:02:52 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:52 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:52 [ERROR] src.pipeline: [Q0037] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:52 [ERROR] src.pipeline: [Q0035] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:52 [WARNING] src.pipeline: [Q0037] Extraction failed
+18:02:52 [WARNING] src.pipeline: [Q0035] Extraction failed
+18:02:55 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:55 [INFO] src.llm: Retrying in 5.0s...
+18:02:55 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:55 [INFO] src.llm: Retrying in 5.0s...
+18:02:55 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:02:55 [INFO] src.llm: Retrying in 5.0s...
+18:03:02 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:02 [ERROR] src.pipeline: [Q0043] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:02 [WARNING] src.pipeline: [Q0043] Extraction failed
+18:03:02 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:02 [ERROR] src.pipeline: [Q0029] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:02 [WARNING] src.pipeline: [Q0029] Extraction failed
+18:03:02 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:02 [ERROR] src.pipeline: [Q0049] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:02 [WARNING] src.pipeline: [Q0049] Extraction failed
+18:03:05 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:05 [INFO] src.llm: Retrying in 5.0s...
+18:03:08 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:08 [INFO] src.llm: Retrying in 5.0s...
+18:03:08 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 113] No route to host"))
+18:03:08 [INFO] src.llm: Retrying in 5.0s...
+18:03:10 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:10 [INFO] src.llm: Retrying in 10.0s...
+18:03:11 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:11 [INFO] src.llm: Retrying in 10.0s...
+18:03:11 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:11 [INFO] src.llm: Retrying in 10.0s...
+18:03:11 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:11 [INFO] src.llm: Retrying in 10.0s...
+18:03:13 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:13 [INFO] src.llm: Retrying in 10.0s...
+18:03:13 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:13 [INFO] src.llm: Retrying in 10.0s...
+18:03:20 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:20 [ERROR] src.pipeline: [Q0050] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:20 [WARNING] src.pipeline: [Q0050] Extraction failed
+18:03:20 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:20 [INFO] src.llm: Retrying in 5.0s...
+18:03:22 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [ERROR] src.pipeline: [Q0038] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [WARNING] src.pipeline: [Q0038] Extraction failed
+18:03:22 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [ERROR] src.pipeline: [Q0041] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [WARNING] src.pipeline: [Q0041] Extraction failed
+18:03:22 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [ERROR] src.pipeline: [Q0042] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [WARNING] src.pipeline: [Q0042] Extraction failed
+18:03:22 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [INFO] src.llm: Retrying in 5.0s...
+18:03:22 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [INFO] src.llm: Retrying in 5.0s...
+18:03:22 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:22 [INFO] src.llm: Retrying in 5.0s...
+18:03:23 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:23 [ERROR] src.pipeline: [Q0039] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:23 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:23 [ERROR] src.pipeline: [Q0059] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:23 [WARNING] src.pipeline: [Q0039] Extraction failed
+18:03:23 [WARNING] src.pipeline: [Q0059] Extraction failed
+18:03:23 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:23 [INFO] src.llm: Retrying in 5.0s...
+18:03:23 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:23 [INFO] src.llm: Retrying in 5.0s...
+18:03:25 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:25 [INFO] src.llm: Retrying in 10.0s...
+18:03:28 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:28 [INFO] src.llm: Retrying in 10.0s...
+18:03:28 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:28 [INFO] src.llm: Retrying in 10.0s...
+18:03:28 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:28 [INFO] src.llm: Retrying in 10.0s...
+18:03:29 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:29 [INFO] src.llm: Retrying in 10.0s...
+18:03:29 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:29 [INFO] src.llm: Retrying in 10.0s...
+18:03:35 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:35 [ERROR] src.pipeline: [Q0040] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:35 [WARNING] src.pipeline: [Q0040] Extraction failed
+18:03:35 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:35 [INFO] src.llm: Retrying in 5.0s...
+18:03:38 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [ERROR] src.pipeline: [Q0054] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [WARNING] src.pipeline: [Q0054] Extraction failed
+18:03:38 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [ERROR] src.pipeline: [Q0051] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [WARNING] src.pipeline: [Q0051] Extraction failed
+18:03:38 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [ERROR] src.pipeline: [Q0053] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [WARNING] src.pipeline: [Q0053] Extraction failed
+18:03:38 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [INFO] src.llm: Retrying in 5.0s...
+18:03:38 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [INFO] src.llm: Retrying in 5.0s...
+18:03:38 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:38 [INFO] src.llm: Retrying in 5.0s...
+18:03:39 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:39 [ERROR] src.pipeline: [Q0052] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:39 [WARNING] src.pipeline: [Q0052] Extraction failed
+18:03:39 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:39 [ERROR] src.pipeline: [Q0046] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:39 [WARNING] src.pipeline: [Q0046] Extraction failed
+18:03:39 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:39 [INFO] src.llm: Retrying in 5.0s...
+18:03:39 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:39 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eea7ce0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed3790>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee19150>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee199d0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee18270>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489edf8190>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee1a470>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee186b0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee18d10>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee18490>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed3350>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee1a250>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee197b0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee188d0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed3df0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eea7820>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eea2570>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eec3c50>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee19bf0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee18af0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed2e00>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed3bd0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee18f30>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed07c0>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489ee19370>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by ConnectTimeoutError(<HTTPConnection(host='192.168.10.11', port=9292) at 0x74489eed3570>, 'Connection to 192.168.10.11 timed out. (connect timeout=300)'))
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [INFO] src.llm: Retrying in 5.0s...
+18:03:40 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:40 [INFO] src.llm: Retrying in 10.0s...
+18:03:43 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:43 [INFO] src.llm: Retrying in 10.0s...
+18:03:43 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:43 [INFO] src.llm: Retrying in 10.0s...
+18:03:43 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:43 [INFO] src.llm: Retrying in 10.0s...
+18:03:44 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:44 [INFO] src.llm: Retrying in 10.0s...
+18:03:44 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:44 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:45 [INFO] src.llm: Retrying in 10.0s...
+18:03:51 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:51 [ERROR] src.pipeline: [Q0070] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:51 [WARNING] src.pipeline: [Q0070] Extraction failed
+18:03:51 [WARNING] src.llm: API call failed (attempt 1/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError("HTTPConnection(host='192.168.10.11', port=9292): Failed to establish a new connection: [Errno 111] Connection refused"))
+18:03:51 [INFO] src.llm: Retrying in 5.0s...
+18:08:53 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:53 [ERROR] src.pipeline: [Q0064] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:53 [WARNING] src.pipeline: [Q0064] Extraction failed
+18:08:53 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:53 [ERROR] src.pipeline: [Q0044] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:53 [WARNING] src.pipeline: [Q0044] Extraction failed
+18:08:53 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:53 [ERROR] src.pipeline: [Q0055] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:53 [WARNING] src.pipeline: [Q0055] Extraction failed
+18:08:54 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:54 [ERROR] src.pipeline: [Q0062] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:54 [WARNING] src.pipeline: [Q0062] Extraction failed
+18:08:54 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:54 [ERROR] src.pipeline: [Q0069] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:54 [WARNING] src.pipeline: [Q0069] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0034] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0015] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0034] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0015] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0020] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0020] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0008] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0008] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0014] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0014] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0032] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0032] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0022] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0022] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0004] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0016] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0004] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0003] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0016] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0003] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0007] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0006] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0007] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0030] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0006] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0030] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0012] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0012] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0036] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0019] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0036] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0019] Extraction failed
+18:08:55 [ERROR] src.pipeline: [Q0025] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0025] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0018] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0023] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0031] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0017] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0018] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0023] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0031] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0017] Extraction failed
+18:08:55 [ERROR] src.pipeline: [Q0005] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0033] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0009] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0005] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0033] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0009] Extraction failed
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0010] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.llm: API call failed (attempt 3/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [ERROR] src.pipeline: [Q0013] VLM call failed: API call failed after 3 attempts: HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:55 [WARNING] src.pipeline: [Q0010] Extraction failed
+18:08:55 [WARNING] src.pipeline: [Q0013] Extraction failed
+18:08:56 [WARNING] src.llm: API call failed (attempt 2/3): HTTPConnectionPool(host='192.168.10.11', port=9292): Read timed out. (read timeout=300)
+18:08:56 [INFO] src.llm: Retrying in 10.0s...
+18:10:20 [WARNING] src.pipeline: [Q0079] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:21 [WARNING] src.pipeline: [Q0068] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:22 [WARNING] src.pipeline: [Q0079] Extraction failed
+18:10:23 [WARNING] src.pipeline: [Q0065] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 378)
+18:10:23 [WARNING] src.pipeline: [Q0067] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:23 [WARNING] src.pipeline: [Q0068] Extraction failed
+18:10:23 [WARNING] src.pipeline: [Q0065] Extraction failed
+18:10:24 [WARNING] src.pipeline: [Q0067] Extraction failed
+18:10:25 [WARNING] src.pipeline: [Q0063] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 444)
+18:10:25 [INFO] src.pipeline: Progress: 10/250 done, 61 failed this pass, tokens: in=45,076, out=3,556
+18:10:26 [WARNING] src.pipeline: [Q0063] Extraction failed
+18:10:28 [INFO] src.pipeline: Progress: 20/250 done, 62 failed this pass, tokens: in=56,637, out=4,592
+18:10:33 [WARNING] src.pipeline: [Q0086] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:34 [WARNING] src.pipeline: [Q0086] Extraction failed
+18:10:35 [INFO] src.pipeline: Progress: 30/250 done, 63 failed this pass, tokens: in=81,537, out=7,009
+18:10:39 [INFO] src.pipeline: Progress: 40/250 done, 63 failed this pass, tokens: in=117,349, out=10,258
+18:10:44 [INFO] src.pipeline: Progress: 50/250 done, 63 failed this pass, tokens: in=129,143, out=11,680
+18:10:45 [WARNING] src.pipeline: [Q0124] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:45 [WARNING] src.pipeline: [Q0124] Extraction failed
+18:10:45 [WARNING] src.pipeline: [Q0116] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:46 [WARNING] src.pipeline: [Q0116] Extraction failed
+18:10:47 [WARNING] src.pipeline: [Q0125] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:47 [WARNING] src.pipeline: [Q0125] Extraction failed
+18:10:47 [WARNING] src.pipeline: [Q0120] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:48 [INFO] src.pipeline: Progress: 60/250 done, 66 failed this pass, tokens: in=162,774, out=15,178
+18:10:48 [WARNING] src.pipeline: [Q0120] Extraction failed
+18:10:49 [WARNING] src.pipeline: [Q0121] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:51 [WARNING] src.pipeline: [Q0121] Extraction failed
+18:10:52 [INFO] src.pipeline: Progress: 70/250 done, 68 failed this pass, tokens: in=185,269, out=17,137
+18:10:56 [WARNING] src.pipeline: [Q0160] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:10:56 [INFO] src.pipeline: Progress: 80/250 done, 68 failed this pass, tokens: in=214,492, out=19,955
+18:10:56 [WARNING] src.pipeline: [Q0160] Extraction failed
+18:11:01 [INFO] src.pipeline: Progress: 90/250 done, 69 failed this pass, tokens: in=238,683, out=22,021
+18:11:03 [WARNING] src.pipeline: [Q0198] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:03 [WARNING] src.pipeline: [Q0173] JSON parse failed: Expecting ',' delimiter: line 18 column 9 (char 416)
+18:11:04 [WARNING] src.pipeline: [Q0198] Extraction failed
+18:11:04 [WARNING] src.pipeline: [Q0173] Extraction failed
+18:11:04 [WARNING] src.pipeline: [Q0163] JSON parse failed: Expecting ',' delimiter: line 49 column 7 (char 1101)
+18:11:05 [WARNING] src.pipeline: [Q0196] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:06 [WARNING] src.pipeline: [Q0163] Extraction failed
+18:11:06 [WARNING] src.pipeline: [Q0179] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 471)
+18:11:07 [WARNING] src.pipeline: [Q0196] Extraction failed
+18:11:07 [INFO] src.pipeline: Progress: 100/250 done, 73 failed this pass, tokens: in=265,402, out=24,694
+18:11:08 [WARNING] src.pipeline: [Q0179] Extraction failed
+18:11:10 [WARNING] src.pipeline: [Q0159] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:10 [WARNING] src.pipeline: [Q0190] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:10 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 367)
+18:11:10 [WARNING] src.pipeline: [Q0159] Extraction failed
+18:11:10 [WARNING] src.pipeline: [Q0190] Extraction failed
+18:11:10 [WARNING] src.pipeline: [Q0170] Extraction failed
+18:11:10 [INFO] src.pipeline: Progress: 110/250 done, 77 failed this pass, tokens: in=292,685, out=28,270
+18:11:12 [WARNING] src.pipeline: [Q0192] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:12 [WARNING] src.pipeline: [Q0192] Extraction failed
+18:11:16 [INFO] src.pipeline: Progress: 120/250 done, 78 failed this pass, tokens: in=319,602, out=31,420
+18:11:17 [WARNING] src.pipeline: [Q0210] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:18 [WARNING] src.pipeline: [Q0210] Extraction failed
+18:11:21 [INFO] src.pipeline: Progress: 130/250 done, 79 failed this pass, tokens: in=353,219, out=34,588
+18:11:25 [INFO] src.pipeline: Progress: 140/250 done, 79 failed this pass, tokens: in=369,230, out=36,543
+18:11:25 [WARNING] src.pipeline: [Q0217] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:26 [WARNING] src.pipeline: [Q0228] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:26 [WARNING] src.pipeline: [Q0233] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 463)
+18:11:27 [WARNING] src.pipeline: [Q0250] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:11:27 [WARNING] src.pipeline: [Q0234] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 388)
+18:11:27 [WARNING] src.pipeline: [Q0217] Extraction failed
+18:11:27 [WARNING] src.pipeline: [Q0228] Extraction failed
+18:11:27 [WARNING] src.pipeline: [Q0233] Extraction failed
+18:11:27 [WARNING] src.pipeline: [Q0241] JSON parse failed: Expecting ',' delimiter: line 22 column 9 (char 476)
+18:11:30 [INFO] src.pipeline: Progress: 150/250 done, 82 failed this pass, tokens: in=434,982, out=44,294
+18:11:33 [WARNING] src.pipeline: [Q0250] Extraction failed
+18:11:33 [WARNING] src.pipeline: [Q0234] Extraction failed
+18:11:34 [INFO] src.pipeline: Progress: 160/250 done, 84 failed this pass, tokens: in=434,982, out=44,294
+18:11:34 [WARNING] src.pipeline: [Q0241] Extraction failed
+18:11:36 [INFO] src.pipeline: Pass 0 complete: 165 extracted, 85 failed. Retrying in 30s...
+18:12:08 [INFO] src.pipeline: Resuming: 165 extractions already exist
+18:12:08 [INFO] src.pipeline: === Retry 1/3: 85 pending, 85 failed so far ===
+18:12:08 [INFO] src.pipeline: Extracting 85 complaints with 32 workers...
+18:12:19 [INFO] src.pipeline: Progress: 170/250 done, 0 failed this pass, tokens: in=450,470, out=45,520
+18:12:19 [WARNING] src.pipeline: [Q0013] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:20 [WARNING] src.pipeline: [Q0013] Extraction failed
+18:12:21 [WARNING] src.pipeline: [Q0036] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:21 [WARNING] src.pipeline: [Q0036] Extraction failed
+18:12:23 [INFO] src.pipeline: Progress: 180/250 done, 2 failed this pass, tokens: in=475,033, out=47,697
+18:12:24 [WARNING] src.pipeline: [Q0017] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:25 [WARNING] src.pipeline: [Q0017] Extraction failed
+18:12:30 [INFO] src.pipeline: Progress: 190/250 done, 3 failed this pass, tokens: in=501,934, out=50,735
+18:12:33 [WARNING] src.pipeline: [Q0039] JSON parse failed: Expecting ',' delimiter: line 18 column 9 (char 381)
+18:12:33 [INFO] src.pipeline: Progress: 200/250 done, 3 failed this pass, tokens: in=530,846, out=53,600
+18:12:34 [WARNING] src.pipeline: [Q0039] Extraction failed
+18:12:35 [WARNING] src.pipeline: [Q0018] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 884)
+18:12:35 [WARNING] src.pipeline: [Q0018] Extraction failed
+18:12:37 [WARNING] src.pipeline: [Q0065] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:37 [WARNING] src.pipeline: [Q0068] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:37 [WARNING] src.pipeline: [Q0065] Extraction failed
+18:12:38 [WARNING] src.pipeline: [Q0068] Extraction failed
+18:12:38 [INFO] src.pipeline: Progress: 210/250 done, 7 failed this pass, tokens: in=551,187, out=56,013
+18:12:39 [WARNING] src.pipeline: [Q0086] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:39 [WARNING] src.pipeline: [Q0125] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:39 [WARNING] src.pipeline: [Q0063] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 444)
+18:12:39 [WARNING] src.pipeline: [Q0086] Extraction failed
+18:12:39 [WARNING] src.pipeline: [Q0125] Extraction failed
+18:12:39 [WARNING] src.pipeline: [Q0063] Extraction failed
+18:12:39 [WARNING] src.pipeline: [Q0124] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:40 [WARNING] src.pipeline: [Q0198] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:40 [WARNING] src.pipeline: [Q0196] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 388)
+18:12:40 [WARNING] src.pipeline: [Q0124] Extraction failed
+18:12:40 [WARNING] src.pipeline: [Q0198] Extraction failed
+18:12:40 [WARNING] src.pipeline: [Q0196] Extraction failed
+18:12:41 [WARNING] src.pipeline: [Q0160] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:12:41 [WARNING] src.pipeline: [Q0160] Extraction failed
+18:12:41 [WARNING] src.pipeline: [Q0179] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 471)
+18:12:42 [WARNING] src.pipeline: [Q0190] JSON parse failed: Expecting ',' delimiter: line 22 column 9 (char 518)
+18:12:42 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 367)
+18:12:42 [WARNING] src.pipeline: [Q0163] JSON parse failed: Expecting ',' delimiter: line 48 column 7 (char 1074)
+18:12:43 [WARNING] src.pipeline: [Q0179] Extraction failed
+18:12:43 [WARNING] src.pipeline: [Q0234] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 388)
+18:12:43 [INFO] src.pipeline: Progress: 220/250 done, 15 failed this pass, tokens: in=621,356, out=64,353
+18:12:43 [WARNING] src.pipeline: [Q0190] Extraction failed
+18:12:44 [WARNING] src.pipeline: [Q0170] Extraction failed
+18:12:46 [WARNING] src.pipeline: [Q0163] Extraction failed
+18:12:47 [WARNING] src.pipeline: [Q0234] Extraction failed
+18:12:47 [INFO] src.pipeline: Progress: 230/250 done, 19 failed this pass, tokens: in=625,834, out=65,147
+18:12:47 [INFO] src.pipeline: Pass 1 complete: 66 extracted, 19 failed. Retrying in 30s...
+18:13:19 [INFO] src.pipeline: Resuming: 231 extractions already exist
+18:13:19 [INFO] src.pipeline: === Retry 2/3: 19 pending, 104 failed so far ===
+18:13:19 [INFO] src.pipeline: Extracting 19 complaints with 32 workers...
+18:13:27 [WARNING] src.pipeline: [Q0125] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0065] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0125] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0065] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0086] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0086] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0198] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0198] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0036] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0160] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0063] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 444)
+18:13:27 [WARNING] src.pipeline: [Q0124] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:27 [WARNING] src.pipeline: [Q0036] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0170] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0160] Extraction failed
+18:13:27 [WARNING] src.pipeline: [Q0039] JSON parse failed: Expecting ',' delimiter: line 18 column 9 (char 390)
+18:13:27 [WARNING] src.pipeline: [Q0017] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:13:28 [WARNING] src.pipeline: [Q0063] Extraction failed
+18:13:28 [WARNING] src.pipeline: [Q0124] Extraction failed
+18:13:28 [WARNING] src.pipeline: [Q0039] Extraction failed
+18:13:28 [WARNING] src.pipeline: [Q0017] Extraction failed
+18:13:28 [WARNING] src.pipeline: [Q0234] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 388)
+18:13:28 [WARNING] src.pipeline: [Q0234] Extraction failed
+18:13:29 [WARNING] src.pipeline: [Q0018] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 884)
+18:13:29 [WARNING] src.pipeline: [Q0018] Extraction failed
+18:13:29 [WARNING] src.pipeline: [Q0163] JSON parse failed: Expecting ',' delimiter: line 48 column 7 (char 1070)
+18:13:29 [WARNING] src.pipeline: [Q0163] Extraction failed
+18:13:29 [INFO] src.pipeline: Pass 2 complete: 5 extracted, 14 failed. Retrying in 30s...
+18:14:01 [INFO] src.pipeline: Resuming: 236 extractions already exist
+18:14:01 [INFO] src.pipeline: === Retry 3/3: 14 pending, 118 failed so far ===
+18:14:01 [INFO] src.pipeline: Extracting 14 complaints with 32 workers...
+18:14:07 [WARNING] src.pipeline: [Q0125] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:14:07 [WARNING] src.pipeline: [Q0125] Extraction failed
+18:14:07 [WARNING] src.pipeline: [Q0065] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 378)
+18:14:07 [WARNING] src.pipeline: [Q0198] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:14:07 [WARNING] src.pipeline: [Q0170] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 367)
+18:14:07 [WARNING] src.pipeline: [Q0065] Extraction failed
+18:14:07 [WARNING] src.pipeline: [Q0198] Extraction failed
+18:14:07 [WARNING] src.pipeline: [Q0170] Extraction failed
+18:14:07 [WARNING] src.pipeline: [Q0063] JSON parse failed: Expecting property name enclosed in double quotes: line 22 column 9 (char 444)
+18:14:07 [WARNING] src.pipeline: [Q0160] JSON parse failed: Expecting property name enclosed in double quotes: line 4 column 3 (char 59)
+18:14:07 [WARNING] src.pipeline: [Q0063] Extraction failed
+18:14:07 [WARNING] src.pipeline: [Q0160] Extraction failed
+18:14:07 [WARNING] src.pipeline: [Q0039] JSON parse failed: Expecting ',' delimiter: line 18 column 9 (char 381)
+18:14:08 [INFO] src.pipeline: Progress: 240/250 done, 6 failed this pass, tokens: in=692,940, out=71,459
+18:14:08 [WARNING] src.pipeline: [Q0039] Extraction failed
+18:14:08 [WARNING] src.pipeline: [Q0234] JSON parse failed: Expecting property name enclosed in double quotes: line 18 column 9 (char 388)
+18:14:08 [WARNING] src.pipeline: [Q0234] Extraction failed
+18:14:08 [WARNING] src.pipeline: [Q0163] JSON parse failed: Expecting ',' delimiter: line 48 column 7 (char 1085)
+18:14:08 [WARNING] src.pipeline: [Q0163] Extraction failed
+18:14:09 [WARNING] src.pipeline: [Q0018] JSON parse failed: Expecting ',' delimiter: line 40 column 7 (char 884)
+18:14:09 [WARNING] src.pipeline: [Q0018] Extraction failed
+miUrba — Extraction (raw + images → structured, VLM)
+=======================================================
+  Model (VLM): qwen3.6-35b-awq
+  Endpoint:   http://192.168.10.11:9292
+  Source:     ../eval/results/iter_4/gen_gen_gemma4_31b_awq/raw/complaints.jsonl
+  Images:     data/images
+  Output:     eval/results/iter_4/gen_gen_gemma4_31b_awq/ext_extract_qwen3_6_35b/annotated/extractions.jsonl
+  Resume:     True
+=======================================================
+
+=======================================================
+Extraction complete!
+  Extracted:  240
+  Failed:     10
+  Skipped:    0
+  Total:      250
+  Tokens in:  699,627
+  Tokens out: 72,680
+  Images dir: data/images
+  Output:     eval/results/iter_4/gen_gen_gemma4_31b_awq/ext_extract_qwen3_6_35b/annotated/extractions.jsonl

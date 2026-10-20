@@ -1,0 +1,56 @@
+17:14:39 [INFO] src.pipeline: Generating 250 records with 32 workers...
+17:14:53 [WARNING] src.pipeline: [Q0008] JSON parse failed: Invalid \escape: line 2 column 202 (char 203)
+17:14:58 [INFO] src.pipeline: Progress: 10/250 generated, 0 failed, tokens: in=51,319, out=6,081
+17:15:11 [INFO] src.pipeline: Progress: 20/250 generated, 0 failed, tokens: in=124,478, out=16,172
+17:15:16 [WARNING] src.pipeline: [Q0122] JSON parse failed: Invalid \escape: line 2 column 76 (char 77)
+17:15:19 [WARNING] src.pipeline: [Q0008] Generation failed
+17:15:24 [INFO] src.pipeline: Progress: 30/250 generated, 1 failed, tokens: in=190,124, out=25,503
+17:15:27 [WARNING] src.pipeline: [Q0140] JSON parse failed: Invalid \escape: line 2 column 233 (char 234)
+17:15:34 [INFO] src.pipeline: Progress: 40/250 generated, 1 failed, tokens: in=246,851, out=33,243
+17:15:45 [WARNING] src.pipeline: [Q0209] JSON parse failed: Invalid \escape: line 2 column 188 (char 189)
+17:15:48 [INFO] src.pipeline: Progress: 50/250 generated, 1 failed, tokens: in=326,227, out=44,401
+17:16:05 [INFO] src.pipeline: Progress: 60/250 generated, 1 failed, tokens: in=337,032, out=46,265
+17:16:16 [WARNING] src.pipeline: [Q0220] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+17:16:20 [INFO] src.pipeline: Progress: 70/250 generated, 1 failed, tokens: in=338,468, out=50,973
+17:16:36 [INFO] src.pipeline: Progress: 80/250 generated, 1 failed, tokens: in=338,468, out=50,973
+17:16:50 [INFO] src.pipeline: Progress: 90/250 generated, 1 failed, tokens: in=338,468, out=50,973
+17:17:07 [INFO] src.pipeline: Progress: 100/250 generated, 1 failed, tokens: in=338,468, out=50,973
+17:17:16 [WARNING] src.pipeline: [Q0122] Generation failed
+17:17:25 [INFO] src.pipeline: Progress: 110/250 generated, 2 failed, tokens: in=338,468, out=50,973
+17:17:42 [INFO] src.pipeline: Progress: 120/250 generated, 2 failed, tokens: in=338,468, out=50,973
+17:17:59 [INFO] src.pipeline: Progress: 130/250 generated, 2 failed, tokens: in=338,468, out=50,973
+17:18:16 [INFO] src.pipeline: Progress: 140/250 generated, 2 failed, tokens: in=338,468, out=50,973
+17:18:31 [WARNING] src.pipeline: [Q0140] Generation failed
+17:18:33 [INFO] src.pipeline: Progress: 150/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:18:49 [INFO] src.pipeline: Progress: 160/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:19:04 [INFO] src.pipeline: Progress: 170/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:19:20 [INFO] src.pipeline: Progress: 180/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:19:37 [INFO] src.pipeline: Progress: 190/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:19:54 [INFO] src.pipeline: Progress: 200/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:20:12 [INFO] src.pipeline: Progress: 210/250 generated, 3 failed, tokens: in=338,468, out=50,973
+17:20:20 [WARNING] src.pipeline: [Q0209] Generation failed
+17:20:27 [INFO] src.pipeline: Progress: 220/250 generated, 4 failed, tokens: in=338,468, out=50,973
+17:20:43 [INFO] src.pipeline: Progress: 230/250 generated, 4 failed, tokens: in=338,468, out=50,973
+17:20:59 [INFO] src.pipeline: Progress: 240/250 generated, 4 failed, tokens: in=338,468, out=50,973
+17:21:07 [WARNING] src.pipeline: [Q0220] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_6_35b_awq (qwen3.6-35b-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    250
+  IDs:        Q0001 — Q0250
+  Output:     ../eval/results/iter_4/gen_gen_qwen3_6_35b_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  245
+  Failed:     5
+  Tokens in:  338,468
+  Tokens out: 50,973
+  Raw:        ../eval/results/iter_4/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_4/gen_gen_qwen3_6_35b_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_4/gen_gen_qwen3_6_35b_awq/raw/metadata.jsonl
+  Images dir: None

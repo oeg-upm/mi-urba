@@ -1,0 +1,372 @@
+12:10:56 [INFO] src.pipeline: Generating 1000 records with 32 workers...
+12:11:05 [WARNING] src.pipeline: [Q0022] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:11:05 [WARNING] src.pipeline: [Q0022] Generation failed
+12:11:06 [INFO] src.pipeline: Progress: 10/1000 generated, 1 failed, tokens: in=12,596, out=1,365
+12:11:09 [WARNING] src.pipeline: [Q0020] JSON parse failed: Invalid control character at: line 2 column 765 (char 766)
+12:11:09 [WARNING] src.pipeline: [Q0020] Generation failed
+12:11:09 [WARNING] src.pipeline: [Q0008] JSON parse failed: Invalid \escape: line 2 column 442 (char 443)
+12:11:09 [WARNING] src.pipeline: [Q0008] Generation failed
+12:11:09 [INFO] src.pipeline: Progress: 20/1000 generated, 3 failed, tokens: in=26,296, out=3,915
+12:11:12 [INFO] src.pipeline: Progress: 30/1000 generated, 3 failed, tokens: in=37,498, out=6,514
+12:11:16 [INFO] src.pipeline: Progress: 40/1000 generated, 3 failed, tokens: in=48,625, out=8,683
+12:11:19 [INFO] src.pipeline: Progress: 50/1000 generated, 3 failed, tokens: in=59,711, out=10,892
+12:11:23 [INFO] src.pipeline: Progress: 60/1000 generated, 3 failed, tokens: in=70,954, out=12,822
+12:11:23 [WARNING] src.pipeline: [Q0057] JSON parse failed: Invalid \escape: line 2 column 375 (char 376)
+12:11:23 [WARNING] src.pipeline: [Q0057] Generation failed
+12:11:24 [WARNING] src.pipeline: [Q0046] JSON parse failed: Invalid \escape: line 2 column 684 (char 685)
+12:11:24 [WARNING] src.pipeline: [Q0046] Generation failed
+12:11:26 [INFO] src.pipeline: Progress: 70/1000 generated, 5 failed, tokens: in=84,096, out=16,001
+12:11:27 [WARNING] src.pipeline: [Q0076] JSON parse failed: Invalid \escape: line 2 column 241 (char 242)
+12:11:27 [WARNING] src.pipeline: [Q0076] Generation failed
+12:11:28 [WARNING] src.pipeline: [Q0086] JSON parse failed: Invalid \escape: line 2 column 85 (char 86)
+12:11:28 [WARNING] src.pipeline: [Q0086] Generation failed
+12:11:29 [INFO] src.pipeline: Progress: 80/1000 generated, 7 failed, tokens: in=96,660, out=18,034
+12:11:31 [WARNING] src.pipeline: [Q0090] JSON parse failed: Expecting ',' delimiter: line 2 column 639 (char 640)
+12:11:31 [WARNING] src.pipeline: [Q0090] Generation failed
+12:11:32 [WARNING] src.pipeline: [Q0106] JSON parse failed: Invalid \escape: line 2 column 299 (char 300)
+12:11:32 [WARNING] src.pipeline: [Q0106] Generation failed
+12:11:32 [INFO] src.pipeline: Progress: 90/1000 generated, 9 failed, tokens: in=109,716, out=20,659
+12:11:35 [WARNING] src.pipeline: [Q0026] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 3406)
+12:11:35 [WARNING] src.pipeline: [Q0026] Generation failed
+12:11:36 [INFO] src.pipeline: Progress: 100/1000 generated, 10 failed, tokens: in=123,401, out=23,657
+12:11:36 [WARNING] src.pipeline: [Q0110] JSON parse failed: Invalid \escape: line 2 column 229 (char 230)
+12:11:36 [WARNING] src.pipeline: [Q0110] Generation failed
+12:11:38 [WARNING] src.pipeline: [Q0115] JSON parse failed: Invalid \escape: line 2 column 172 (char 173)
+12:11:38 [WARNING] src.pipeline: [Q0115] Generation failed
+12:11:39 [INFO] src.pipeline: Progress: 110/1000 generated, 12 failed, tokens: in=135,197, out=26,689
+12:11:40 [WARNING] src.pipeline: [Q0121] JSON parse failed: Invalid \escape: line 2 column 455 (char 456)
+12:11:40 [WARNING] src.pipeline: [Q0121] Generation failed
+12:11:40 [WARNING] src.pipeline: [Q0120] JSON parse failed: Invalid \escape: line 2 column 402 (char 403)
+12:11:40 [WARNING] src.pipeline: [Q0120] Generation failed
+12:11:42 [WARNING] src.pipeline: [Q0109] JSON parse failed: Invalid \escape: line 2 column 410 (char 411)
+12:11:42 [WARNING] src.pipeline: [Q0109] Generation failed
+12:11:42 [INFO] src.pipeline: Progress: 120/1000 generated, 15 failed, tokens: in=149,236, out=29,880
+12:11:45 [INFO] src.pipeline: Progress: 130/1000 generated, 15 failed, tokens: in=160,083, out=31,771
+12:11:47 [WARNING] src.pipeline: [Q0149] JSON parse failed: Invalid \escape: line 2 column 408 (char 409)
+12:11:47 [WARNING] src.pipeline: [Q0149] Generation failed
+12:11:48 [INFO] src.pipeline: Progress: 140/1000 generated, 16 failed, tokens: in=171,780, out=34,160
+12:11:51 [INFO] src.pipeline: Progress: 150/1000 generated, 16 failed, tokens: in=183,021, out=35,889
+12:11:52 [WARNING] src.pipeline: [Q0161] JSON parse failed: Invalid \escape: line 2 column 360 (char 361)
+12:11:52 [WARNING] src.pipeline: [Q0161] Generation failed
+12:11:54 [INFO] src.pipeline: Progress: 160/1000 generated, 17 failed, tokens: in=194,959, out=37,981
+12:11:55 [WARNING] src.pipeline: [Q0152] JSON parse failed: Invalid \escape: line 2 column 782 (char 783)
+12:11:55 [WARNING] src.pipeline: [Q0152] Generation failed
+12:11:57 [WARNING] src.pipeline: [Q0188] JSON parse failed: Expecting ',' delimiter: line 2 column 369 (char 370)
+12:11:57 [WARNING] src.pipeline: [Q0188] Generation failed
+12:11:58 [INFO] src.pipeline: Progress: 170/1000 generated, 19 failed, tokens: in=208,885, out=40,992
+12:12:00 [INFO] src.pipeline: Progress: 180/1000 generated, 19 failed, tokens: in=218,377, out=42,671
+12:12:03 [INFO] src.pipeline: Progress: 190/1000 generated, 19 failed, tokens: in=229,522, out=45,291
+12:12:06 [WARNING] src.pipeline: [Q0229] JSON parse failed: Invalid \escape: line 2 column 184 (char 185)
+12:12:06 [WARNING] src.pipeline: [Q0229] Generation failed
+12:12:06 [WARNING] src.pipeline: [Q0211] JSON parse failed: Invalid \escape: line 2 column 346 (char 347)
+12:12:06 [WARNING] src.pipeline: [Q0211] Generation failed
+12:12:06 [WARNING] src.pipeline: [Q0224] JSON parse failed: Invalid \escape: line 2 column 214 (char 215)
+12:12:06 [WARNING] src.pipeline: [Q0224] Generation failed
+12:12:07 [INFO] src.pipeline: Progress: 200/1000 generated, 22 failed, tokens: in=243,408, out=49,344
+12:12:09 [INFO] src.pipeline: Progress: 210/1000 generated, 22 failed, tokens: in=254,470, out=51,157
+12:12:09 [WARNING] src.pipeline: [Q0204] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 1496)
+12:12:09 [WARNING] src.pipeline: [Q0204] Generation failed
+12:12:12 [INFO] src.pipeline: Progress: 220/1000 generated, 23 failed, tokens: in=266,586, out=53,204
+12:12:13 [WARNING] src.pipeline: [Q0242] JSON parse failed: Invalid \escape: line 2 column 500 (char 501)
+12:12:13 [WARNING] src.pipeline: [Q0242] Generation failed
+12:12:13 [WARNING] src.pipeline: [Q0141] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 3711)
+12:12:13 [WARNING] src.pipeline: [Q0141] Generation failed
+12:12:16 [INFO] src.pipeline: Progress: 230/1000 generated, 25 failed, tokens: in=279,884, out=56,123
+12:12:18 [WARNING] src.pipeline: [Q0253] JSON parse failed: Invalid \escape: line 2 column 332 (char 333)
+12:12:18 [WARNING] src.pipeline: [Q0253] Generation failed
+12:12:19 [INFO] src.pipeline: Progress: 240/1000 generated, 26 failed, tokens: in=291,798, out=58,691
+12:12:21 [WARNING] src.pipeline: [Q0291] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:12:21 [WARNING] src.pipeline: [Q0291] Generation failed
+12:12:22 [INFO] src.pipeline: Progress: 250/1000 generated, 27 failed, tokens: in=303,724, out=60,799
+12:12:22 [WARNING] src.pipeline: [Q0270] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:12:22 [WARNING] src.pipeline: [Q0270] Generation failed
+12:12:24 [INFO] src.pipeline: Progress: 260/1000 generated, 28 failed, tokens: in=316,485, out=63,302
+12:12:27 [WARNING] src.pipeline: [Q0318] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:12:27 [WARNING] src.pipeline: [Q0318] Generation failed
+12:12:27 [WARNING] src.pipeline: [Q0294] JSON parse failed: Extra data: line 4 column 1 (char 910)
+12:12:27 [WARNING] src.pipeline: [Q0294] Generation failed
+12:12:28 [WARNING] src.pipeline: [Q0292] JSON parse failed: Expecting ',' delimiter: line 2 column 119 (char 120)
+12:12:28 [WARNING] src.pipeline: [Q0292] Generation failed
+12:12:28 [WARNING] src.pipeline: [Q0296] JSON parse failed: Invalid \escape: line 2 column 319 (char 320)
+12:12:28 [WARNING] src.pipeline: [Q0296] Generation failed
+12:12:29 [WARNING] src.pipeline: [Q0300] JSON parse failed: Invalid \escape: line 2 column 408 (char 409)
+12:12:29 [WARNING] src.pipeline: [Q0300] Generation failed
+12:12:29 [INFO] src.pipeline: Progress: 270/1000 generated, 33 failed, tokens: in=332,676, out=66,378
+12:12:33 [INFO] src.pipeline: Progress: 280/1000 generated, 33 failed, tokens: in=343,335, out=68,406
+12:12:36 [INFO] src.pipeline: Progress: 290/1000 generated, 33 failed, tokens: in=354,446, out=70,586
+12:12:37 [WARNING] src.pipeline: [Q0327] JSON parse failed: Invalid \escape: line 2 column 359 (char 360)
+12:12:37 [WARNING] src.pipeline: [Q0327] Generation failed
+12:12:38 [WARNING] src.pipeline: [Q0313] JSON parse failed: Invalid \escape: line 2 column 348 (char 349)
+12:12:38 [WARNING] src.pipeline: [Q0313] Generation failed
+12:12:40 [INFO] src.pipeline: Progress: 300/1000 generated, 35 failed, tokens: in=367,067, out=73,623
+12:12:42 [WARNING] src.pipeline: [Q0332] JSON parse failed: Invalid \escape: line 2 column 319 (char 320)
+12:12:42 [WARNING] src.pipeline: [Q0332] Generation failed
+12:12:42 [WARNING] src.pipeline: [Q0348] JSON parse failed: Invalid \escape: line 2 column 570 (char 571)
+12:12:42 [WARNING] src.pipeline: [Q0348] Generation failed
+12:12:44 [INFO] src.pipeline: Progress: 310/1000 generated, 37 failed, tokens: in=381,096, out=76,452
+12:12:46 [WARNING] src.pipeline: [Q0326] JSON parse failed: Invalid \escape: line 2 column 1855 (char 1856)
+12:12:46 [WARNING] src.pipeline: [Q0326] Generation failed
+12:12:46 [WARNING] src.pipeline: [Q0262] JSON parse failed: Invalid \escape: line 2 column 425 (char 426)
+12:12:46 [WARNING] src.pipeline: [Q0262] Generation failed
+12:12:48 [WARNING] src.pipeline: [Q0378] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:12:48 [WARNING] src.pipeline: [Q0378] Generation failed
+12:12:48 [INFO] src.pipeline: Progress: 320/1000 generated, 40 failed, tokens: in=395,333, out=80,560
+12:12:49 [WARNING] src.pipeline: [Q0359] JSON parse failed: Expecting ',' delimiter: line 2 column 109 (char 110)
+12:12:49 [WARNING] src.pipeline: [Q0359] Generation failed
+12:12:52 [INFO] src.pipeline: Progress: 330/1000 generated, 41 failed, tokens: in=407,467, out=82,891
+12:12:52 [WARNING] src.pipeline: [Q0333] JSON parse failed: Invalid \escape: line 2 column 1029 (char 1030)
+12:12:52 [WARNING] src.pipeline: [Q0333] Generation failed
+12:12:53 [WARNING] src.pipeline: [Q0362] JSON parse failed: Invalid \escape: line 2 column 1075 (char 1076)
+12:12:53 [WARNING] src.pipeline: [Q0362] Generation failed
+12:12:54 [WARNING] src.pipeline: [Q0380] JSON parse failed: Invalid \escape: line 2 column 400 (char 401)
+12:12:54 [WARNING] src.pipeline: [Q0380] Generation failed
+12:12:55 [WARNING] src.pipeline: [Q0374] JSON parse failed: Invalid \escape: line 2 column 308 (char 309)
+12:12:55 [WARNING] src.pipeline: [Q0374] Generation failed
+12:12:55 [WARNING] src.pipeline: [Q0364] JSON parse failed: Invalid \escape: line 2 column 1621 (char 1622)
+12:12:55 [WARNING] src.pipeline: [Q0364] Generation failed
+12:12:56 [INFO] src.pipeline: Progress: 340/1000 generated, 46 failed, tokens: in=423,895, out=86,992
+12:12:57 [WARNING] src.pipeline: [Q0395] JSON parse failed: Invalid \escape: line 2 column 73 (char 74)
+12:12:57 [WARNING] src.pipeline: [Q0395] Generation failed
+12:12:59 [INFO] src.pipeline: Progress: 350/1000 generated, 47 failed, tokens: in=435,371, out=89,110
+12:13:01 [WARNING] src.pipeline: [Q0411] JSON parse failed: Invalid \escape: line 2 column 92 (char 93)
+12:13:01 [WARNING] src.pipeline: [Q0411] Generation failed
+12:13:03 [WARNING] src.pipeline: [Q0413] JSON parse failed: Invalid \escape: line 2 column 200 (char 201)
+12:13:03 [WARNING] src.pipeline: [Q0413] Generation failed
+12:13:04 [INFO] src.pipeline: Progress: 360/1000 generated, 49 failed, tokens: in=448,479, out=91,956
+12:13:06 [WARNING] src.pipeline: [Q0438] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:13:06 [WARNING] src.pipeline: [Q0438] Generation failed
+12:13:07 [INFO] src.pipeline: Progress: 370/1000 generated, 50 failed, tokens: in=460,331, out=94,398
+12:13:08 [WARNING] src.pipeline: [Q0424] JSON parse failed: Invalid \escape: line 2 column 289 (char 290)
+12:13:08 [WARNING] src.pipeline: [Q0424] Generation failed
+12:13:09 [WARNING] src.pipeline: [Q0435] JSON parse failed: Invalid \escape: line 2 column 246 (char 247)
+12:13:09 [WARNING] src.pipeline: [Q0435] Generation failed
+12:13:09 [WARNING] src.pipeline: [Q0423] JSON parse failed: Invalid \escape: line 2 column 746 (char 747)
+12:13:09 [WARNING] src.pipeline: [Q0423] Generation failed
+12:13:11 [WARNING] src.pipeline: [Q0408] JSON parse failed: Invalid \escape: line 2 column 268 (char 269)
+12:13:11 [WARNING] src.pipeline: [Q0408] Generation failed
+12:13:12 [INFO] src.pipeline: Progress: 380/1000 generated, 54 failed, tokens: in=475,583, out=97,826
+12:13:13 [WARNING] src.pipeline: [Q0434] JSON parse failed: Invalid \escape: line 2 column 263 (char 264)
+12:13:13 [WARNING] src.pipeline: [Q0434] Generation failed
+12:13:14 [WARNING] src.pipeline: [Q0457] JSON parse failed: Extra data: line 4 column 1 (char 533)
+12:13:14 [WARNING] src.pipeline: [Q0457] Generation failed
+12:13:16 [INFO] src.pipeline: Progress: 390/1000 generated, 56 failed, tokens: in=488,663, out=100,751
+12:13:16 [WARNING] src.pipeline: [Q0429] JSON parse failed: Invalid \escape: line 2 column 465 (char 466)
+12:13:16 [WARNING] src.pipeline: [Q0429] Generation failed
+12:13:20 [INFO] src.pipeline: Progress: 400/1000 generated, 57 failed, tokens: in=500,541, out=103,081
+12:13:21 [WARNING] src.pipeline: [Q0456] JSON parse failed: Invalid \escape: line 2 column 375 (char 376)
+12:13:21 [WARNING] src.pipeline: [Q0456] Generation failed
+12:13:22 [WARNING] src.pipeline: [Q0482] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:13:22 [WARNING] src.pipeline: [Q0482] Generation failed
+12:13:23 [INFO] src.pipeline: Progress: 410/1000 generated, 59 failed, tokens: in=513,633, out=105,290
+12:13:24 [WARNING] src.pipeline: [Q0485] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:13:24 [WARNING] src.pipeline: [Q0485] Generation failed
+12:13:27 [INFO] src.pipeline: Progress: 420/1000 generated, 60 failed, tokens: in=525,683, out=107,818
+12:13:30 [WARNING] src.pipeline: [Q0494] JSON parse failed: Expecting ',' delimiter: line 2 column 523 (char 524)
+12:13:30 [WARNING] src.pipeline: [Q0494] Generation failed
+12:13:31 [INFO] src.pipeline: Progress: 430/1000 generated, 61 failed, tokens: in=537,638, out=110,339
+12:13:33 [WARNING] src.pipeline: [Q0491] JSON parse failed: Invalid \escape: line 2 column 309 (char 310)
+12:13:33 [WARNING] src.pipeline: [Q0491] Generation failed
+12:13:35 [INFO] src.pipeline: Progress: 440/1000 generated, 62 failed, tokens: in=549,734, out=112,936
+12:13:36 [WARNING] src.pipeline: [Q0522] JSON parse failed: Invalid \escape: line 2 column 87 (char 88)
+12:13:36 [WARNING] src.pipeline: [Q0522] Generation failed
+12:13:37 [WARNING] src.pipeline: [Q0520] JSON parse failed: Invalid \escape: line 2 column 27 (char 28)
+12:13:37 [WARNING] src.pipeline: [Q0520] Generation failed
+12:13:38 [WARNING] src.pipeline: [Q0497] JSON parse failed: Invalid \escape: line 2 column 393 (char 394)
+12:13:38 [WARNING] src.pipeline: [Q0497] Generation failed
+12:13:39 [WARNING] src.pipeline: [Q0539] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:13:39 [WARNING] src.pipeline: [Q0539] Generation failed
+12:13:39 [INFO] src.pipeline: Progress: 450/1000 generated, 66 failed, tokens: in=565,094, out=115,724
+12:13:43 [WARNING] src.pipeline: [Q0525] JSON parse failed: Expecting ',' delimiter: line 2 column 165 (char 166)
+12:13:43 [WARNING] src.pipeline: [Q0525] Generation failed
+12:13:43 [INFO] src.pipeline: Progress: 460/1000 generated, 67 failed, tokens: in=577,416, out=117,750
+12:13:43 [WARNING] src.pipeline: [Q0526] JSON parse failed: Invalid \escape: line 2 column 237 (char 238)
+12:13:43 [WARNING] src.pipeline: [Q0526] Generation failed
+12:13:46 [INFO] src.pipeline: Progress: 470/1000 generated, 68 failed, tokens: in=589,182, out=120,058
+12:13:49 [WARNING] src.pipeline: [Q0529] JSON parse failed: Invalid \escape: line 2 column 1025 (char 1026)
+12:13:49 [WARNING] src.pipeline: [Q0529] Generation failed
+12:13:50 [INFO] src.pipeline: Progress: 480/1000 generated, 69 failed, tokens: in=600,759, out=122,312
+12:13:54 [INFO] src.pipeline: Progress: 490/1000 generated, 69 failed, tokens: in=611,770, out=124,213
+12:13:56 [WARNING] src.pipeline: [Q0569] JSON parse failed: Invalid \escape: line 2 column 392 (char 393)
+12:13:56 [WARNING] src.pipeline: [Q0569] Generation failed
+12:13:59 [WARNING] src.pipeline: [Q0577] JSON parse failed: Invalid \escape: line 2 column 379 (char 380)
+12:13:59 [WARNING] src.pipeline: [Q0577] Generation failed
+12:13:59 [INFO] src.pipeline: Progress: 500/1000 generated, 71 failed, tokens: in=624,658, out=126,549
+12:14:00 [WARNING] src.pipeline: [Q0555] JSON parse failed: Invalid \escape: line 2 column 1500 (char 1501)
+12:14:00 [WARNING] src.pipeline: [Q0555] Generation failed
+12:14:03 [INFO] src.pipeline: Progress: 510/1000 generated, 72 failed, tokens: in=636,297, out=129,856
+12:14:03 [WARNING] src.pipeline: [Q0581] JSON parse failed: Extra data: line 4 column 1 (char 567)
+12:14:03 [WARNING] src.pipeline: [Q0581] Generation failed
+12:14:04 [WARNING] src.pipeline: [Q0593] JSON parse failed: Extra data: line 4 column 1 (char 722)
+12:14:04 [WARNING] src.pipeline: [Q0593] Generation failed
+12:14:06 [WARNING] src.pipeline: [Q0578] JSON parse failed: Invalid \escape: line 2 column 404 (char 405)
+12:14:06 [WARNING] src.pipeline: [Q0578] Generation failed
+12:14:07 [INFO] src.pipeline: Progress: 520/1000 generated, 75 failed, tokens: in=650,582, out=132,466
+12:14:12 [INFO] src.pipeline: Progress: 530/1000 generated, 75 failed, tokens: in=662,168, out=134,571
+12:14:15 [INFO] src.pipeline: Progress: 540/1000 generated, 75 failed, tokens: in=672,843, out=137,018
+12:14:19 [INFO] src.pipeline: Progress: 550/1000 generated, 75 failed, tokens: in=683,831, out=139,776
+12:14:22 [WARNING] src.pipeline: [Q0631] JSON parse failed: Invalid \escape: line 2 column 575 (char 576)
+12:14:22 [WARNING] src.pipeline: [Q0631] Generation failed
+12:14:24 [INFO] src.pipeline: Progress: 560/1000 generated, 76 failed, tokens: in=696,041, out=141,998
+12:14:26 [WARNING] src.pipeline: [Q0657] JSON parse failed: Invalid \escape: line 2 column 464 (char 465)
+12:14:26 [WARNING] src.pipeline: [Q0657] Generation failed
+12:14:29 [INFO] src.pipeline: Progress: 570/1000 generated, 77 failed, tokens: in=707,984, out=144,424
+12:14:30 [WARNING] src.pipeline: [Q0077] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:14:30 [WARNING] src.pipeline: [Q0077] Generation failed
+12:14:30 [WARNING] src.pipeline: [Q0645] JSON parse failed: Invalid \escape: line 2 column 269 (char 270)
+12:14:30 [WARNING] src.pipeline: [Q0645] Generation failed
+12:14:32 [WARNING] src.pipeline: [Q0640] JSON parse failed: Invalid \escape: line 2 column 1160 (char 1161)
+12:14:32 [WARNING] src.pipeline: [Q0640] Generation failed
+12:14:32 [WARNING] src.pipeline: [Q0655] JSON parse failed: Invalid \escape: line 2 column 342 (char 343)
+12:14:32 [WARNING] src.pipeline: [Q0655] Generation failed
+12:14:34 [INFO] src.pipeline: Progress: 580/1000 generated, 81 failed, tokens: in=723,099, out=153,043
+12:14:36 [WARNING] src.pipeline: [Q0666] JSON parse failed: Invalid \escape: line 2 column 989 (char 990)
+12:14:36 [WARNING] src.pipeline: [Q0666] Generation failed
+12:14:38 [WARNING] src.pipeline: [Q0677] JSON parse failed: Expecting ',' delimiter: line 2 column 199 (char 200)
+12:14:38 [WARNING] src.pipeline: [Q0677] Generation failed
+12:14:39 [WARNING] src.pipeline: [Q0680] JSON parse failed: Invalid \escape: line 2 column 525 (char 526)
+12:14:39 [WARNING] src.pipeline: [Q0680] Generation failed
+12:14:39 [WARNING] src.pipeline: [Q0693] JSON parse failed: Expecting ',' delimiter: line 2 column 85 (char 86)
+12:14:39 [WARNING] src.pipeline: [Q0693] Generation failed
+12:14:39 [INFO] src.pipeline: Progress: 590/1000 generated, 85 failed, tokens: in=738,001, out=156,376
+12:14:44 [INFO] src.pipeline: Progress: 600/1000 generated, 85 failed, tokens: in=749,080, out=159,294
+12:14:45 [WARNING] src.pipeline: [Q0681] JSON parse failed: Invalid \escape: line 2 column 1297 (char 1298)
+12:14:45 [WARNING] src.pipeline: [Q0681] Generation failed
+12:14:48 [INFO] src.pipeline: Progress: 610/1000 generated, 86 failed, tokens: in=761,037, out=161,980
+12:14:49 [WARNING] src.pipeline: [Q0716] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:14:49 [WARNING] src.pipeline: [Q0716] Generation failed
+12:14:51 [WARNING] src.pipeline: [Q0711] JSON parse failed: Invalid \escape: line 2 column 365 (char 366)
+12:14:51 [WARNING] src.pipeline: [Q0711] Generation failed
+12:14:54 [INFO] src.pipeline: Progress: 620/1000 generated, 88 failed, tokens: in=774,436, out=164,940
+12:14:59 [INFO] src.pipeline: Progress: 630/1000 generated, 88 failed, tokens: in=785,114, out=167,648
+12:14:59 [WARNING] src.pipeline: [Q0733] JSON parse failed: Expecting ',' delimiter: line 3 column 3 (char 754)
+12:14:59 [WARNING] src.pipeline: [Q0733] Generation failed
+12:15:04 [INFO] src.pipeline: Progress: 640/1000 generated, 89 failed, tokens: in=797,496, out=170,100
+12:15:04 [WARNING] src.pipeline: [Q0220] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:15:04 [WARNING] src.pipeline: [Q0220] Generation failed
+12:15:05 [WARNING] src.pipeline: [Q0708] JSON parse failed: Invalid control character at: line 2 column 2546 (char 2547)
+12:15:05 [WARNING] src.pipeline: [Q0708] Generation failed
+12:15:07 [WARNING] src.pipeline: [Q0740] JSON parse failed: Invalid \escape: line 2 column 436 (char 437)
+12:15:07 [WARNING] src.pipeline: [Q0740] Generation failed
+12:15:10 [INFO] src.pipeline: Progress: 650/1000 generated, 92 failed, tokens: in=811,580, out=177,978
+12:15:10 [WARNING] src.pipeline: [Q0730] JSON parse failed: Invalid \escape: line 2 column 836 (char 837)
+12:15:10 [WARNING] src.pipeline: [Q0730] Generation failed
+12:15:10 [WARNING] src.pipeline: [Q0757] JSON parse failed: Invalid \escape: line 2 column 324 (char 325)
+12:15:10 [WARNING] src.pipeline: [Q0757] Generation failed
+12:15:12 [WARNING] src.pipeline: [Q0756] JSON parse failed: Invalid \escape: line 2 column 500 (char 501)
+12:15:12 [WARNING] src.pipeline: [Q0756] Generation failed
+12:15:12 [WARNING] src.pipeline: [Q0760] JSON parse failed: Invalid \escape: line 2 column 272 (char 273)
+12:15:12 [WARNING] src.pipeline: [Q0760] Generation failed
+12:15:13 [WARNING] src.pipeline: [Q0748] JSON parse failed: Invalid \escape: line 2 column 337 (char 338)
+12:15:13 [WARNING] src.pipeline: [Q0748] Generation failed
+12:15:14 [WARNING] src.pipeline: [Q0739] JSON parse failed: Invalid \escape: line 2 column 1988 (char 1989)
+12:15:14 [WARNING] src.pipeline: [Q0739] Generation failed
+12:15:17 [INFO] src.pipeline: Progress: 660/1000 generated, 98 failed, tokens: in=828,701, out=182,107
+12:15:18 [WARNING] src.pipeline: [Q0759] JSON parse failed: Expecting ',' delimiter: line 2 column 1089 (char 1090)
+12:15:18 [WARNING] src.pipeline: [Q0759] Generation failed
+12:15:18 [WARNING] src.pipeline: [Q0768] JSON parse failed: Invalid \escape: line 2 column 237 (char 238)
+12:15:18 [WARNING] src.pipeline: [Q0768] Generation failed
+12:15:21 [WARNING] src.pipeline: [Q0789] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:15:21 [WARNING] src.pipeline: [Q0789] Generation failed
+12:15:21 [INFO] src.pipeline: Progress: 670/1000 generated, 101 failed, tokens: in=843,188, out=185,544
+12:15:23 [WARNING] src.pipeline: [Q0285] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:15:23 [WARNING] src.pipeline: [Q0285] Generation failed
+12:15:24 [WARNING] src.pipeline: [Q0776] JSON parse failed: Invalid \escape: line 2 column 857 (char 858)
+12:15:24 [WARNING] src.pipeline: [Q0776] Generation failed
+12:15:26 [WARNING] src.pipeline: [Q0782] JSON parse failed: Invalid \escape: line 2 column 580 (char 581)
+12:15:26 [WARNING] src.pipeline: [Q0782] Generation failed
+12:15:26 [INFO] src.pipeline: Progress: 680/1000 generated, 104 failed, tokens: in=857,938, out=193,105
+12:15:30 [WARNING] src.pipeline: [Q0312] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:15:30 [WARNING] src.pipeline: [Q0312] Generation failed
+12:15:31 [INFO] src.pipeline: Progress: 690/1000 generated, 105 failed, tokens: in=870,226, out=200,014
+12:15:32 [WARNING] src.pipeline: [Q0799] JSON parse failed: Expecting ',' delimiter: line 2 column 242 (char 243)
+12:15:32 [WARNING] src.pipeline: [Q0799] Generation failed
+12:15:35 [INFO] src.pipeline: Progress: 700/1000 generated, 106 failed, tokens: in=882,264, out=202,046
+12:15:36 [WARNING] src.pipeline: [Q0811] JSON parse failed: Invalid \escape: line 2 column 664 (char 665)
+12:15:36 [WARNING] src.pipeline: [Q0811] Generation failed
+12:15:36 [WARNING] src.pipeline: [Q0810] JSON parse failed: Invalid \escape: line 2 column 300 (char 301)
+12:15:36 [WARNING] src.pipeline: [Q0810] Generation failed
+12:15:38 [WARNING] src.pipeline: [Q0806] JSON parse failed: Expecting property name enclosed in double quotes: line 2 column 1274 (char 1275)
+12:15:38 [WARNING] src.pipeline: [Q0806] Generation failed
+12:15:40 [WARNING] src.pipeline: [Q0342] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:15:40 [WARNING] src.pipeline: [Q0342] Generation failed
+12:15:40 [INFO] src.pipeline: Progress: 710/1000 generated, 110 failed, tokens: in=897,152, out=209,742
+12:15:41 [WARNING] src.pipeline: [Q0849] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:15:41 [WARNING] src.pipeline: [Q0849] Generation failed
+12:15:44 [WARNING] src.pipeline: [Q0823] JSON parse failed: Invalid \escape: line 2 column 338 (char 339)
+12:15:44 [WARNING] src.pipeline: [Q0823] Generation failed
+12:15:46 [INFO] src.pipeline: Progress: 720/1000 generated, 112 failed, tokens: in=909,952, out=212,168
+12:15:50 [INFO] src.pipeline: Progress: 730/1000 generated, 112 failed, tokens: in=921,246, out=214,064
+12:15:54 [INFO] src.pipeline: Progress: 740/1000 generated, 112 failed, tokens: in=932,345, out=216,155
+12:15:57 [INFO] src.pipeline: Progress: 750/1000 generated, 112 failed, tokens: in=943,185, out=218,534
+12:16:02 [INFO] src.pipeline: Progress: 760/1000 generated, 112 failed, tokens: in=955,093, out=220,928
+12:16:02 [WARNING] src.pipeline: [Q0894] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+12:16:02 [WARNING] src.pipeline: [Q0894] Generation failed
+12:16:06 [WARNING] src.pipeline: [Q0878] JSON parse failed: Invalid \escape: line 2 column 247 (char 248)
+12:16:06 [WARNING] src.pipeline: [Q0878] Generation failed
+12:16:06 [INFO] src.pipeline: Progress: 770/1000 generated, 114 failed, tokens: in=967,560, out=223,475
+12:16:08 [WARNING] src.pipeline: [Q0891] JSON parse failed: Invalid \escape: line 2 column 949 (char 950)
+12:16:08 [WARNING] src.pipeline: [Q0891] Generation failed
+12:16:09 [WARNING] src.pipeline: [Q0392] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:16:09 [WARNING] src.pipeline: [Q0392] Generation failed
+12:16:11 [WARNING] src.pipeline: [Q0897] JSON parse failed: Invalid \escape: line 2 column 636 (char 637)
+12:16:11 [WARNING] src.pipeline: [Q0897] Generation failed
+12:16:12 [INFO] src.pipeline: Progress: 780/1000 generated, 117 failed, tokens: in=981,409, out=231,139
+12:16:14 [WARNING] src.pipeline: [Q0905] JSON parse failed: Invalid control character at: line 2 column 46 (char 47)
+12:16:14 [WARNING] src.pipeline: [Q0905] Generation failed
+12:16:14 [WARNING] src.pipeline: [Q0906] JSON parse failed: Invalid \escape: line 2 column 269 (char 270)
+12:16:14 [WARNING] src.pipeline: [Q0906] Generation failed
+12:16:17 [INFO] src.pipeline: Progress: 790/1000 generated, 119 failed, tokens: in=994,280, out=233,742
+12:16:20 [WARNING] src.pipeline: [Q0893] JSON parse failed: Invalid \escape: line 2 column 407 (char 408)
+12:16:20 [WARNING] src.pipeline: [Q0893] Generation failed
+12:16:22 [INFO] src.pipeline: Progress: 800/1000 generated, 120 failed, tokens: in=1,006,294, out=236,755
+12:16:24 [WARNING] src.pipeline: [Q0470] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:16:24 [WARNING] src.pipeline: [Q0470] Generation failed
+12:16:25 [WARNING] src.pipeline: [Q0926] JSON parse failed: Invalid \escape: line 2 column 46 (char 47)
+12:16:25 [WARNING] src.pipeline: [Q0926] Generation failed
+12:16:26 [WARNING] src.pipeline: [Q0460] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:16:26 [WARNING] src.pipeline: [Q0460] Generation failed
+12:16:27 [INFO] src.pipeline: Progress: 810/1000 generated, 123 failed, tokens: in=1,020,877, out=248,734
+12:16:31 [INFO] src.pipeline: Progress: 820/1000 generated, 123 failed, tokens: in=1,032,316, out=250,711
+12:16:34 [INFO] src.pipeline: Progress: 830/1000 generated, 123 failed, tokens: in=1,043,410, out=253,082
+12:16:38 [INFO] src.pipeline: Progress: 840/1000 generated, 123 failed, tokens: in=1,055,546, out=255,300
+12:16:41 [WARNING] src.pipeline: [Q0972] JSON parse failed: Invalid \escape: line 2 column 245 (char 246)
+12:16:41 [WARNING] src.pipeline: [Q0972] Generation failed
+12:16:41 [INFO] src.pipeline: Progress: 850/1000 generated, 124 failed, tokens: in=1,066,173, out=257,289
+12:16:43 [INFO] src.pipeline: Progress: 860/1000 generated, 124 failed, tokens: in=1,077,454, out=259,537
+12:16:46 [WARNING] src.pipeline: [Q0985] JSON parse failed: Invalid \escape: line 2 column 317 (char 318)
+12:16:46 [WARNING] src.pipeline: [Q0985] Generation failed
+12:16:56 [WARNING] src.pipeline: [Q0623] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:16:56 [WARNING] src.pipeline: [Q0623] Generation failed
+12:17:01 [WARNING] src.pipeline: [Q0661] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:17:01 [WARNING] src.pipeline: [Q0661] Generation failed
+12:17:04 [WARNING] src.pipeline: [Q0685] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:17:04 [WARNING] src.pipeline: [Q0685] Generation failed
+12:17:08 [WARNING] src.pipeline: [Q0728] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:17:08 [WARNING] src.pipeline: [Q0728] Generation failed
+12:17:15 [WARNING] src.pipeline: [Q0795] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:17:15 [WARNING] src.pipeline: [Q0795] Generation failed
+12:17:17 [WARNING] src.pipeline: [Q0790] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:17:17 [WARNING] src.pipeline: [Q0790] Generation failed
+12:17:25 [WARNING] src.pipeline: [Q0931] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+12:17:25 [WARNING] src.pipeline: [Q0931] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_6_35b_awq (qwen3.6-35b-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    1000
+  IDs:        Q0001 — Q1000
+  Output:     ../eval/results/iter_1/gen_gen_qwen3_6_35b_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  868
+  Failed:     132
+  Tokens in:  1,095,792
+  Tokens out: 296,533
+  Raw:        ../eval/results/iter_1/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_1/gen_gen_qwen3_6_35b_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_1/gen_gen_qwen3_6_35b_awq/raw/metadata.jsonl
+  Images dir: None

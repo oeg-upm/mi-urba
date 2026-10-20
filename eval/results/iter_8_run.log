@@ -1,0 +1,102 @@
+═══════════════════════════════════════════════════
+  ITERATION 8 — PHASE 1: GENERATION
+═══════════════════════════════════════════════════
+[20:54:39] gen_gemma4_31b_awq: warmup...
+  [20:55:39] local_llama/gemma4-31b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [20:56:59] local_llama/gemma4-31b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [20:58:23] local_llama/gemma4-31b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [21:00:49] local_llama/gemma4-31b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [21:02:49] local_llama/gemma4-31b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [21:04:50] local_llama/gemma4-31b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [21:07:45] local_llama/gemma4-31b-awq loaded (attempt 7)
+[21:07:46] gen_gemma4_31b_awq: generating 250 complaints...
+[21:16:39] gen_gemma4_31b_awq: 250/250 generated
+[21:16:44] gen_qwen3_6_35b_awq: warmup...
+  [21:17:45] local_llama/qwen3.6-35b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [21:19:05] local_llama/qwen3.6-35b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [21:20:25] local_llama/qwen3.6-35b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [21:22:35] local_llama/qwen3.6-35b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [21:24:35] local_llama/qwen3.6-35b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [21:26:36] local_llama/qwen3.6-35b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [21:29:36] local_llama/qwen3.6-35b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [21:32:36] local_llama/qwen3.6-35b-awq: server unreachable (attempt 8, streak 8) — retry in 120s
+  [21:34:37] local_llama/qwen3.6-35b-awq loaded (attempt 9)
+[21:34:39] gen_qwen3_6_35b_awq: generating 250 complaints...
+[21:41:46] gen_qwen3_6_35b_awq: 236/250 generated
+[21:41:51] gen_gemma4_12b_awq: warmup...
+  [21:42:52] local_llama/gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [21:47:28] local_llama/gemma4-12b-awq: server unreachable (attempt 8, streak 1) — retry in 20s
+  [21:48:48] local_llama/gemma4-12b-awq: server unreachable (attempt 9, streak 2) — retry in 20s
+  [21:50:08] local_llama/gemma4-12b-awq: server unreachable (attempt 10, streak 3) — retry in 60s
+  [21:52:08] local_llama/gemma4-12b-awq: server unreachable (attempt 11, streak 4) — retry in 60s
+  [21:53:50] local_llama/gemma4-12b-awq loaded (attempt 12)
+[21:54:54] gen_gemma4_12b_awq: generating 250 complaints...
+[22:00:20] gen_gemma4_12b_awq: 248/250 generated
+[22:00:25] gen_qwen3_4b_instr_awq: warmup...
+  [22:01:25] local_llama/qwen3-4b-instruct-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [22:02:46] local_llama/qwen3-4b-instruct-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [22:04:06] local_llama/qwen3-4b-instruct-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [22:05:06] local_llama/qwen3-4b-instruct-awq loaded (attempt 4)
+[22:05:08] gen_qwen3_4b_instr_awq: generating 250 complaints...
+[22:17:05] gen_qwen3_4b_instr_awq: 236/250 generated
+
+═══════════════════════════════════════════════════
+  ITERATION 8 — PHASE 2: EXTRACTION
+═══════════════════════════════════════════════════
+[22:17:10] gen_gemma4_31b_awq × extract_gemma4_12b: warmup...
+  [22:18:10] local_llama/gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [22:19:30] local_llama/gemma4-12b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [22:20:50] local_llama/gemma4-12b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [22:22:51] local_llama/gemma4-12b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [22:24:51] local_llama/gemma4-12b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [22:26:36] local_llama/gemma4-12b-awq loaded (attempt 6)
+[22:26:37] gen_gemma4_31b_awq × extract_gemma4_12b: extracting...
+[22:30:11] gen_gemma4_31b_awq × extract_gemma4_12b: 250 extracted
+[22:30:16] gen_qwen3_6_35b_awq × extract_gemma4_12b: warmup...
+  [22:31:17] local_llama/gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [22:34:14] local_llama/gemma4-12b-awq: server unreachable (attempt 4, streak 1) — retry in 20s
+  [22:35:34] local_llama/gemma4-12b-awq: server unreachable (attempt 5, streak 2) — retry in 20s
+  [22:39:10] local_llama/gemma4-12b-awq: server unreachable (attempt 10, streak 1) — retry in 20s
+  [22:40:30] local_llama/gemma4-12b-awq: server unreachable (attempt 11, streak 2) — retry in 20s
+  [22:41:50] local_llama/gemma4-12b-awq: server unreachable (attempt 12, streak 3) — retry in 60s
+  [22:43:17] local_llama/gemma4-12b-awq loaded (attempt 13)
+[22:43:18] gen_qwen3_6_35b_awq × extract_gemma4_12b: extracting...
+[22:46:46] gen_qwen3_6_35b_awq × extract_gemma4_12b: 236 extracted
+[22:46:51] gen_gemma4_12b_awq × extract_gemma4_12b: warmup...
+  [22:46:51] local_llama/gemma4-12b-awq loaded (attempt 1)
+[22:46:53] gen_gemma4_12b_awq × extract_gemma4_12b: extracting...
+[23:17:58] gen_gemma4_12b_awq × extract_gemma4_12b: 248 extracted
+[23:18:03] gen_qwen3_4b_instr_awq × extract_gemma4_12b: warmup...
+  [23:18:04] local_llama/gemma4-12b-awq loaded (attempt 1)
+[23:18:06] gen_qwen3_4b_instr_awq × extract_gemma4_12b: extracting...
+[23:22:28] gen_qwen3_4b_instr_awq × extract_gemma4_12b: 236 extracted
+
+═══════════════════════════════════════════════════
+  ITERATION 8 — PHASE 3: EVALUATION
+═══════════════════════════════════════════════════
+
+=== F1 MATRIX (generator × extractor) ===
+
+Generator ↓ / Extractor →           gemma4_12b
+------------------------------------------------------------------------------------------
+gemma4_31b_awq                          0.9677
+qwen3_6_35b_awq                         0.8970
+gemma4_12b_awq                          0.9526
+qwen3_4b_instr_awq                      0.8195
+
+=== KEY METRICS (all 16 combinations) ===
+
+Combination                                                 F1      P      R     EM    Urg    ElP    ElR    FP  Ext/q
+--------------------------------------------------------------------------------------------------------------
+gemma4_31b_awq × gemma4_12b                              0.968  0.957  0.988  0.924  0.868  0.653  0.830    22   1.24
+qwen3_6_35b_awq × gemma4_12b                             0.897  0.878  0.944  0.801  0.756  0.616  0.765    64   1.33
+gemma4_12b_awq × gemma4_12b                              0.953  0.939  0.982  0.899  0.884  0.605  0.782    30   1.27
+qwen3_4b_instr_awq × gemma4_12b                          0.820  0.813  0.865  0.691  0.320  0.537  0.704    83   1.33
+Reporte guardado en eval/results/iter_8/report.md
+
+Metrics: eval/results/iter_8/metrics.json
+Report: eval/results/iter_8/report.md
+
+═══════════════════════════════════════════════════
+  ITERATION 8 COMPLETE
+═══════════════════════════════════════════════════

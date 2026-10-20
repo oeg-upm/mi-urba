@@ -1,0 +1,245 @@
+═══════════════════════════════════════════════════
+  ITERATION 6 — PHASE 1: GENERATION
+═══════════════════════════════════════════════════
+[06:23:12] gen_gemma4_31b_awq: warmup...
+  [06:24:13] gemma4-31b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [06:25:33] gemma4-31b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [06:26:53] gemma4-31b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [06:28:54] gemma4-31b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [06:30:54] gemma4-31b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [06:32:50] gemma4-31b-awq loaded (attempt 6)
+[06:32:51] gen_gemma4_31b_awq: generating 250 complaints...
+[06:41:39] gen_gemma4_31b_awq: 250/250 generated
+[06:41:44] gen_qwen3_6_35b_awq: warmup...
+  [06:42:44] qwen3.6-35b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [06:44:05] qwen3.6-35b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [06:45:25] qwen3.6-35b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [06:47:25] qwen3.6-35b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [06:49:26] qwen3.6-35b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [06:51:26] qwen3.6-35b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [06:54:26] qwen3.6-35b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [06:57:02] qwen3.6-35b-awq loaded (attempt 8)
+[06:57:04] gen_qwen3_6_35b_awq: generating 250 complaints...
+[07:05:09] gen_qwen3_6_35b_awq: 231/250 generated
+[07:05:14] gen_gemma4_12b_awq: warmup...
+  [07:06:15] gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [07:07:35] gemma4-12b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [07:08:55] gemma4-12b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [07:10:56] gemma4-12b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [07:12:56] gemma4-12b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [07:14:22] gemma4-12b-awq loaded (attempt 6)
+[07:14:23] gen_gemma4_12b_awq: generating 250 complaints...
+[07:23:12] gen_gemma4_12b_awq: 249/250 generated
+[07:23:17] gen_qwen3_4b_instr_awq: warmup...
+  [07:24:18] qwen3-4b-instruct-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [07:25:38] qwen3-4b-instruct-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [07:26:58] qwen3-4b-instruct-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [07:27:59] qwen3-4b-instruct-awq loaded (attempt 4)
+[07:28:00] gen_qwen3_4b_instr_awq: generating 250 complaints...
+[07:36:04] gen_qwen3_4b_instr_awq: 237/250 generated
+
+═══════════════════════════════════════════════════
+  ITERATION 6 — PHASE 2: EXTRACTION
+═══════════════════════════════════════════════════
+[07:36:10] gen_gemma4_31b_awq × extract_gemma4_31b: warmup...
+  [07:37:10] gemma4-31b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [07:38:30] gemma4-31b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [07:38:52] gemma4-31b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [07:39:55] gemma4-31b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [07:40:56] gemma4-31b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [07:42:56] gemma4-31b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [07:45:57] gemma4-31b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [07:48:57] gemma4-31b-awq: server unreachable (attempt 8, streak 8) — retry in 120s
+  [07:51:57] gemma4-31b-awq: server unreachable (attempt 9, streak 9) — retry in 120s
+  [07:53:57] gemma4-31b-awq loaded (attempt 10)
+[07:54:00] gen_gemma4_31b_awq × extract_gemma4_31b: extracting...
+[08:02:19] gen_gemma4_31b_awq × extract_gemma4_31b: 250 extracted
+[08:02:24] gen_gemma4_31b_awq × extract_qwen3_6_35b: warmup...
+  [08:03:24] qwen3.6-35b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [08:04:44] qwen3.6-35b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [08:06:04] qwen3.6-35b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [08:08:05] qwen3.6-35b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [08:10:05] qwen3.6-35b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [08:12:05] qwen3.6-35b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [08:15:06] qwen3.6-35b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [08:17:55] qwen3.6-35b-awq loaded (attempt 8)
+[08:17:58] gen_gemma4_31b_awq × extract_qwen3_6_35b: extracting...
+[08:25:05] gen_gemma4_31b_awq × extract_qwen3_6_35b: 247 extracted
+[08:25:10] gen_gemma4_31b_awq × extract_gemma4_12b: warmup...
+  [08:26:10] gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [08:27:31] gemma4-12b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [08:28:51] gemma4-12b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [08:30:51] gemma4-12b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [08:32:51] gemma4-12b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [08:34:12] gemma4-12b-awq loaded (attempt 6)
+[08:34:15] gen_gemma4_31b_awq × extract_gemma4_12b: extracting...
+[08:38:52] gen_gemma4_31b_awq × extract_gemma4_12b: 250 extracted
+[08:38:57] gen_gemma4_31b_awq × extract_qwen3_4b: warmup...
+  [08:39:57] qwen3-4b-instruct-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [08:41:17] qwen3-4b-instruct-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [08:42:37] qwen3-4b-instruct-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [08:43:38] qwen3-4b-instruct-awq loaded (attempt 4)
+[08:43:41] gen_gemma4_31b_awq × extract_qwen3_4b: extracting...
+[08:47:03] gen_gemma4_31b_awq × extract_qwen3_4b: 250 extracted
+[08:47:08] gen_qwen3_6_35b_awq × extract_gemma4_31b: warmup...
+  [08:48:09] gemma4-31b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [08:49:29] gemma4-31b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [08:50:49] gemma4-31b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [08:52:49] gemma4-31b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [08:54:50] gemma4-31b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [08:56:50] gemma4-31b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [08:58:57] gemma4-31b-awq loaded (attempt 7)
+[08:59:00] gen_qwen3_6_35b_awq × extract_gemma4_31b: extracting...
+[09:06:58] gen_qwen3_6_35b_awq × extract_gemma4_31b: 231 extracted
+[09:07:03] gen_qwen3_6_35b_awq × extract_qwen3_6_35b: warmup...
+  [09:08:04] qwen3.6-35b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [09:09:24] qwen3.6-35b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [09:10:44] qwen3.6-35b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [09:12:44] qwen3.6-35b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [09:14:45] qwen3.6-35b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [09:16:45] qwen3.6-35b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [09:19:45] qwen3.6-35b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [09:21:53] qwen3.6-35b-awq loaded (attempt 8)
+[09:21:56] gen_qwen3_6_35b_awq × extract_qwen3_6_35b: extracting...
+[09:28:58] gen_qwen3_6_35b_awq × extract_qwen3_6_35b: 228 extracted
+[09:29:03] gen_qwen3_6_35b_awq × extract_gemma4_12b: warmup...
+  [09:30:03] gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [09:31:24] gemma4-12b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [09:32:44] gemma4-12b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [09:34:44] gemma4-12b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [09:36:45] gemma4-12b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [09:37:53] gemma4-12b-awq loaded (attempt 6)
+[09:37:55] gen_qwen3_6_35b_awq × extract_gemma4_12b: extracting...
+[09:42:19] gen_qwen3_6_35b_awq × extract_gemma4_12b: 231 extracted
+[09:42:24] gen_qwen3_6_35b_awq × extract_qwen3_4b: warmup...
+  [09:43:24] qwen3-4b-instruct-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [09:44:45] qwen3-4b-instruct-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [09:46:05] qwen3-4b-instruct-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [09:47:06] qwen3-4b-instruct-awq loaded (attempt 4)
+[09:47:09] gen_qwen3_6_35b_awq × extract_qwen3_4b: extracting...
+[09:50:20] gen_qwen3_6_35b_awq × extract_qwen3_4b: 231 extracted
+[09:50:26] gen_gemma4_12b_awq × extract_gemma4_31b: warmup...
+  [09:51:26] gemma4-31b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [09:52:46] gemma4-31b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [09:54:06] gemma4-31b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [09:56:07] gemma4-31b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [09:58:07] gemma4-31b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [10:00:08] gemma4-31b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [10:02:15] gemma4-31b-awq loaded (attempt 7)
+[10:02:18] gen_gemma4_12b_awq × extract_gemma4_31b: extracting...
+[10:10:38] gen_gemma4_12b_awq × extract_gemma4_31b: 249 extracted
+[10:10:43] gen_gemma4_12b_awq × extract_qwen3_6_35b: warmup...
+  [10:11:43] qwen3.6-35b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [10:13:03] qwen3.6-35b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [10:14:23] qwen3.6-35b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [10:16:24] qwen3.6-35b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [10:18:24] qwen3.6-35b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [10:20:25] qwen3.6-35b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [10:23:25] qwen3.6-35b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [10:25:32] qwen3.6-35b-awq loaded (attempt 8)
+[10:25:36] gen_gemma4_12b_awq × extract_qwen3_6_35b: extracting...
+[10:32:48] gen_gemma4_12b_awq × extract_qwen3_6_35b: 247 extracted
+[10:32:53] gen_gemma4_12b_awq × extract_gemma4_12b: warmup...
+  [10:33:54] gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [10:35:14] gemma4-12b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [10:36:34] gemma4-12b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [10:38:34] gemma4-12b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [10:40:35] gemma4-12b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [10:41:42] gemma4-12b-awq loaded (attempt 6)
+[10:41:46] gen_gemma4_12b_awq × extract_gemma4_12b: extracting...
+[10:46:37] gen_gemma4_12b_awq × extract_gemma4_12b: 249 extracted
+[10:46:42] gen_gemma4_12b_awq × extract_qwen3_4b: warmup...
+  [10:47:43] qwen3-4b-instruct-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [10:49:03] qwen3-4b-instruct-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [10:50:23] qwen3-4b-instruct-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [10:51:24] qwen3-4b-instruct-awq loaded (attempt 4)
+[10:51:28] gen_gemma4_12b_awq × extract_qwen3_4b: extracting...
+[10:54:46] gen_gemma4_12b_awq × extract_qwen3_4b: 249 extracted
+[10:54:52] gen_qwen3_4b_instr_awq × extract_gemma4_31b: warmup...
+  [10:55:52] gemma4-31b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [10:57:12] gemma4-31b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [10:58:32] gemma4-31b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [11:00:33] gemma4-31b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [11:02:33] gemma4-31b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [11:04:34] gemma4-31b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [11:06:37] gemma4-31b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [11:09:38] gemma4-31b-awq: server unreachable (attempt 8, streak 8) — retry in 120s
+  [11:12:38] gemma4-31b-awq: server unreachable (attempt 9, streak 9) — retry in 120s
+  [11:15:38] gemma4-31b-awq: server unreachable (attempt 10, streak 10) — retry in 120s
+  [11:17:59] gemma4-31b-awq loaded (attempt 11)
+[11:18:02] gen_qwen3_4b_instr_awq × extract_gemma4_31b: extracting...
+[11:38:50] gen_qwen3_4b_instr_awq × extract_gemma4_31b: 237 extracted
+[11:38:55] gen_qwen3_4b_instr_awq × extract_qwen3_6_35b: warmup...
+  [11:39:56] qwen3.6-35b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [11:41:16] qwen3.6-35b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [11:42:37] qwen3.6-35b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [11:44:37] qwen3.6-35b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [11:46:37] qwen3.6-35b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [11:48:38] qwen3.6-35b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [11:51:38] qwen3.6-35b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [11:54:38] qwen3.6-35b-awq: server unreachable (attempt 8, streak 8) — retry in 120s
+  [11:56:39] qwen3.6-35b-awq loaded (attempt 9)
+[11:56:42] gen_qwen3_4b_instr_awq × extract_qwen3_6_35b: extracting...
+[12:03:54] gen_qwen3_4b_instr_awq × extract_qwen3_6_35b: 234 extracted
+[12:03:59] gen_qwen3_4b_instr_awq × extract_gemma4_12b: warmup...
+  [12:04:59] gemma4-12b-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [12:06:20] gemma4-12b-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [12:07:40] gemma4-12b-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [12:08:43] gemma4-12b-awq: server unreachable (attempt 4, streak 4) — retry in 60s
+  [12:09:46] gemma4-12b-awq: server unreachable (attempt 5, streak 5) — retry in 60s
+  [12:10:47] gemma4-12b-awq: server unreachable (attempt 6, streak 6) — retry in 120s
+  [12:13:47] gemma4-12b-awq: server unreachable (attempt 7, streak 7) — retry in 120s
+  [12:16:47] gemma4-12b-awq: server unreachable (attempt 8, streak 8) — retry in 120s
+  [12:19:48] gemma4-12b-awq: server unreachable (attempt 9, streak 9) — retry in 120s
+  [12:21:56] gemma4-12b-awq loaded (attempt 10)
+[12:21:59] gen_qwen3_4b_instr_awq × extract_gemma4_12b: extracting...
+[12:26:43] gen_qwen3_4b_instr_awq × extract_gemma4_12b: 237 extracted
+[12:26:48] gen_qwen3_4b_instr_awq × extract_qwen3_4b: warmup...
+  [12:27:49] qwen3-4b-instruct-awq: server unreachable (attempt 1, streak 1) — retry in 20s
+  [12:29:09] qwen3-4b-instruct-awq: server unreachable (attempt 2, streak 2) — retry in 20s
+  [12:30:29] qwen3-4b-instruct-awq: server unreachable (attempt 3, streak 3) — retry in 60s
+  [12:31:32] qwen3-4b-instruct-awq loaded (attempt 4)
+[12:31:34] gen_qwen3_4b_instr_awq × extract_qwen3_4b: extracting...
+[12:34:57] gen_qwen3_4b_instr_awq × extract_qwen3_4b: 237 extracted
+
+═══════════════════════════════════════════════════
+  ITERATION 6 — PHASE 3: EVALUATION
+═══════════════════════════════════════════════════
+
+=== F1 MATRIX (generator × extractor) ===
+
+Generator ↓ / Extractor →           gemma4_31b     qwen3_6_35b      gemma4_12b        qwen3_4b
+------------------------------------------------------------------------------------------
+gemma4_31b_awq                          0.9614          0.9217          0.9733          0.9324
+qwen3_6_35b_awq                         0.9056          0.9064          0.9001          0.8733
+gemma4_12b_awq                          0.9519          0.9271          0.9527          0.9409
+qwen3_4b_instr_awq                      0.8166          0.7852          0.8055          0.7868
+
+=== KEY METRICS (all 16 combinations) ===
+
+Combination                                                 F1      P      R     EM    Urg    ElP    ElR    FP  Ext/q
+--------------------------------------------------------------------------------------------------------------
+gemma4_31b_awq × gemma4_31b                              0.961  0.948  0.991  0.904  0.834  0.738  0.928    30   1.28
+gemma4_31b_awq × qwen3_6_35b                             0.922  0.914  0.940  0.887  0.774  0.782  0.871    40   1.27
+gemma4_31b_awq × gemma4_12b                              0.973  0.966  0.988  0.944  0.862  0.668  0.849    15   1.22
+gemma4_31b_awq × qwen3_4b                                0.932  0.912  0.975  0.844  0.563  0.612  0.627    65   1.40
+qwen3_6_35b_awq × gemma4_31b                             0.906  0.883  0.957  0.801  0.718  0.683  0.872    55   1.31
+qwen3_6_35b_awq × qwen3_6_35b                            0.906  0.897  0.928  0.855  0.675  0.680  0.775    48   1.26
+qwen3_6_35b_awq × gemma4_12b                             0.900  0.881  0.942  0.809  0.776  0.641  0.801    52   1.29
+qwen3_6_35b_awq × qwen3_4b                               0.873  0.851  0.923  0.775  0.417  0.534  0.538    83   1.40
+gemma4_12b_awq × gemma4_31b                              0.952  0.938  0.984  0.883  0.814  0.711  0.882    34   1.28
+gemma4_12b_awq × qwen3_6_35b                             0.927  0.919  0.946  0.878  0.730  0.725  0.836    38   1.26
+gemma4_12b_awq × gemma4_12b                              0.953  0.940  0.980  0.892  0.863  0.624  0.789    29   1.26
+gemma4_12b_awq × qwen3_4b                                0.941  0.929  0.967  0.875  0.498  0.545  0.586    51   1.33
+qwen3_4b_instr_awq × gemma4_31b                          0.817  0.806  0.865  0.679  0.299  0.630  0.822    82   1.32
+qwen3_4b_instr_awq × qwen3_6_35b                         0.785  0.789  0.808  0.684  0.395  0.603  0.778    83   1.27
+qwen3_4b_instr_awq × gemma4_12b                          0.805  0.795  0.854  0.654  0.329  0.541  0.714    82   1.31
+qwen3_4b_instr_awq × qwen3_4b                            0.787  0.769  0.850  0.625  0.167  0.428  0.451   123   1.48
+Reporte guardado en eval/results/iter_6/report.md
+
+Metrics: eval/results/iter_6/metrics.json
+Report: eval/results/iter_6/report.md
+
+═══════════════════════════════════════════════════
+  ITERATION 6 COMPLETE
+═══════════════════════════════════════════════════

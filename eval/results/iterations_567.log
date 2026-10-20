@@ -1,0 +1,43 @@
+=== Starting iterations 5, 6, 7 with N=250 ===
+
+================================================================
+  APPLYING PROMPT VARIANT FOR ITERATION 5
+================================================================
+Applied prompt variant iter_5 to:
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-generator/src/prompts.py
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-extractor/src/prompts.py
+
+  RUNNING ITERATION 5 (N=250)
+================================================================
+Iteration 5 finished (exit code 0).
+Report: eval/results/iter_5/report.md
+
+═══════════════════════════════════════════════════
+  ITERATION 5 COMPLETE
+═══════════════════════════════════════════════════
+
+================================================================
+  APPLYING PROMPT VARIANT FOR ITERATION 6
+================================================================
+Applied prompt variant iter_6 to:
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-generator/src/prompts.py
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-extractor/src/prompts.py
+
+  RUNNING ITERATION 6 (N=250)
+================================================================
+Iteration 6 finished (exit code 1).
+  File "<stdin>", line 71, in <module>
+  File "/mnt/backup/pc1/data/miUrba2/mi-urba/eval/evaluate.py", line 269, in generate_report
+    f"**Dataset:** {results[0]['total_gt']} quejas con ground truth\n",
+                    ~~~~~~~^^^
+IndexError: list index out of range
+
+================================================================
+  APPLYING PROMPT VARIANT FOR ITERATION 7
+================================================================
+Applied prompt variant iter_7 to:
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-generator/src/prompts.py
+  /mnt/backup/pc1/data/miUrba2/mi-urba/miurba-extractor/src/prompts.py
+
+  RUNNING ITERATION 7 (N=250)
+================================================================

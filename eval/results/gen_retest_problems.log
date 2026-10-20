@@ -1,0 +1,15 @@
+=== Retest 44 problem models ===
+[  1/44] OK   agentica-deepcoder-14b         ( 127.3s, fail   ): Hola, quería informar de un problema de fontanería en el garaje, plaza 23. Hay u
+[  2/44] FAIL apertus-8b                     (  58.0s, fail   ): 
+[  3/44] FAIL bloomz-3b                      (  18.0s, fail   ): 
+[  4/44] OK   command-r-08-2024              ( 119.6s, fail   ): Buenas, te escribo para reportar una emergencia en la plaza 23 del garaje. Hay u
+[  5/44] FAIL command-r-v01                  ( 229.1s, fail   ): 
+[  6/44] OK   deepseek-r1-distill-qwen-14b   (  53.2s, fail   ): Estimados compañeros de comunidad, quiero informarles de un problema urgente en 
+[  7/44] OK   deepseek-r1-distill-qwen-32b   ( 122.7s, fail   ): Urgente: hay una fuga en la fontanería del garaje en la plaza 23. Esto es una em
+[  8/44] FAIL deepseek-r1-distill-qwen-7b    (  34.3s, fail   ): 
+[  9/44] ERR  deepseek-v4-flash-iq2          ( 300.3s, fail   ): HTTPConnectionPool(host='192.168.10.1', port=4000)
+[ 10/44] FAIL falcon-7b-instruct             ( 192.5s, fail   ): 
+[ 11/44] OK   falcon3-1b-instruct            (  69.1s, fail   ): Urgent: Fondoatriz en Garaje, Plaza 23, urgencia urgente
+[ 12/44] OK   gemma-4-31B-it                 ( 243.1s, fail   ): Hola, buenas. Mire, hay una fuga de agua importantísima en el garaje, justo por 
+[ 13/44] OK   glm-4.7-flash                  ( 225.1s, fail   ): AL GESTOR O ADMINISTRACIÓN: ¡URGENTE! Se ha roto una tubería en el garaje de la 
+[ 14/44] OK   llama-3.2-1b-instruct          (  10.3s, fail   ): Corroborar la fuga en garaje de inmediato

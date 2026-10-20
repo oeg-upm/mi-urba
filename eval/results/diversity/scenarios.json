@@ -1,0 +1,886 @@
+[
+  {
+    "record_id": "Q0001",
+    "problems": [
+      {
+        "category": "fontanería",
+        "subcategory": "fugas",
+        "urgency": "media",
+        "location_zone": "locales",
+        "location_detail": "local bajo planta",
+        "risks": [
+          "inundación"
+        ],
+        "affected_elements": [
+          {
+            "principal": "instalación_sanitaria",
+            "subcategory": "alimentación"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C006",
+      "name": "Residencia Mayor",
+      "type": "bloque_pisos",
+      "num_viviendas": 60,
+      "year": 1965,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "joven_profesional",
+      "profile": "Hombre de 28-35, profesional urbano, vive solo. Poco tiempo, mucha tecnología. Primera vez que contacta.",
+      "style": "Directo, conciso, coloquial joven. \"tío\", \"va mal\", \"da la sensación\". Mensajes cortos. Emojis en WhatsApp. No conoce procedimientos.",
+      "weight": 6
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0002",
+    "problems": [
+      {
+        "category": "cubierta",
+        "subcategory": "impermeabilización",
+        "urgency": "alta",
+        "location_zone": "exterior",
+        "location_detail": "acera perimetral",
+        "risks": [
+          "inundación",
+          "caída"
+        ],
+        "affected_elements": [
+          {
+            "principal": "cubierta",
+            "subcategory": "terrazo_cubierta"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C001",
+      "name": "Residencial Las Acacias",
+      "type": "bloque_pisos",
+      "num_viviendas": 48,
+      "year": 1985,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecino_tecnico",
+      "profile": "Ingeniero o profesional técnico. Preciso, terminología específica. No especula.",
+      "style": "Preciso y técnico. \"Fisura de retracción de 2mm\", \"PVC Ø110 con pérdida\". Estructurado. No emocional. Sugiere soluciones técnicas.",
+      "weight": 3
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0003",
+    "problems": [
+      {
+        "category": "ascensor",
+        "subcategory": "puertas_cabina",
+        "urgency": "alta",
+        "location_zone": "portal",
+        "location_detail": "hall de entrada",
+        "risks": [
+          "seguridad_persona"
+        ],
+        "affected_elements": [
+          {
+            "principal": "equipamiento",
+            "subcategory": "bomba_presión"
+          },
+          {
+            "principal": "puerta",
+            "subcategory": "cortafuegos"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "abuelo_ajetreado",
+      "profile": "Hombre mayor de 70, con movilidad reducida. Vive solo. Depende del ascensor y las zonas accesibles.",
+      "style": "Tono quejumbroso pero resignado. \"Ya estoy mayor para estas cosas\", \"no puedo subir las escaleras\". Enfatiza cómo le afecta personalmente. Pide que lo tengan en cuenta.",
+      "weight": 5
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0004",
+    "problems": [
+      {
+        "category": "climatización",
+        "subcategory": "ACS",
+        "urgency": "media",
+        "location_zone": "azotea",
+        "location_detail": "cuarto de máquinas",
+        "risks": [
+          "ninguno"
+        ],
+        "affected_elements": [
+          {
+            "principal": "equipamiento",
+            "subcategory": "bomba_presión"
+          },
+          {
+            "principal": "tubería",
+            "subcategory": "presión"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C002",
+      "name": "Urbanización El Roble",
+      "type": "urbanizacion",
+      "num_viviendas": 120,
+      "year": 2005,
+      "has_elevator": false,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "inquilino_reciente",
+      "profile": "Se acaba de mudar (2-6 meses). No conoce zonas comunes ni procedimientos.",
+      "style": "Inseguro, pregunta más que afirma. \"¿A quién le doy parte?\", \"no sé si esto es competencia de la comunidad\". Nombres vagos de zonas. Mensajes breves.",
+      "weight": 5
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0005",
+    "problems": [
+      {
+        "category": "fontanería",
+        "subcategory": "agua_caliente",
+        "urgency": "inmediata",
+        "location_zone": "exterior",
+        "location_detail": "terraza comunitaria",
+        "risks": [
+          "inundación"
+        ],
+        "affected_elements": [
+          {
+            "principal": "revestimiento",
+            "subcategory": "mortero"
+          },
+          {
+            "principal": "tubería",
+            "subcategory": "riego"
+          },
+          {
+            "principal": "instalación_sanitaria",
+            "subcategory": "suministro_general"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C006",
+      "name": "Residencia Mayor",
+      "type": "bloque_pisos",
+      "num_viviendas": 60,
+      "year": 1965,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecino_racional",
+      "profile": "Analítico y frío. No se emociona. Causa-efecto. Prioriza por coste-beneficio. Piensa en el presupuesto de la comunidad.",
+      "style": "Objetivo y económico. \"Si lo arreglamos ahora sale más barato\", \"es mejor invertir en prevención\". Sin emociones. Referencias al dinero. Propone priorizar.",
+      "weight": 3
+    },
+    "modifier": {
+      "id": "ultra_conciso",
+      "description": "Escribe lo mínimo imprescindible. Telegráfico.",
+      "style_override": "Extremadamente breve. 2-5 palabras. Sin saludo, sin despedida, sin contexto. \"Ascensor roto\", \"fuga garaje\", \"persiana portal 2 caída\". A veces solo un sustantivo y un adjetivo.",
+      "prob": 0.04
+    },
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0006",
+    "problems": [
+      {
+        "category": "carpintería",
+        "subcategory": "cristales",
+        "urgency": "media",
+        "location_zone": "portal",
+        "location_detail": "escalera",
+        "risks": [
+          "seguridad_persona"
+        ],
+        "affected_elements": [
+          {
+            "principal": "ventana",
+            "subcategory": "marco"
+          },
+          {
+            "principal": "puerta",
+            "subcategory": "ascensor"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C002",
+      "name": "Urbanización El Roble",
+      "type": "urbanizacion",
+      "num_viviendas": 120,
+      "year": 2005,
+      "has_elevator": false,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "padre_activo",
+      "profile": "Padre de 40-50, implicación media-alta. Lleva a los niños al parque de la comunidad. Práctico y resolutivo.",
+      "style": "Tono práctico y directo. \"Mira, el tema es este\", \"lo que hay que hacer es...\". Sugiere soluciones más que quejarse. Mensajes estructurados.",
+      "weight": 5
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0007",
+    "problems": [
+      {
+        "category": "seguridad",
+        "subcategory": "alumbrado_exterior",
+        "urgency": "media",
+        "location_zone": "exterior",
+        "location_detail": "patio de entrada",
+        "risks": [
+          "seguridad_persona"
+        ],
+        "affected_elements": [
+          {
+            "principal": "equipamiento",
+            "subcategory": "caldera"
+          },
+          {
+            "principal": "cerramiento",
+            "subcategory": "portón"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecina_pasivo_agresiva",
+      "profile": "No quiere parecer conflictiva pero está molesta. Indirectas, tercera persona. \"No es por mí, pero...\".",
+      "style": "Aparentemente amable, cargada de indirectas. \"No sé si alguien más lo habrá notado...\", \"supongo que no es para tanto\". \"Por si acaso\". Va subiendo de tono.",
+      "weight": 5
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0008",
+    "problems": [
+      {
+        "category": "fachada",
+        "subcategory": "pintura",
+        "urgency": "media",
+        "location_zone": "exterior",
+        "location_detail": "acera perimetral",
+        "risks": [
+          "caída"
+        ],
+        "affected_elements": [
+          {
+            "principal": "muro",
+            "subcategory": "pantalla"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C001",
+      "name": "Residencial Las Acacias",
+      "type": "bloque_pisos",
+      "num_viviendas": 48,
+      "year": 1985,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecino_nuevo_dinero",
+      "profile": "Acaba de comprar un piso caro. Expectativas altísimas. No tolera imperfecciones. Recién llegada de chalet.",
+      "style": "Exigente y con expectativas de servicio premium. \"Acabo de comprar y ya tengo problemas\", \"en mi anterior comunidad esto no pasaba\". Comparaciones con estándares altos. Tono indignado.",
+      "weight": 2
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0009",
+    "problems": [
+      {
+        "category": "fontanería",
+        "subcategory": "rotura_tubería",
+        "urgency": "baja",
+        "location_zone": "exterior",
+        "location_detail": "fachada sur",
+        "risks": [
+          "ninguno"
+        ],
+        "affected_elements": [
+          {
+            "principal": "tubería",
+            "subcategory": "vertical"
+          },
+          {
+            "principal": "suelo",
+            "subcategory": "parquet"
+          },
+          {
+            "principal": "instalación_sanitaria",
+            "subcategory": "alimentación"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C005",
+      "name": "Adosados La Dehesa",
+      "type": "adosados",
+      "num_viviendas": 32,
+      "year": 2015,
+      "has_elevator": false,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "inquilino_transeunte",
+      "profile": "Estudiante o joven temporal. No se implica. Reporta lo mínimo. Se muda en meses.",
+      "style": "Despreocupado. \"Se ha roto X\", sin más contexto. No pide seguimiento. \"Si pueden mirarlo\". Tono de quien no se siente parte de la comunidad.",
+      "weight": 3
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0010",
+    "problems": [
+      {
+        "category": "seguridad",
+        "subcategory": "cámaras",
+        "urgency": "media",
+        "location_zone": "portal",
+        "location_detail": "zona de buzones",
+        "risks": [
+          "seguridad_persona"
+        ],
+        "affected_elements": [
+          {
+            "principal": "equipamiento",
+            "subcategory": "bomba_presión"
+          },
+          {
+            "principal": "cerramiento",
+            "subcategory": "valla"
+          },
+          {
+            "principal": "instalación_eléctrica",
+            "subcategory": "punto_luz"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecino_nuevo_dinero",
+      "profile": "Acaba de comprar un piso caro. Expectativas altísimas. No tolera imperfecciones. Recién llegada de chalet.",
+      "style": "Exigente y con expectativas de servicio premium. \"Acabo de comprar y ya tengo problemas\", \"en mi anterior comunidad esto no pasaba\". Comparaciones con estándares altos. Tono indignado.",
+      "weight": 2
+    },
+    "modifier": {
+      "id": "habla_gallega",
+      "description": "Gallego con giros y estructuras propias.",
+      "style_override": "Castellano con gallegadas: \"¿qué se le ofrece?\", uso del condicional por subjuntivo, \"cando\" por \"cuando\", \"véña\" por \"venga\". Tono amable y algo arcaizante. \"Pois mire, que cho digo que a tubería está rota desde faismos tempo\".",
+      "prob": 0.03
+    },
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0011",
+    "problems": [
+      {
+        "category": "fontanería",
+        "subcategory": "fugas",
+        "urgency": "baja",
+        "location_zone": "garaje",
+        "location_detail": "cuarto de contadores",
+        "risks": [
+          "sanitario"
+        ],
+        "affected_elements": [
+          {
+            "principal": "instalación_sanitaria",
+            "subcategory": "suministro_general"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C005",
+      "name": "Adosados La Dehesa",
+      "type": "adosados",
+      "num_viviendas": 32,
+      "year": 2015,
+      "has_elevator": false,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "madre_preocupada",
+      "profile": "Mujer de 35-45, madre de niños pequeños. Hipervigilante con la seguridad. 3-5 años en la comunidad.",
+      "style": "Tono preocupado, enfatiza riesgos infantiles. \"Mi hijo podría caer\", \"los niños juegan ahí\". Exclamaciones. Pide urgencia a veces desproporcionada.",
+      "weight": 7
+    },
+    "modifier": {
+      "id": "semianalfabeto",
+      "description": "Escribe como habla, sin ortografía ni puntuación. faltas constantes.",
+      "style_override": "Escribe con faltas de ortografía graves: hache mudas (ojo por hojo), b/v mezcladas, g/j, s/c/z, sin puntuación o puntuación aleatoria. Frases larguísimas sin punto. Todo seguido o todo en minúscula. \"k\" por \"qu\", abreviaciones SMS. Ejemplo: \"k se a roto la tuberia y ai agua x todos ldao\".",
+      "prob": 0.08
+    },
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0012",
+    "problems": [
+      {
+        "category": "cubierta",
+        "subcategory": "impermeabilización",
+        "urgency": "baja",
+        "location_zone": "exterior",
+        "location_detail": "patio de entrada",
+        "risks": [
+          "caída"
+        ],
+        "affected_elements": [
+          {
+            "principal": "muro",
+            "subcategory": "medianero"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "portero_encargado",
+      "profile": "Conserje o portero del edificio. Conoce mejor que nadie el estado de las zonas comunes. Reporta lo que ve en su ronda.",
+      "style": "Tono práctico y coloquial de trabajador. \"Don Pepe, que me he dao cuenta que...\", \"esta mañana al hacer la ronda he visto que...\". Conoce nombres de vecinos y zonas. Usa términos de mantenimiento.",
+      "weight": 3
+    },
+    "modifier": {
+      "id": "semianalfabeto",
+      "description": "Escribe como habla, sin ortografía ni puntuación. faltas constantes.",
+      "style_override": "Escribe con faltas de ortografía graves: hache mudas (ojo por hojo), b/v mezcladas, g/j, s/c/z, sin puntuación o puntuación aleatoria. Frases larguísimas sin punto. Todo seguido o todo en minúscula. \"k\" por \"qu\", abreviaciones SMS. Ejemplo: \"k se a roto la tuberia y ai agua x todos ldao\".",
+      "prob": 0.08
+    },
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0013",
+    "problems": [
+      {
+        "category": "electricidad",
+        "subcategory": "cuadro_eléctrico",
+        "urgency": "media",
+        "location_zone": "portal",
+        "location_detail": "ascensor",
+        "risks": [
+          "eléctrico",
+          "incendio"
+        ],
+        "affected_elements": [
+          {
+            "principal": "instalación_eléctrica",
+            "subcategory": "cuadro"
+          },
+          {
+            "principal": "equipamiento",
+            "subcategory": "bomba_presión"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C001",
+      "name": "Residencial Las Acacias",
+      "type": "bloque_pisos",
+      "num_viviendas": 48,
+      "year": 1985,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "padre_activo",
+      "profile": "Padre de 40-50, implicación media-alta. Lleva a los niños al parque de la comunidad. Práctico y resolutivo.",
+      "style": "Tono práctico y directo. \"Mira, el tema es este\", \"lo que hay que hacer es...\". Sugiere soluciones más que quejarse. Mensajes estructurados.",
+      "weight": 5
+    },
+    "modifier": {
+      "id": "habla_andaluza",
+      "description": "Andaluz: ceceo/seseo, aspiración, contracciones.",
+      "style_override": "Andaluz escrito: \"na má\" por \"nada más\", \"usté\" por \"usted\", \"pohía\" por \"podía\", \"to esto\" por \"todo esto\". Ceceo: \"grasia\" por \"gracia\". Contracciones: \"pa'l\", \"na de na\". Tono cálido. \"Mire usté, que se ha desprendío too el revoco de la fachá y náide dice ná\".",
+      "prob": 0.06
+    },
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0014",
+    "problems": [
+      {
+        "category": "ruido",
+        "subcategory": "vibraciones",
+        "urgency": "baja",
+        "location_zone": "garaje",
+        "location_detail": "nivel -1",
+        "risks": [
+          "ninguno"
+        ],
+        "affected_elements": [
+          {
+            "principal": "estructura",
+            "subcategory": "pilar"
+          }
+        ]
+      },
+      {
+        "category": "seguridad",
+        "subcategory": "alumbrado_exterior",
+        "urgency": "media",
+        "location_zone": "exterior",
+        "location_detail": "fachada norte",
+        "risks": [
+          "seguridad_persona"
+        ],
+        "affected_elements": [
+          {
+            "principal": "instalación_eléctrica",
+            "subcategory": "cableado"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "madre_preocupada",
+      "profile": "Mujer de 35-45, madre de niños pequeños. Hipervigilante con la seguridad. 3-5 años en la comunidad.",
+      "style": "Tono preocupado, enfatiza riesgos infantiles. \"Mi hijo podría caer\", \"los niños juegan ahí\". Exclamaciones. Pide urgencia a veces desproporcionada.",
+      "weight": 7
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0015",
+    "problems": [
+      {
+        "category": "fontanería",
+        "subcategory": "desagües",
+        "urgency": "urgente",
+        "location_zone": "locales",
+        "location_detail": "local bajo planta",
+        "risks": [
+          "eléctrico"
+        ],
+        "affected_elements": [
+          {
+            "principal": "revestimiento",
+            "subcategory": "azulejo"
+          },
+          {
+            "principal": "instalación_sanitaria",
+            "subcategory": "contra_incendios"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C001",
+      "name": "Residencial Las Acacias",
+      "type": "bloque_pisos",
+      "num_viviendas": 48,
+      "year": 1985,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecino_conspiranoico",
+      "profile": "Desconfía de todo. Cree que la comunidad le oculta cosas, que las obras son innecesarias, que hay enchufismo.",
+      "style": "Sospecha en todo. \"Seguro que ya lo sabíais\", \"no me extraña que no se haya hecho nada\". Teorías sobre por qué no arreglan. Cita \"otras veces que\". Desconfianza.",
+      "weight": 3
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0016",
+    "problems": [
+      {
+        "category": "mobiliario",
+        "subcategory": "bancos",
+        "urgency": "inmediata",
+        "location_zone": "piscina",
+        "location_detail": "cuarto de maquinaria",
+        "risks": [
+          "caída"
+        ],
+        "affected_elements": [
+          {
+            "principal": "mobiliario_común",
+            "subcategory": "papelera"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "joven_profesional",
+      "profile": "Hombre de 28-35, profesional urbano, vive solo. Poco tiempo, mucha tecnología. Primera vez que contacta.",
+      "style": "Directo, conciso, coloquial joven. \"tío\", \"va mal\", \"da la sensación\". Mensajes cortos. Emojis en WhatsApp. No conoce procedimientos.",
+      "weight": 6
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0017",
+    "problems": [
+      {
+        "category": "climatización",
+        "subcategory": "aire_acondicionado",
+        "urgency": "media",
+        "location_zone": "portal",
+        "location_detail": "portería",
+        "risks": [
+          "ninguno"
+        ],
+        "affected_elements": [
+          {
+            "principal": "instalación_sanitaria",
+            "subcategory": "alimentación"
+          },
+          {
+            "principal": "equipamiento",
+            "subcategory": "caldera"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C001",
+      "name": "Residencial Las Acacias",
+      "type": "bloque_pisos",
+      "num_viviendas": 48,
+      "year": 1985,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "inquilino_reciente",
+      "profile": "Se acaba de mudar (2-6 meses). No conoce zonas comunes ni procedimientos.",
+      "style": "Inseguro, pregunta más que afirma. \"¿A quién le doy parte?\", \"no sé si esto es competencia de la comunidad\". Nombres vagos de zonas. Mensajes breves.",
+      "weight": 5
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0018",
+    "problems": [
+      {
+        "category": "electricidad",
+        "subcategory": "cortes_suministro",
+        "urgency": "alta",
+        "location_zone": "exterior",
+        "location_detail": "patio de luces",
+        "risks": [
+          "eléctrico"
+        ],
+        "affected_elements": [
+          {
+            "principal": "equipamiento",
+            "subcategory": "caldera"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C001",
+      "name": "Residencial Las Acacias",
+      "type": "bloque_pisos",
+      "num_viviendas": 48,
+      "year": 1985,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "vecino_sumiso",
+      "profile": "Se queja lo mínimo. Se disculpa por molestar. Acepta cualquier respuesta. Tarda en reportar porque \"no quiere dar la lata\".",
+      "style": "Excesivamente comedido. \"Perdona, no quería molestar\", \"si no es mucha molestia...\", \"solo era por si acaso\". Minimiza su propio problema. Se disculpa al final.",
+      "weight": 4
+    },
+    "modifier": {
+      "id": "ultra_conciso",
+      "description": "Escribe lo mínimo imprescindible. Telegráfico.",
+      "style_override": "Extremadamente breve. 2-5 palabras. Sin saludo, sin despedida, sin contexto. \"Ascensor roto\", \"fuga garaje\", \"persiana portal 2 caída\". A veces solo un sustantivo y un adjetivo.",
+      "prob": 0.04
+    },
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0019",
+    "problems": [
+      {
+        "category": "limpieza",
+        "subcategory": "residuos_voluminosos",
+        "urgency": "baja",
+        "location_zone": "portal",
+        "location_detail": "hall de entrada",
+        "risks": [
+          "ninguno"
+        ],
+        "affected_elements": [
+          {
+            "principal": "suelo",
+            "subcategory": "cimentación"
+          },
+          {
+            "principal": "mobiliario_común",
+            "subcategory": "mesa"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C003",
+      "name": "Edificio Mirador",
+      "type": "bloque_pisos",
+      "num_viviendas": 24,
+      "year": 1972,
+      "has_elevator": true,
+      "has_pool": false,
+      "has_garage": false
+    },
+    "persona": {
+      "id": "presidente_comunidad",
+      "profile": "Presidente de la comunidad de propietarios. Conoce estatutos, presupuestos, historial. Habla en nombre de otros.",
+      "style": "Institucional. \"Como presidente\", \"en la última junta se acordó\". Cita normativas. Estructura: problema, urgencia, propuesta. Adjunta fotos de otros vecinos.",
+      "weight": 4
+    },
+    "modifier": null,
+    "num_pics": 0
+  },
+  {
+    "record_id": "Q0020",
+    "problems": [
+      {
+        "category": "ascensor",
+        "subcategory": "avería",
+        "urgency": "media",
+        "location_zone": "portal",
+        "location_detail": "zona de buzones",
+        "risks": [
+          "accesibilidad"
+        ],
+        "affected_elements": [
+          {
+            "principal": "puerta",
+            "subcategory": "trastero"
+          }
+        ]
+      }
+    ],
+    "community": {
+      "id": "C004",
+      "name": "Complejo Los Pinos",
+      "type": "complejo_residencial",
+      "num_viviendas": 86,
+      "year": 1998,
+      "has_elevator": true,
+      "has_pool": true,
+      "has_garage": true
+    },
+    "persona": {
+      "id": "joven_profesional",
+      "profile": "Hombre de 28-35, profesional urbano, vive solo. Poco tiempo, mucha tecnología. Primera vez que contacta.",
+      "style": "Directo, conciso, coloquial joven. \"tío\", \"va mal\", \"da la sensación\". Mensajes cortos. Emojis en WhatsApp. No conoce procedimientos.",
+      "weight": 6
+    },
+    "modifier": null,
+    "num_pics": 0
+  }
+]

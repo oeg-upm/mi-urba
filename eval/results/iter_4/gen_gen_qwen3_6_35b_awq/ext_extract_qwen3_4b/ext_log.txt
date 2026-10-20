@@ -1,0 +1,45 @@
+19:02:12 [INFO] src.pipeline: Extracting 245 complaints with 32 workers...
+19:02:20 [INFO] src.pipeline: Progress: 10/245 done, 0 failed this pass, tokens: in=59,758, out=4,995
+19:02:23 [INFO] src.pipeline: Progress: 20/245 done, 0 failed this pass, tokens: in=110,349, out=10,089
+19:02:25 [INFO] src.pipeline: Progress: 30/245 done, 0 failed this pass, tokens: in=149,437, out=14,663
+19:02:28 [INFO] src.pipeline: Progress: 40/245 done, 0 failed this pass, tokens: in=197,763, out=18,777
+19:02:32 [INFO] src.pipeline: Progress: 50/245 done, 0 failed this pass, tokens: in=243,610, out=23,185
+19:02:35 [INFO] src.pipeline: Progress: 60/245 done, 0 failed this pass, tokens: in=289,920, out=26,823
+19:02:37 [INFO] src.pipeline: Progress: 70/245 done, 0 failed this pass, tokens: in=323,445, out=29,789
+19:02:40 [INFO] src.pipeline: Progress: 80/245 done, 0 failed this pass, tokens: in=360,026, out=33,145
+19:02:44 [INFO] src.pipeline: Progress: 90/245 done, 0 failed this pass, tokens: in=398,668, out=37,223
+19:02:47 [INFO] src.pipeline: Progress: 100/245 done, 0 failed this pass, tokens: in=442,887, out=42,046
+19:02:50 [INFO] src.pipeline: Progress: 110/245 done, 0 failed this pass, tokens: in=486,278, out=46,537
+19:02:52 [INFO] src.pipeline: Progress: 120/245 done, 0 failed this pass, tokens: in=517,449, out=49,554
+19:02:56 [INFO] src.pipeline: Progress: 130/245 done, 0 failed this pass, tokens: in=571,115, out=54,409
+19:03:00 [INFO] src.pipeline: Progress: 140/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:04 [INFO] src.pipeline: Progress: 150/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:07 [INFO] src.pipeline: Progress: 160/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:12 [INFO] src.pipeline: Progress: 170/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:17 [INFO] src.pipeline: Progress: 180/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:21 [INFO] src.pipeline: Progress: 190/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:25 [INFO] src.pipeline: Progress: 200/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:28 [INFO] src.pipeline: Progress: 210/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:31 [INFO] src.pipeline: Progress: 220/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:37 [INFO] src.pipeline: Progress: 230/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+19:03:41 [INFO] src.pipeline: Progress: 240/245 done, 0 failed this pass, tokens: in=593,040, out=57,266
+miUrba — Extraction (raw + images → structured, VLM)
+=======================================================
+  Model (VLM): qwen3-4b-instruct-awq
+  Endpoint:   http://192.168.10.11:9292
+  Source:     ../eval/results/iter_4/gen_gen_qwen3_6_35b_awq/raw/complaints.jsonl
+  Images:     data/images
+  Output:     eval/results/iter_4/gen_gen_qwen3_6_35b_awq/ext_extract_qwen3_4b/annotated/extractions.jsonl
+  Resume:     True
+=======================================================
+
+=======================================================
+Extraction complete!
+  Extracted:  245
+  Failed:     0
+  Skipped:    0
+  Total:      245
+  Tokens in:  593,040
+  Tokens out: 57,266
+  Images dir: data/images
+  Output:     eval/results/iter_4/gen_gen_qwen3_6_35b_awq/ext_extract_qwen3_4b/annotated/extractions.jsonl

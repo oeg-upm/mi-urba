@@ -1,0 +1,74 @@
+{
+ "deepseek-r1-distill-llama-8b": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.2,
+  "urgency_accuracy": 0.4,
+  "risks_accuracy": 0.6,
+  "naturalness_mean": 3.4
+ },
+ "deepseek-r1-distill-qwen-7b": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.7,
+  "urgency_accuracy": 0.5,
+  "risks_accuracy": 0.5,
+  "naturalness_mean": 1.8
+ },
+ "falcon3-7b-instruct": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.1,
+  "urgency_accuracy": 0.6,
+  "risks_accuracy": 0.9,
+  "naturalness_mean": 3.7
+ },
+ "granite-3.3-2b": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.7,
+  "urgency_accuracy": 0.5,
+  "risks_accuracy": 0.8,
+  "naturalness_mean": 3.4
+ },
+ "mistral-7b-v0.3-base": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.3,
+  "urgency_accuracy": 0.2,
+  "risks_accuracy": 1.0,
+  "naturalness_mean": 3.2
+ },
+ "olmo-2-13b-instruct": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.4,
+  "urgency_accuracy": 0.4,
+  "risks_accuracy": 0.7,
+  "naturalness_mean": 3.4
+ },
+ "pantheon-rp-8b-llama3": {
+  "n": 10,
+  "completeness_rate": 0.85,
+  "hallucination_rate": 0.4,
+  "urgency_accuracy": 0.6,
+  "risks_accuracy": 0.7,
+  "naturalness_mean": 4.1
+ },
+ "phi-4": {
+  "n": 10,
+  "completeness_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "urgency_accuracy": 0.8,
+  "risks_accuracy": 1.0,
+  "naturalness_mean": 4.1
+ },
+ "qwen3-0.6b": {
+  "n": 10,
+  "completeness_rate": 0.5333,
+  "hallucination_rate": 0.5,
+  "urgency_accuracy": 0.3,
+  "risks_accuracy": 0.2,
+  "naturalness_mean": 3.1
+ }
+}

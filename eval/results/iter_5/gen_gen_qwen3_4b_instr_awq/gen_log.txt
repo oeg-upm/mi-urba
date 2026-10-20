@@ -1,0 +1,69 @@
+23:08:50 [INFO] src.pipeline: Generating 250 records with 32 workers...
+23:09:10 [INFO] src.pipeline: Progress: 10/250 generated, 0 failed, tokens: in=70,852, out=11,191
+23:09:25 [INFO] src.pipeline: Progress: 20/250 generated, 0 failed, tokens: in=131,280, out=22,895
+23:09:41 [INFO] src.pipeline: Progress: 30/250 generated, 0 failed, tokens: in=187,647, out=32,384
+23:09:54 [INFO] src.pipeline: Progress: 40/250 generated, 0 failed, tokens: in=239,243, out=41,621
+23:10:09 [INFO] src.pipeline: Progress: 50/250 generated, 0 failed, tokens: in=291,546, out=50,202
+23:10:28 [INFO] src.pipeline: Progress: 60/250 generated, 0 failed, tokens: in=352,258, out=61,639
+23:10:48 [INFO] src.pipeline: Progress: 70/250 generated, 0 failed, tokens: in=352,258, out=61,639
+23:10:57 [WARNING] src.pipeline: [Q0026] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:11:08 [INFO] src.pipeline: Progress: 80/250 generated, 0 failed, tokens: in=353,856, out=68,233
+23:11:28 [INFO] src.pipeline: Progress: 90/250 generated, 0 failed, tokens: in=353,856, out=68,233
+23:11:39 [WARNING] src.pipeline: [Q0005] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:11:50 [INFO] src.pipeline: Progress: 100/250 generated, 0 failed, tokens: in=355,572, out=74,709
+23:11:52 [WARNING] src.pipeline: [Q0058] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:02 [WARNING] src.pipeline: [Q0019] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:09 [INFO] src.pipeline: Progress: 110/250 generated, 0 failed, tokens: in=358,795, out=87,870
+23:12:11 [WARNING] src.pipeline: [Q0121] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:13 [WARNING] src.pipeline: [Q0125] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:13 [WARNING] src.pipeline: [Q0071] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:27 [INFO] src.pipeline: Progress: 120/250 generated, 0 failed, tokens: in=363,172, out=108,069
+23:12:38 [WARNING] src.pipeline: [Q0047] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:40 [WARNING] src.pipeline: [Q0065] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:43 [WARNING] src.pipeline: [Q0072] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:48 [INFO] src.pipeline: Progress: 130/250 generated, 0 failed, tokens: in=368,011, out=127,806
+23:12:50 [WARNING] src.pipeline: [Q0228] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:12:55 [WARNING] src.pipeline: [Q0141] JSON parse failed: Unterminated string starting at: line 2 column 16 (char 17)
+23:13:08 [INFO] src.pipeline: Progress: 140/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:13:29 [INFO] src.pipeline: Progress: 150/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:13:51 [INFO] src.pipeline: Progress: 160/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:14:12 [INFO] src.pipeline: Progress: 170/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:14:33 [INFO] src.pipeline: Progress: 180/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:14:53 [INFO] src.pipeline: Progress: 190/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:15:21 [INFO] src.pipeline: Progress: 200/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:15:55 [INFO] src.pipeline: Progress: 210/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:16:15 [INFO] src.pipeline: Progress: 220/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:16:37 [INFO] src.pipeline: Progress: 230/250 generated, 0 failed, tokens: in=371,059, out=141,142
+23:16:54 [WARNING] src.pipeline: [Q0026] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0005] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0058] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0019] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0121] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0125] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0071] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0047] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0065] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0072] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0228] Generation failed
+23:16:54 [WARNING] src.pipeline: [Q0141] Generation failed
+miUrba — Generation (single model)
+=======================================================
+  Model:      gen_qwen3_4b_instr_awq (qwen3-4b-instruct-awq)
+  Endpoint:   http://192.168.10.11:9292
+  Records:    250
+  IDs:        Q0001 — Q0250
+  Output:     ../eval/results/iter_5/gen_gen_qwen3_4b_instr_awq/raw/
+  Images:     disabled
+  Resume:     True
+=======================================================
+
+=======================================================
+Generation complete!
+  Generated:  238
+  Failed:     12
+  Tokens in:  371,059
+  Tokens out: 141,142
+  Raw:        ../eval/results/iter_5/gen_gen_qwen3_4b_instr_awq/raw/complaints.jsonl
+  Ground truth: ../eval/results/iter_5/gen_gen_qwen3_4b_instr_awq/raw/ground_truth.jsonl
+  Metadata:    ../eval/results/iter_5/gen_gen_qwen3_4b_instr_awq/raw/metadata.jsonl
+  Images dir: None
