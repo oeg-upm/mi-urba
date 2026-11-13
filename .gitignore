@@ -46,3 +46,34 @@ Thumbs.db
 
 # Generated test output
 test_results.json
+
+# Test config with LAN endpoint
+config.test.yaml
+config.test_b.yaml
+config.test_c.yaml
+config.test_d.yaml
+data_test/
+data_test_b/
+data_test_b2/
+
+# Docker run logs
+logs/
+
+# Prompt iteration backups
+*.bak
+
+# Coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+
+# Generated corpora and benchmark runs (hundreds of MB of jsonl, logs and
+# per-model dumps). The frozen inputs stay tracked: eval/judge_bench/cases.jsonl,
+# eval/judge_bench/batches/, eval/judge_bench/labels/ and ANNOTATION_GUIDE.md.
+eval/results/
+eval/judge_bench/gold_100/
+eval/judge_bench/gold_smoke25/
+eval/judge_bench/pilot*/
+eval/judge_bench/results/
+eval/judge_bench/*.log
+eval/judge_bench/smoke_*.txt

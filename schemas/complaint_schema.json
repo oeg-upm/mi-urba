@@ -22,16 +22,6 @@
       "description": "List of image filenames referenced by this complaint",
       "default": []
     },
-    "channel": {
-      "type": "string",
-      "description": "Channel through which the complaint was received",
-      "enum": ["whatsapp", "email", "presencial", "app", "telefono", "buzon_sugerencias"]
-    },
-    "channel": {
-      "type": "string",
-      "description": "Channel through which the complaint was received",
-      "enum": ["whatsapp", "email", "presencial", "app", "telefono", "buzon_sugerencias"]
-    },
     "timestamp": {
       "type": "string",
       "format": "date-time",

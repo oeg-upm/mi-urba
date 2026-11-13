@@ -2,9 +2,9 @@ endpoints:
   neuralwatt:
     base_url: https://api.neuralwatt.com/v1
     description: NeuralWatt API (OpenAI-compatible)
-    api_key: sk-a16ec848369b9f78bdb67db1a8c43d8ac9afc49fa1ad255ce5eec0be0691a699
+    api_key: ${NEURALWATT_API_KEY}   # from .env or environment (never commit)
   llama_swap:
-    base_url: http://192.168.10.11:9292
+    base_url: http://llama-swap.local:9292   # set to your llama-swap host
     description: Local GPU cluster via llama-swap
 models:
   kimi-k2.6:
@@ -68,16 +68,13 @@ models:
     model: qwen3.6-27b-q6-k-xl-mtp-2
     temperature: 0.85
 generation:
-  default_output_dir: data
+  # Salida de la demo (relativa a miurba-generator/, donde corre el CLI)
+  default_output_dir: ../demo/output
   batches:
   - model: kimi-k2.6
     count: 3
   - model: qwen3_local
     count: 3
-annotation:
-  model: kimi-k2.6
-  temperature: 0.2
-  vision_model: kimi-k2.6
 paths:
   raw_subdir: raw
   annotated_subdir: annotated
@@ -1003,3 +1000,15 @@ urgency_weights:
     media: 35
     baja: 25
     planificable: 15
+
+extraction:
+  model: kimi-k2.6
+  temperature: 0.2
+  default_output_dir: ../demo/output
+  raw_dir: ../demo/output/raw
+  annotated_dir: ../demo/output/annotated
+  images_dir: ../demo/output/images
+  resume: false
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0

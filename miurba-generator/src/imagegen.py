@@ -13,6 +13,7 @@ deps when image generation is disabled.
 
 import json
 import os
+import threading
 from typing import Any
 
 
@@ -35,6 +36,9 @@ class FluxImageGenerator:
         self.device0 = device0
         self.device1 = device1
         self.pipe: Any = None
+        # diffusers pipelines are NOT thread-safe: serialize generate() calls
+        # when the pipeline runs inside a worker pool.
+        self._gen_lock = threading.Lock()
         self._device0 = None
 
     def load(self):
@@ -123,7 +127,17 @@ class FluxImageGenerator:
         return self
 
     def generate(self, prompt: str, seed: int, out_path: str) -> str:
-        """Generate one image and save it to out_path."""
+        """Generate one image and save it to out_path.
+
+        Thread-safe: the diffusers pipeline is stateful and not thread-safe,
+        so concurrent worker threads are serialized behind a lock.
+        """
+        import torch
+
+        with self._gen_lock:
+            return self._generate_locked(prompt, seed, out_path)
+
+    def _generate_locked(self, prompt: str, seed: int, out_path: str) -> str:
         import torch
 
         if self.pipe is None:

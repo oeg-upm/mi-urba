@@ -1,0 +1,85 @@
+# Smoke largo 4K: los cinco generadores × 100 registros, con 4096 tokens de
+# salida en todos ellos (muse y gpt-oss razonan ~1400 tokens y con 2048 devolvían
+# contenido vacío o JSON cortado). Juez sin cambios: qwen3.5-9b, 2500 tokens.
+#
+#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#     generate --config /configs/dataset_smoke_5x100.yaml
+#
+# resume: false → cada pasada empieza de cero y sobrescribe /data/smoke-5x100-4k.
+inherits: config.yaml
+
+logging:
+  level: INFO
+  file: /logs/smoke-5x100-4k.log
+
+endpoints:
+  generadores:
+    base_url: http://192.168.10.11:9292
+  juez:
+    base_url: http://192.168.10.100:9292
+
+models:
+  gemma-3-12b-awq:
+    endpoint: generadores
+    model: gemma-3-12b-it-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  olmo-3.1-32b-awq:
+    endpoint: generadores
+    model: olmo-3.1-32b-instruct-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  qwen3.6-27b-awq:
+    endpoint: generadores
+    model: qwen3.6-27b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  muse-glimmer-30b-awq:
+    endpoint: generadores
+    model: muse-glimmer-30b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  gpt-oss-20b:
+    endpoint: generadores
+    model: gpt-oss-20b-vllm
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  juez-qwen35-9b:
+    endpoint: juez
+    model: qwen3.5-9b-awq
+    temperature: 0.0
+    extra_params:
+      max_tokens: 2500
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+
+generation:
+  default_output_dir: /data/smoke-5x100-4k
+  models:
+  - gemma-3-12b-awq
+  - olmo-3.1-32b-awq
+  - qwen3.6-27b-awq
+  - muse-glimmer-30b-awq
+  - gpt-oss-20b
+  num_records: 100
+  start_id: 1
+  seed: 42
+  resume: false
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  model_load_wait: 600
+  validate: true
+  validator: juez-qwen35-9b
+  max_validation_retries: 3
+  photos: false
+  workers: 8

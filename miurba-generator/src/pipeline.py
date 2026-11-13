@@ -17,11 +17,15 @@ the photos are generated from text-to-image prompts derived from the scenario.
 import json
 import logging
 import random
+import re
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from . import config as cfg
 from .llm import LLMClient
-from .prompts import build_generation_prompt, build_image_prompts
+from .prompt_loader import render as _render_prompt
+from .prompts import build_generation_prompt, build_image_prompts, build_validation_prompt
 from .sampling import (
     sample_community,
     sample_photo_count,
@@ -33,6 +37,189 @@ from .sampling import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ── Validation (2-stage) ──────────────────────────────────────────────
+
+# ── Hygiene gate (deterministic, always on) ────────────────────
+
+_HYGIENE_PATTERNS = [
+    (re.compile(r"\bQ\d{3,6}(_\d+)?(\.(png|jpe?g|webp))?\b", re.I),
+     "internal id/filename in text"),
+    (re.compile(r"\bcategor[ií]a\b|\bsubcategor[ií]a\b", re.I),
+     "taxonomy words in text"),
+    (re.compile(r"\*\*|``|<think>|\{\"|user_text"), "prompt/markdown artifacts"),
+    (re.compile(r"\b[a-záéíóúñ]+_[a-záéíóúñ]+\b"), "snake_case token"),
+]
+
+
+def hygiene_failures(user_text: str) -> list[str]:
+    """Deterministic integrity checks applied to every generated text.
+
+    Returns a list of human-readable failures; empty list = clean text.
+    Unlike the LLM judge, this runs ALWAYS (independent of `validate`).
+
+    Scope: leaks and artefacts only (internal ids/filenames, taxonomy labels,
+    prompt echoes, markdown, snake_case tokens, degeneration loops). Style is
+    NOT checked here: all-caps or short messages are legitimate expressions of
+    the sampled persona/modifier, so rejecting them would contradict the
+    stylistic diversity the corpus is built for.
+    """
+    fails = []
+    for pat, msg in _HYGIENE_PATTERNS:
+        if pat.search(user_text):
+            fails.append(msg)
+    words = user_text.split()
+    if len(words) >= 24:
+        grams = [" ".join(words[i:i + 12]) for i in range(len(words) - 11)]
+        if len(grams) != len(set(grams)):
+            fails.append("repeated 12-gram (degeneration loop)")
+    return fails
+
+
+def _judge_failure_kind(exc: Exception, response) -> str:
+    """Classify why a judge call produced no usable verdict (for diagnosis)."""
+    if isinstance(exc, json.JSONDecodeError) or isinstance(exc, ValueError):
+        return "unparseable"
+    if isinstance(exc, (KeyError, IndexError, TypeError)):
+        return "malformed_shape"
+    name = type(exc).__name__.lower()
+    if "timeout" in name or "connection" in name:
+        return "transport"
+    if "http" in name:
+        return "http_error"
+    return name
+
+
+def _response_facts(response) -> dict:
+    """Finish reason and token usage of a chat completion, for failure analysis."""
+    facts = {}
+    try:
+        choice = (response or {}).get("choices", [{}])[0]
+        facts["finish_reason"] = choice.get("finish_reason")
+    except Exception:
+        pass
+    try:
+        usage = (response or {}).get("usage") or {}
+        facts["completion_tokens"] = usage.get("completion_tokens")
+        facts["prompt_tokens"] = usage.get("prompt_tokens")
+    except Exception:
+        pass
+    return facts
+
+
+def _judge_raw_snippet(client, response, limit: int = 4000) -> str:
+    """Best-effort raw content of a judge reply, for the diagnostics record."""
+    if response is None:
+        return ""
+    try:
+        return (client.extract_content(response) or "")[:limit]
+    except Exception:
+        try:
+            return json.dumps(response)[:limit]
+        except Exception:
+            return ""
+
+
+def _call_judge(client, messages, diagnostics: list, max_attempts: int = 2):
+    """Call the judge, retrying once on an unusable verdict, recording every failure.
+
+    Raises the last exception when no attempt produced a parseable dict, so the
+    caller can mark the record as unvalidated (fail-closed).
+    """
+    last_exc = None
+    for attempt in range(1, max_attempts + 1):
+        response = None
+        try:
+            response = client.chat(messages)
+            data = client.extract_json(response)
+            if not isinstance(data, dict):
+                raise ValueError(f"judge verdict is {type(data).__name__}, expected object")
+            diagnostics.append({"attempt": attempt, "kind": "ok"})
+            return data
+        except Exception as e:  # noqa: BLE001 - classified and re-raised below
+            last_exc = e
+            diagnostics.append({
+                "attempt": attempt,
+                "kind": _judge_failure_kind(e, response),
+                "error": str(e)[:200],
+                "raw": _judge_raw_snippet(client, response),
+                **_response_facts(response),
+            })
+            logger.warning(
+                f"Judge attempt {attempt}/{max_attempts} failed "
+                f"({diagnostics[-1]['kind']}): {str(e)[:120]}"
+            )
+    raise last_exc
+
+
+def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str], bool]:
+    """Validate that user_text faithfully describes the scenario.
+
+    Fail-closed: a validation error (LLM call, malformed JSON) returns
+    is_valid=False plus a degraded flag, so a broken judge can never let
+    unvalidated records into the corpus.
+
+    Returns (is_valid, issues_list, degraded, raw_judge_response).
+    """
+    messages = build_validation_prompt(user_text, problems)
+    diagnostics: list[dict] = []
+    try:
+        data = _call_judge(client, messages, diagnostics)
+        # Strict: only a literal true counts. A judge returning "valid":
+        # "false"/"no"/"0" (strings) must NOT pass (bool("false") is True).
+        # A judge that omits the key is not approving either.
+        is_valid = data.get("valid") is True
+        issues = data.get("issues") or []
+        if not isinstance(issues, list):
+            issues = [str(issues)]
+        # Per-field verdicts are the primary signal when present: any 'grave' or a
+        # problem-count mismatch makes the record invalid regardless of `valid`.
+        fields = data.get("fields")
+        if isinstance(fields, dict):
+            severe = [f for f, v in fields.items() if str(v).lower() == "grave"]
+            issues = list(dict.fromkeys(issues + severe))
+            if severe:
+                is_valid = False
+        invented = data.get("inventado") or {}
+        if isinstance(invented, dict) and any(invented.get(k) for k in invented):
+            is_valid = False
+            issues = list(dict.fromkeys(issues + [f"inventado:{k}" for k in invented if invented.get(k)]))
+        n_txt = data.get("n_problems_texto")
+        if isinstance(n_txt, int) and n_txt != len(problems):
+            is_valid = False
+            issues = list(dict.fromkeys(issues + [f"n_problems:{n_txt}!={len(problems)}"]))
+        # Mechanical urgency check: the level the judge actually found in the text
+        # must match the scenario level, problem by problem when the count agrees.
+        detected = data.get("urgencias_detectadas") or data.get("urgencia_detectada")
+        expected_seq = [str(p.get("urgency")) for p in problems if p.get("urgency")]
+        if isinstance(detected, list) and len(detected) == len(expected_seq):
+            for pos, (det, exp) in enumerate(zip(detected, expected_seq), 1):
+                if str(det).strip().lower() != exp.lower():
+                    is_valid = False
+                    issues = list(dict.fromkeys(issues + [f"urgency[{pos}]:{det}!={exp}"]))
+        elif isinstance(detected, str) and expected_seq and detected.strip().lower() not in expected_seq:
+            is_valid = False
+            issues = list(dict.fromkeys(issues + [f"urgency:{detected}!={sorted(set(expected_seq))}"]))
+        # Feed the judge's own evidence back into the retry prompt: a field name is
+        # a weak hint, a quoted fragment tells the model what to fix.
+        evidence = data.get("evidencia")
+        quoted = data.get("expresion_citada")
+        if not is_valid:
+            if isinstance(evidence, str) and evidence.strip():
+                issues = list(dict.fromkeys(issues + [f"evidencia: {evidence.strip()[:160]}"]))
+            if isinstance(quoted, str) and quoted.strip():
+                issues = list(dict.fromkeys(issues + [f"expresion_citada: {quoted.strip()[:80]}"]))
+        if diagnostics:
+            data["_diagnostics"] = diagnostics
+        return is_valid, issues, False, data
+    except Exception as e:
+        logger.warning(f"Validation call failed: {e}, assuming INVALID (fail-closed)")
+        return False, [f"judge_error:{_judge_failure_kind(e, None)}"], True, {
+            "error": str(e)[:200],
+            "error_kind": _judge_failure_kind(e, None),
+            "_diagnostics": diagnostics,
+        }
 
 
 def _stable_seed(record_id: str, index: int, seed_base: int) -> int:
@@ -50,6 +237,13 @@ def generate_complaint(
     image_gen=None,
     images_dir: str | Path | None = None,
     seed_base: int = 42,
+    validate: bool = False,
+    max_validation_retries: int = 3,
+    validator_client: LLMClient | None = None,
+    validation_log: list | None = None,
+    reject_sink=None,
+    conversation_sink=None,
+    declare_photos: bool = True,
 ) -> tuple[dict, dict] | None:
     """
     Generate a single raw complaint record (and optionally its photos).
@@ -62,6 +256,12 @@ def generate_complaint(
     """
     if scenario is None:
         scenario = sample_scenario()
+
+    if validate and validator_client is None:
+        raise ValueError(
+            "validate=True requires an explicit judge client "
+            "(generation.validator); the generator is never its own judge"
+        )
 
     community = sample_community()
     persona = sample_persona()
@@ -76,7 +276,7 @@ def generate_complaint(
     problems = [scenario] + [sample_scenario() for _ in range(n_problems - 1)]
 
     # Photos?
-    has_photos = should_have_photos()
+    has_photos = declare_photos and should_have_photos()
     num_pics = sample_photo_count(has_photos)
 
     # Build prompt and call LLM (text only: user_text + timestamp)
@@ -95,17 +295,33 @@ def generate_complaint(
 
         if not content:
             logger.warning(f"[{record_id}] Empty content, skipping")
+            if reject_sink is not None:
+                reject_sink({"id": record_id, "stage": "generation",
+                             "reason": "empty_content", "detail": "no content in reply",
+                             "attempts": 1, "scenario": problems,
+                             "last_text": "", "timestamp": "",
+                             **_response_facts(response)})
             return None
 
         try:
             data = client.extract_json(response)
         except json.JSONDecodeError as e:
             logger.warning(f"[{record_id}] JSON parse failed: {e}")
-            logger.debug(f"[{record_id}] Raw content: {content[:500]}")
+            if reject_sink is not None:
+                reject_sink({"id": record_id, "stage": "generation",
+                             "reason": "invalid_json", "detail": str(e)[:200],
+                             "attempts": 1, "scenario": problems,
+                             "last_text": content[:4000], "timestamp": "",
+                             **_response_facts(response)})
             return None
 
     except RuntimeError as e:
         logger.error(f"[{record_id}] LLM call failed: {e}")
+        if reject_sink is not None:
+            reject_sink({"id": record_id, "stage": "generation",
+                         "reason": "llm_error", "detail": str(e)[:200],
+                         "attempts": 1, "scenario": problems,
+                         "last_text": "", "timestamp": ""})
         return None
 
     user_text = data.get("user_text", "")
@@ -113,6 +329,130 @@ def generate_complaint(
 
     if not user_text:
         logger.warning(f"[{record_id}] No user_text in LLM output")
+        if reject_sink is not None:
+            reject_sink({"id": record_id, "stage": "generation",
+                         "reason": "no_user_text", "detail": "JSON without user_text",
+                         "attempts": 1, "scenario": problems,
+                         "last_text": str(data)[:2000], "timestamp": ""})
+        return None
+
+    # Single acceptance gate. The FIRST generation and EVERY regeneration are
+    # validated identically, in the same order: (1) deterministic leak/artefact
+    # check, (2) semantic judge. A candidate that fails either one is
+    # regenerated from the same scenario; the record is written only if some
+    # candidate passes both. If the budget is exhausted the record is
+    # DISCARDED (never written) and the resume pass retries it later with a
+    # fresh scenario. A judge that cannot be reached never counts as approval.
+    judge = validator_client
+    if validate and judge is None:
+        raise ValueError(
+            "validate=True requires an explicit judge client "
+            "(generation.validator); the generator is never its own judge"
+        )
+    max_attempts = max_validation_retries if validate else max_validation_retries + 2
+    accepted = False
+    history: list[tuple[str, str]] = []
+    transcript: list[dict] = []
+
+    for attempt in range(max_attempts + 1):
+        failure = None
+        detail = ""
+
+        judge_raw = None
+        leaks = hygiene_failures(user_text)
+        if leaks:
+            failure = "leak"
+            detail = "; ".join(leaks)
+        elif validate:
+            is_valid, issues, degraded, judge_raw = validate_complaint(judge, user_text, problems)
+            if validation_log is not None:
+                validation_log.append(
+                    "degraded" if degraded else ("ok" if is_valid else "rejected")
+                )
+            if degraded:
+                failure = "judge_unavailable"
+                detail = "judge call failed; not treated as approval"
+            elif not is_valid:
+                failure = "rejected"
+                detail = ", ".join(map(str, issues)) or "unknown"
+
+        transcript.append({
+            "attempt": attempt + 1,
+            "user_text": user_text,
+            "timestamp": timestamp,
+            "hygiene_failures": leaks,
+            "judge": judge_raw if validate else None,
+            "issues": detail,
+            "failure": failure,
+        })
+
+        if failure is None:
+            accepted = True
+            break
+
+        logger.warning(
+            f"[{record_id}] {failure} ({detail}); "
+            f"regenerating (attempt {attempt + 1}/{max_attempts})"
+        )
+        if attempt == max_attempts:
+            break
+        # Feedback-driven retry as a real conversation: the rejected generation and
+        # the judge's comment become assistant/user turns, so the model sees its own
+        # previous answer and what was wrong with it.
+        issues_for_repair = [i.strip() for i in re.split(r"[;,]", detail or "") if i.strip()]
+        history.append((
+            json.dumps({"user_text": user_text, "timestamp": timestamp}, ensure_ascii=False),
+            _render_prompt(
+                "judge_comment",
+                issues="; ".join(issues_for_repair) if issues_for_repair else "no especificados",
+                previous_hint="",
+                n_problems=len(problems),
+            ),
+        ))
+        retry_messages = build_generation_prompt(
+            record_id=record_id,
+            problems=problems,
+            community=community,
+            num_pics=num_pics,
+            persona=persona,
+            modifier=modifier,
+            history=history,
+        )
+        try:
+            response = client.chat(retry_messages)
+            data = client.extract_json(response)
+            regen_text = data.get("user_text", "")
+            if not regen_text:
+                logger.warning(f"[{record_id}] regeneration produced no user_text")
+                break
+            user_text = regen_text
+            timestamp = data.get("timestamp", timestamp)
+        except (RuntimeError, json.JSONDecodeError) as e:
+            logger.error(f"[{record_id}] regeneration LLM call failed: {e}")
+            break
+
+    if not accepted:
+        logger.error(
+            f"[{record_id}] discarded: no candidate passed validation "
+            f"after {max_attempts} regeneration attempts"
+        )
+        if conversation_sink is not None:
+            conversation_sink({"id": record_id, "accepted": False, "scenario": problems,
+                               "attempts": len(transcript), "turns": transcript,
+                               "persona": (persona or {}).get("id"),
+                               "modifier": (modifier or {}).get("id"),
+                               "num_pics": num_pics})
+        if reject_sink is not None:
+            reject_sink({
+                "id": record_id,
+                "stage": "validation",
+                "reason": failure or "unknown",
+                "detail": detail,
+                "attempts": max_attempts + 1,
+                "scenario": problems,
+                "last_text": user_text,
+                "timestamp": timestamp,
+            })
         return None
 
     # Photo filenames (.png); actual files generated below if enabled
@@ -170,6 +510,13 @@ def generate_complaint(
         "image_prompts": image_prompts,
     }
 
+    if conversation_sink is not None:
+        conversation_sink({"id": record_id, "accepted": True, "scenario": problems,
+                           "attempts": len(transcript), "turns": transcript,
+                           "persona": (persona or {}).get("id"),
+                           "modifier": (modifier or {}).get("id"),
+                           "num_pics": num_pics})
+
     return complaint, ground_truth, metadata
 
 
@@ -186,6 +533,11 @@ def generate_dataset(
     resume: bool = True,
     enable_images: bool = False,
     ig_config: dict | None = None,
+    validate: bool = False,
+    max_validation_retries: int = 3,
+    validator_client: LLMClient | None = None,
+    num_workers: int = 1,
+    declare_photos: bool = True,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -203,6 +555,13 @@ def generate_dataset(
     ground_truth_path = Path(output_dir) / raw_subdir / ground_truth_file
     metadata_path = Path(output_dir) / raw_subdir / metadata_file
     raw_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # resume=False means start fresh: truncate previous outputs
+    if not resume:
+        for f in (raw_path, ground_truth_path, metadata_path):
+            if f.exists():
+                f.write_text("")
+                logger.info(f"Start fresh: truncated {f}")
 
     # Optional image generation backend (loaded once)
     image_gen = None
@@ -241,49 +600,95 @@ def generate_dataset(
 
     generated = 0
     failed = 0
+    last_logged = [0]
+    validation_log: list = []
+    write_lock = threading.Lock()
+    reject_path = Path(output_dir) / raw_subdir / "rejected.jsonl"
+    conversation_path = Path(output_dir) / raw_subdir / "conversations.jsonl"
+    if not resume:
+        for p_ in (reject_path, conversation_path):
+            if p_.exists():
+                p_.write_text("")
 
-    for i in range(start_id, start_id + num_records):
-        record_id = f"Q{i:04d}"
+    def _reject_sink(rec: dict) -> None:
+        """Persist every discarded record: the corpus must report its own yield."""
+        with write_lock:
+            with open(reject_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
-        if record_id in existing_ids:
-            logger.debug(f"[{record_id}] Already exists, skipping")
-            generated += 1
-            continue
+    def _conversation_sink(rec: dict) -> None:
+        """Persist the full generator/judge transcript of every record."""
+        with write_lock:
+            with open(conversation_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
-        logger.info(f"[{record_id}] Generating ({generated + 1}/{num_records})...")
-
+    def _generate_and_write(record_id: str) -> bool:
+        """Generate one record and append it to the JSONL files (thread-safe)."""
         result = generate_complaint(
             client, record_id,
             image_gen=image_gen,
             images_dir=images_dir,
             seed_base=seed_base,
+            validate=validate,
+            max_validation_retries=max_validation_retries,
+            validator_client=validator_client,
+            validation_log=validation_log,
+            reject_sink=_reject_sink,
+            conversation_sink=_conversation_sink,
+            declare_photos=declare_photos,
         )
-
         if result is None:
-            failed += 1
             logger.warning(f"[{record_id}] Generation failed")
-            continue
+            return False
 
         complaint, ground_truth, metadata = result
+        with write_lock:
+            with open(raw_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
+            with open(ground_truth_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
+            with open(metadata_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
+        return True
 
-        with open(raw_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(complaint, ensure_ascii=False) + "\n")
+    pending = [f"Q{i:04d}" for i in range(start_id, start_id + num_records)
+               if f"Q{i:04d}" not in existing_ids]
+    generated += num_records - len(pending)  # resumed records count as done
 
-        with open(ground_truth_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(ground_truth, ensure_ascii=False) + "\n")
+    if num_workers > 1:
+        logger.info(f"Generating with {num_workers} parallel workers...")
+        with ThreadPoolExecutor(max_workers=num_workers) as pool:
+            futures = {pool.submit(_generate_and_write, rid): rid for rid in pending}
+            for n, future in enumerate(as_completed(futures), 1):
+                if future.result():
+                    generated += 1
+                else:
+                    failed += 1
+                if n % 10 == 0:
+                    logger.info(
+                        f"Progress: {n}/{len(pending)} processed, {failed} failed, "
+                        f"tokens: in={client.stats['tokens_in']:,}, "
+                        f"out={client.stats['tokens_out']:,}"
+                    )
+    else:
+        for record_id in pending:
+            logger.info(f"[{record_id}] Generating ({generated + 1}/{num_records})...")
+            if _generate_and_write(record_id):
+                generated += 1
+            else:
+                failed += 1
 
-        with open(metadata_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(metadata, ensure_ascii=False) + "\n")
+            if generated % 10 == 0 and generated != last_logged[0]:
+                last_logged[0] = generated
+                logger.info(
+                    f"Progress: {generated}/{num_records} generated, "
+                    f"{failed} failed, "
+                    f"tokens: in={client.stats['tokens_in']:,}, "
+                    f"out={client.stats['tokens_out']:,}"
+                )
 
-        generated += 1
-
-        if generated % 10 == 0:
-            logger.info(
-                f"Progress: {generated}/{num_records} generated, "
-                f"{failed} failed, "
-                f"tokens: in={client.stats['tokens_in']:,}, "
-                f"out={client.stats['tokens_out']:,}"
-            )
+    from collections import Counter
+    validation_counts = Counter(validation_log)
 
     return {
         "generated": generated,
@@ -295,6 +700,7 @@ def generate_dataset(
         "ground_truth_path": str(ground_truth_path),
         "metadata_path": str(metadata_path),
         "images_dir": str(images_dir) if image_gen is not None else None,
+        "validation": dict(validation_counts) if validate else None,
     }
 
 
@@ -333,9 +739,15 @@ def merge_outputs(
                         if line.strip():
                             merged.append(json.loads(line))
 
-    merged_complaints.sort(key=lambda x: x["id"])
-    merged_ground_truth.sort(key=lambda x: x["complaint_id"])
-    merged_metadata.sort(key=lambda x: x["complaint_id"])
+    def _id_num(rec: dict) -> int:
+        try:
+            return int(rec.get("id", rec.get("complaint_id", "Q0")).lstrip("Q"))
+        except (ValueError, AttributeError):
+            return 0
+
+    merged_complaints.sort(key=_id_num)
+    merged_ground_truth.sort(key=_id_num)
+    merged_metadata.sort(key=_id_num)
 
     complaints_path = raw_out / complaints_file
     ground_truth_path = raw_out / ground_truth_file

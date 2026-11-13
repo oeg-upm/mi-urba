@@ -80,8 +80,8 @@ if [ ! -d .venv ]; then
     .venv/bin/pip install -q -r requirements.txt
 fi
 
-echo -e "${G}▶ python cli.py generate -n 3 --config ../demo/config.demo.yaml${R}\n"
-.venv/bin/python cli.py generate -n 3 --config "$CONFIG" --output-dir "$OUT" --no-resume
+echo -e "${G}▶ python cli.py generate --config ../demo/config.demo.yaml${R}\n"
+.venv/bin/python cli.py generate --config "$CONFIG"
 
 show_jsonl "$OUT/raw/complaints.jsonl" "complaints.jsonl"
 show_jsonl "$OUT/raw/ground_truth.jsonl" "ground_truth.jsonl"
@@ -99,15 +99,8 @@ if [ ! -d .venv ]; then
     .venv/bin/pip install -q -r requirements.txt
 fi
 
-mkdir -p data/raw data/images
-cp "$OUT/raw/complaints.jsonl" data/raw/
-cp "$OUT/raw/ground_truth.jsonl" data/raw/  # no usada por el extractor, solo referencia
-
 echo -e "${G}▶ python cli.py extract --config ../demo/config.demo.yaml${R}\n"
-.venv/bin/python cli.py extract --config "$CONFIG" \
-    --raw-dir data/raw \
-    --images-dir data/images \
-    --annotated-dir "$OUT/annotated"
+.venv/bin/python cli.py extract --config "$CONFIG"
 
 show_jsonl "$OUT/annotated/extractions.jsonl" "extractions.jsonl"
 

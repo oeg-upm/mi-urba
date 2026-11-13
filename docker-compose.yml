@@ -1,26 +1,32 @@
-# docker-compose.yml — miUrba API
+# miUrba — generator + extractor containers.
 #
-# Uso:
-#   1. Crear un config con tu API key (ej: copiar config.yaml y añadir tu endpoint+api_key)
-#   2. docker compose up --build
-#   3. http://localhost:8000/docs (Swagger UI)
+# Build:  docker compose build
+#
+# Generate (test config, 3 complaints):
+#   docker compose run --rm miurba-generator generate --config /config/config.test.yaml
+# Extract:
+#   docker compose run --rm miurba-extractor extract --config /config/config.test.yaml
+#
+# Run logs land in ./logs/ via the logging.file key (e.g. /logs/run.log).
+#
+# Bootstrap (fresh clone): config.test.yaml and ./data_test are gitignored —
+# create config.test.yaml (copy of config.yaml with a test plan) before
+# running the smoke; ./data_test is created by the runs.
 
 services:
-  miurba-api:
-    build: .
-    container_name: miurba-api
-    ports:
-      - "8000:8000"
-    environment:
-      - MIURBA_CONFIG=config.yaml
-      - MIURBA_HOST=0.0.0.0
-      - MIURBA_PORT=8000
-    # Montar tu config con API keys (sobrescribe el config.yaml del image):
+  miurba-generator:
+    build: ./miurba-generator
     volumes:
-      - ./config.yaml:/app/config.yaml:ro
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:8000/v1/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - ./config.yaml:/config.yaml:ro
+      - ./config.test.yaml:/config/config.test.yaml:ro
+      - ./data_test:/data
+      - ./logs:/logs
+
+  miurba-extractor:
+    build: ./miurba-extractor
+    volumes:
+      - ./config.yaml:/config.yaml:ro
+      - ./config.test.yaml:/config/config.test.yaml:ro
+      - ./schemas:/schemas:ro
+      - ./data_test:/data
+      - ./logs:/logs

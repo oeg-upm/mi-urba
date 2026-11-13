@@ -1,7 +1,19 @@
+# ============================================================
+# Logging de runs (ambos CLIs). `file` escribe además del stdout;
+# en Docker apunta a un volumen montado, p. ej. /logs/run.log con
+#   docker compose run -v ./logs:/logs miurba-generator ...
+# ============================================================
+logging:
+  level: INFO
+  file: null
+
 endpoints:
   ollama_cloud:
     base_url: http://localhost:11434
     description: Ollama cloud models
+    # Backoff generoso ante caídas del servidor (ConnectionError/Timeout):
+    # espera max(retry_delay, 20s) * intento. Default false = lineal.
+    connection_backoff: false
 models:
   kimi-k2.6:
     endpoint: ollama_cloud
@@ -20,7 +32,10 @@ models:
     model: gemma4:31b-cloud
     temperature: 0.85
 generation:
+  # Directorio base de salida: cada modelo escribe en <default_output_dir>/<model>/
   default_output_dir: data
+  # Plan de generación por lotes [{model, count}, ...].
+  # Alternativa: models: [a, b] + num_records: N (cada modelo genera N).
   batches:
   - model: kimi-k2.6
     count: 25
@@ -30,10 +45,66 @@ generation:
     count: 25
   - model: gemma4-31b
     count: 25
-annotation:
+  # Registros por modelo cuando se usa `models` (ignorado con `batches`)
+  num_records: 100
+  # Primer número de ID (Q<start_id>, secuencial a lo largo del plan)
+  start_id: 1
+  # Semilla base de muestreo. SOLO determinista con workers: 1 (con
+  # workers > 1 los hilos intercalan el stream aleatorio compartido).
+  seed: null
+  # Saltar registros ya presentes en los ficheros de salida
+  resume: true
+  # Cliente LLM: timeout por petición y política de reintentos
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  # Validación en 2ª pasada: tras generar, un LLM juez comprueba que el
+  # texto alinea con el escenario; si no, reintenta la generación hasta
+  # max_validation_retries veces (se conserva el último texto).
+  validate: false
+  max_validation_retries: 3
+  # Modelo juez (clave de models:). null = validar con el propio modelo
+  # generador. Recomendado: un modelo DISTINTO para evitar sesgos compartidos.
+  validator: null
+  # Paciencia (segundos) con modelos en frío: 5xx dentro de esta ventana son
+  # "cargando" y no consumen reintentos. null = desactivado.
+  model_load_wait: null
+  # Quejas con fotos adjuntas declaradas (user_pics). true = se muestrea
+  # según weights.photo_prob (~55%). false = ninguna queja lleva fotos:
+  # user_pics vacío y el prompt indica que no adjunta (los filenames
+  # nunca llegan al modelo). Independiente de image_generation.enabled,
+  # que solo controla si los PNG se generan de verdad.
+  photos: true
+  # Workers de generación en paralelo (1 = secuencial, comportamiento actual)
+  workers: 1
+
+extraction:
+  # Modelo VLM (clave de models:). OBLIGATORIO: el extractor falla si falta.
   model: kimi-k2.6
+  # Temperatura de las llamadas de extracción
   temperature: 0.2
+  # Base de rutas por defecto (null → generation.default_output_dir)
+  default_output_dir: null
+  # Directorios explícitos (null → <default_output_dir>/<subdir de paths:>)
+  raw_dir: null
+  annotated_dir: null
+  images_dir: null
+  # Saltar quejas ya presentes en extractions.jsonl
+  resume: true
+  # Cliente LLM: timeout por petición y política de reintentos
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  # P2 stage-split: dos llamadas (visión describe fotos → texto extrae).
+  # Requiere fotos; sin fotos o sin vision_model cae a llamada única.
+  stage_split: false
+  # Modelo de visión para la etapa 1 (clave de models:) cuando stage_split: true
   vision_model: null
+  # Paciencia (segundos) con modelos en frío: 5xx dentro de esta ventana son
+  # "cargando" y no consumen reintentos. null = desactivado.
+  model_load_wait: null
+  # Workers de extracción en paralelo (1 = secuencial, comportamiento actual)
+  workers: 1
 paths:
   raw_subdir: raw
   annotated_subdir: annotated
@@ -142,7 +213,8 @@ categories:
   - vecinos
   - vibraciones
   - maquinaria_común
-  varios: []
+  varios:
+  - general
 affected_elements:
   tubería:
   - vertical
@@ -282,6 +354,29 @@ risks:
 - accesibilidad
 - seguridad_persona
 - ninguno
+
+# Expresión en lenguaje natural de cada riesgo (para el prompt de generación).
+# Debe cubrir todos los riesgos de la lista anterior excepto "ninguno".
+risk_expressions:
+  eléctrico: "riesgo eléctrico"
+  estructural: "riesgo de derrumbe"
+  sanitario: "riesgo sanitario"
+  incendio: "riesgo de incendio"
+  inundación: "riesgo de inundación"
+  caída: "peligro de caída"
+  accesibilidad: "riesgo de accidente por accesibilidad"
+  seguridad_persona: "riesgo para las personas"
+
+# Expresiones que el texto generado DEBE incluir según el nivel de urgencia.
+# Debe cubrir todos los niveles de urgency_levels.
+urgency_expressions:
+  inmediata: ["es una emergencia", "peligro inminente", "necesito que vengan ya mismo"]
+  urgente: ["es urgente", "no puede esperar", "vengan cuanto antes"]
+  alta: ["es importante", "me preocupa", "deberían revisarlo pronto"]
+  media: ["cuando puedan", "no tiene prisa pero"]
+  baja: ["es una sugerencia", "para cuando haya tiempo"]
+  planificable: ["mantenimiento preventivo", "para revisar a largo plazo"]
+
 urgency_levels:
 - inmediata
 - urgente
@@ -719,6 +814,8 @@ category_elements:
   limpieza:
   - suelo
   - mobiliario_común
+  - ventana
+  - puerta
   ascensor:
   - equipamiento
   - puerta
@@ -726,20 +823,32 @@ category_elements:
   - equipamiento
   - instalación_sanitaria
   - tubería
+  - instalación_eléctrica
   piscina:
   - equipamiento
   - instalación_sanitaria
+  - suelo
+  - revestimiento
+  - muro
+  - cerramiento
+  - mobiliario_común
   garaje:
   - suelo
   - puerta
   - instalación_eléctrica
   - instalación_sanitaria
+  - muro
   plagas:
   - muro
   - revestimiento
   - jardín
+  - estructura
+  - puerta
+  - instalación_sanitaria
+  - cubierta
   mobiliario:
   - mobiliario_común
+  - cerramiento
   seguridad:
   - cerramiento
   - equipamiento
@@ -747,6 +856,23 @@ category_elements:
   ruido:
   - muro
   - estructura
+  - equipamiento
+  - instalación_eléctrica
+  varios:
+  - tubería
+  - muro
+  - cubierta
+  - suelo
+  - puerta
+  - ventana
+  - revestimiento
+  - instalación_eléctrica
+  - instalación_sanitaria
+  - jardín
+  - mobiliario_común
+  - equipamiento
+  - estructura
+  - cerramiento
 category_zones:
   fontanería:
   - garaje
@@ -800,6 +926,15 @@ category_zones:
   ruido:
   - portal
   - garaje
+  - locales
+  varios:
+  - garaje
+  - portal
+  - exterior
+  - zonas_verdes
+  - piscina
+  - trasteros
+  - azotea
   - locales
 category_risks:
   fontanería:

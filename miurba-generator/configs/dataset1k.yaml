@@ -1,0 +1,83 @@
+# Corpus 1K — generación predefinitiva (4 generadores × 300 intentos = 1.200).
+#
+#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#     generate --config /configs/dataset1k.yaml
+#
+# Config destinada a repetirse igual para el 10K si no aparece nada mejorable.
+# 300 intentos por modelo porque `num_records` cuenta intentos: a las tasas
+# medidas (gemma ~82 %, los otros tres ~96-98 %) se esperan ~1.080 registros.
+#
+# Cambios respecto a la campaña 10K:
+#   - juez qwen3.8-27b-ud-q4-dflash2 con prompt v12 (banco: 96,4 % exactitud,
+#     recall 1,00 sobre los defectos del panel, 0 colados, 4 falsos rechazos)
+#   - presupuesto del juez 6.000 (gasta ~1.500-2.400 entre razonamiento y JSON)
+#
+# Ids: gemma Q0001-300 · qwen3.6 Q0301-600 · muse Q0601-900 · gpt-oss Q0901-1200
+# Salida: /data/dataset-1k/<modelo>/raw/ + rejected.jsonl + conversations.jsonl
+inherits: config.yaml
+
+logging:
+  level: INFO
+  file: /logs/generate-1k.log
+
+endpoints:
+  generadores:
+    base_url: http://192.168.10.11:9292
+  juez:
+    base_url: http://192.168.10.100:9292
+
+models:
+  gemma-3-12b-awq:
+    endpoint: generadores
+    model: gemma-3-12b-it-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  qwen3.6-27b-awq:
+    endpoint: generadores
+    model: qwen3.6-27b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  muse-glimmer-30b-awq:
+    endpoint: generadores
+    model: muse-glimmer-30b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  gpt-oss-20b:
+    endpoint: generadores
+    model: gpt-oss-20b-vllm
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  juez-qwen38-27b:
+    endpoint: juez
+    model: qwen3.8-27b-ud-q4-dflash2
+    temperature: 0.0
+    extra_params:
+      max_tokens: 6000
+
+generation:
+  default_output_dir: /data/dataset-1k
+  models:
+  - gemma-3-12b-awq
+  - qwen3.6-27b-awq
+  - muse-glimmer-30b-awq
+  - gpt-oss-20b
+  num_records: 300
+  start_id: 1
+  seed: 42
+  resume: true
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  model_load_wait: 600
+  validate: true
+  validator: juez-qwen38-27b
+  max_validation_retries: 3
+  photos: false
+  workers: 8

@@ -1,0 +1,59 @@
+# Smoke de iteración: UN solo generador (qwen3.6, el de mejor aceptación/velocidad
+# hasta ahora) y 50 registros, para iterar prompts sin pagar la carga en frío de
+# cinco modelos.
+#
+#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#     generate --config /configs/dataset_smoke_q36.yaml
+#
+# resume: false → cada pasada empieza de cero y sobrescribe /data/smoke-q36.
+inherits: config.yaml
+
+logging:
+  level: INFO
+  file: /logs/smoke-q36.log
+
+endpoints:
+  generadores:
+    base_url: http://192.168.10.11:9292
+  juez:
+    base_url: http://192.168.10.100:9292
+
+models:
+  qwen3.6-27b-awq:
+    endpoint: generadores
+    model: qwen3.6-27b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 2048
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  juez-qwen35-9b:
+    endpoint: juez
+    model: qwen3.5-9b-awq
+    temperature: 0.0
+    extra_params:
+      # 1200 truncaba el veredicto (JSON cortado a mitad de cadena en el 19 %
+      # de los juicios): el juez necesita margen para campos + listas + evidencia.
+      max_tokens: 2500
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+
+generation:
+  default_output_dir: /data/smoke-q36
+  models:
+  - qwen3.6-27b-awq
+  num_records: 50
+  start_id: 1
+  seed: 42
+  resume: false
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  model_load_wait: 600
+  validate: true
+  validator: juez-qwen35-9b
+  max_validation_retries: 3
+  photos: false
+  workers: 8
