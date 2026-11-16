@@ -21,6 +21,7 @@ def cfg_dir(tmp_path, monkeypatch):
     (tmp_path / "schemas").mkdir()
     cfg = {"endpoints": {"e": {"base_url": "http://x", "api_key": "${TEST_SECRET}"}}}
     (tmp_path / "config.yaml").write_text(yaml.safe_dump(cfg))
+    (tmp_path / "taxonomy.yaml").write_text(yaml.safe_dump({"categories": {}}))
     monkeypatch.setattr(sc, "DEFAULT_CONFIG_PATH", tmp_path / "config.yaml")
     sc._CONFIG = None
     yield tmp_path
@@ -50,4 +51,4 @@ def test_missing_var_fails_fast(cfg_dir, monkeypatch):
 def test_plain_values_untouched(cfg_dir, monkeypatch):
     (cfg_dir / "config.yaml").write_text(yaml.safe_dump({"a": "no vars here", "b": 5}))
     cfg = sc.load_config(cfg_dir / "config.yaml")
-    assert cfg == {"a": "no vars here", "b": 5}
+    assert {k: v for k, v in cfg.items() if k not in sc.TAXONOMY_KEYS} == {"a": "no vars here", "b": 5}

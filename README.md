@@ -26,7 +26,8 @@ referenciados por `user_pics`), no código.
 
 ```
 mi-urba/
-├── config.yaml                  # configuración compartida (obligatoria)
+├── config.yaml                  # configuración de ejecución (obligatoria)
+├── taxonomy.yaml                # vocabulario de dominio: taxonomías, personas, pesos
 ├── schemas/                     # contratos de datos
 │   ├── complaint_schema.json
 │   ├── extraction_schema.json
@@ -83,12 +84,12 @@ Un único `config.yaml` compartido en la raíz. Detalle completo de claves,
 defaults y comentarios en el propio fichero y en los README de cada
 subproyecto. Resumen:
 
-| Sección | Obligatoria | Uso |
-|---|---|---|
-| `endpoints` | sí | URLs base y `api_key` (referenciada como `${VAR}` desde `.env`) |
-| `models` | sí | Modelos por nombre: `endpoint`, `model`, `temperature`, `structured_output` (extractor), `extra_params` |
-| Taxonomía (`categories`, `risks`, `location_zones`, `personas`, `communities`, `weights`, …) | sí (generador) | Dominio del muestreo y del prompt |
-| `risk_expressions`, `urgency_expressions` | sí (generador) | Expresiones obligatorias en el texto generado; cobertura validada al arrancar |
+| Sección | Fichero | Obligatoria | Uso |
+|---|---|---|---|
+| `endpoints` | config.yaml | sí | URLs base y `api_key` (referenciada como `${VAR}` desde `.env`) |
+| `models` | config.yaml | sí | Modelos por nombre: `endpoint`, `model`, `temperature`, `structured_output` (extractor), `extra_params` |
+| Taxonomía (`categories`, `risks`, `location_zones`, `personas`, `communities`, `weights`, …) | taxonomy.yaml | sí (generador) | Dominio del muestreo y del prompt; se referencia con `taxonomy:` en el config. Claves de taxonomía en config.yaml → error fail-fast |
+| `risk_expressions`, `urgency_expressions` | taxonomy.yaml | sí (generador) | Expresiones obligatorias en el texto generado; cobertura validada al arrancar |
 | `generation` | no | Plan de batches, seed, workers, retries, validación con juez |
 | `extraction` | no (salvo `model`, obligatorio) | Modelo VLM, rutas, workers, retries |
 | `paths`, `logging` | no | Nombres de ficheros y log de run |

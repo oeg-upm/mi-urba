@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPO_ROOT = PROJECT_ROOT.parent
 
 SCHEMA = json.load(open(REPO_ROOT / "schemas" / "complaint_schema.json"))
-CONFIG = yaml.safe_load(open(REPO_ROOT / "config.yaml"))
+CONFIG = yaml.safe_load(open(REPO_ROOT / "taxonomy.yaml"))
 
 
 def _enum(prop: str) -> list:

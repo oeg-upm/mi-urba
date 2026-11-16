@@ -31,6 +31,16 @@ DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.ya
 
 _VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
+# Domain vocabulary sections: they live in taxonomy.yaml, NOT in config.yaml
+# (mirrors miurba-generator's loader).
+TAXONOMY_KEYS = (
+    "categories", "affected_elements", "location_zones", "risks",
+    "risk_expressions", "urgency_expressions", "urgency_levels",
+    "communities", "personas", "weights", "modifiers", "modifier_prob",
+    "category_elements", "category_zones", "category_risks",
+    "urgency_weights", "element_subcategories",
+)
+
 
 def _load_dotenv() -> None:
     """Populate os.environ from the repo-root .env (existing vars win)."""
@@ -71,15 +81,52 @@ def _expand_vars(node: Any) -> Any:
     return node
 
 
+def _deep_merge(base: dict, override: dict) -> dict:
+    """Recursively merge `override` on top of `base` (override wins)."""
+    out = dict(base)
+    for key, value in (override or {}).items():
+        if isinstance(value, dict) and isinstance(out.get(key), dict):
+            out[key] = _deep_merge(out[key], value)
+        else:
+            out[key] = value
+    return out
+
+
+def _load_taxonomy(cfg: dict, child: Path) -> None:
+    """Merge taxonomy.yaml into cfg; fail fast on stale inline taxonomy keys."""
+    stale = [k for k in TAXONOMY_KEYS if k in cfg]
+    if stale:
+        raise ValueError(
+            f"config {child.name} declares taxonomy keys ({', '.join(stale)}); "
+            f"they live in taxonomy.yaml — move them there and reference it with "
+            f"`taxonomy: <path>`"
+        )
+    ref = cfg.pop("taxonomy", None)
+    default = DEFAULT_CONFIG_PATH.parent / "taxonomy.yaml"
+    tax_path = Path(ref) if ref and Path(ref).is_absolute() else (
+        (child.parent / ref).resolve() if ref and (child.parent / ref).resolve().exists() else default
+    )
+    if not tax_path.exists():
+        raise FileNotFoundError(f"taxonomy file not found: {tax_path}")
+    with open(tax_path, encoding="utf-8") as f:
+        cfg.update(yaml.safe_load(f) or {})
+
+
 def load_config(path: str | Path | None = None) -> dict[str, Any]:
-    """Load and cache the YAML configuration, expanding ${VAR} references."""
+    """Load and cache the YAML configuration, expanding ${VAR} references.
+
+    Domain vocabulary is loaded from taxonomy.yaml (key `taxonomy:` in the
+    config, default `<repo root>/taxonomy.yaml`) and merged into the result;
+    declaring taxonomy keys directly in the config fails fast.
+    """
     global _CONFIG
     if path is None:
         path = DEFAULT_CONFIG_PATH
     path = Path(path)
     _load_dotenv()
     with open(path, encoding="utf-8") as f:
-        cfg = yaml.safe_load(f)
+        cfg = yaml.safe_load(f) or {}
+    _load_taxonomy(cfg, path)
     _CONFIG = _expand_vars(cfg)
     return _CONFIG
 

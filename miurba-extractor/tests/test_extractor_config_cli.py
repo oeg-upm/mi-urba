@@ -41,6 +41,10 @@ def config_file(tmp_path):
     }
     p = tmp_path / "config.yaml"
     p.write_text(yaml.safe_dump(cfg, allow_unicode=True), encoding="utf-8")
+    (tmp_path / "taxonomy.yaml").write_text(yaml.safe_dump(
+        {"categories": {"cubierta": ["tejas"]}, "risks": ["r"],
+         "urgency_levels": ["alta"], "location_zones": {"portal": []}}),
+        encoding="utf-8")
     return p
 
 
