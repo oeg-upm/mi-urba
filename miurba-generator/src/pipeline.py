@@ -1,17 +1,14 @@
 """
 Pipeline functions — synthetic complaint GENERATION.
 
-Orchestrates scenario sampling, LLM calls (text), optional image generation,
-and file I/O to produce a dataset of raw complaints:
+Orchestrates scenario sampling, LLM calls (text) and file I/O to produce a
+dataset of raw complaints:
 
-  - complaints.jsonl   (id, user_text, user_pics, timestamp)
-  - ground_truth.jsonl  (complaint_id, extractions, image_descriptions)
-  - metadata.jsonl      (complaint_id, persona, modifier, community, num_pics, image_prompts)
-  - <images_subdir>/*.png  (actual photos, only if image generation is enabled)
+  - complaints.jsonl   (id, user_text, timestamp)
+  - ground_truth.jsonl  (complaint_id, extractions)
+  - metadata.jsonl      (complaint_id, persona, modifier, community)
 
-The LLM produces ONLY user_text + timestamp. It does NOT describe images:
-describing images is the extractor's job. When image generation is enabled,
-the photos are generated from text-to-image prompts derived from the scenario.
+The LLM produces ONLY user_text + timestamp.
 """
 
 import json
@@ -25,15 +22,13 @@ from pathlib import Path
 from . import config as cfg
 from .llm import LLMClient
 from .prompt_loader import render as _render_prompt
-from .prompts import build_generation_prompt, build_image_prompts, build_validation_prompt
+from .prompts import build_generation_prompt, build_validation_prompt
 from .sampling import (
     sample_community,
-    sample_photo_count,
     sample_persona,
     sample_modifier,
     sample_scenario,
     should_be_multi_problem,
-    should_have_photos,
 )
 
 logger = logging.getLogger(__name__)
@@ -222,37 +217,24 @@ def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) 
         }
 
 
-def _stable_seed(record_id: str, index: int, seed_base: int) -> int:
-    """Deterministic seed for reproducible image generation."""
-    h = sum((i + 1) * ord(c) for i, c in enumerate(record_id))
-    return (h * 1000 + index + seed_base) % (2**32)
-
-
 # ── Generation ──────────────────────────────────────────────────
 
 def generate_complaint(
     client: LLMClient,
     record_id: str,
     scenario: dict | None = None,
-    image_gen=None,
-    images_dir: str | Path | None = None,
-    seed_base: int = 42,
     validate: bool = False,
     max_validation_retries: int = 3,
     validator_client: LLMClient | None = None,
     validation_log: list | None = None,
     reject_sink=None,
     conversation_sink=None,
-    declare_photos: bool = True,
 ) -> tuple[dict, dict] | None:
     """
-    Generate a single raw complaint record (and optionally its photos).
+    Generate a single raw complaint record.
 
     Returns:
-        Tuple of (complaint_dict, scenario_dict) or None on failure.
-
-    When `image_gen` is provided and the complaint has photos, the actual
-        PNG files are generated to `images_dir`.
+        Tuple of (complaint_dict, ground_truth, metadata) or None on failure.
     """
     if scenario is None:
         scenario = sample_scenario()
@@ -275,16 +257,11 @@ def generate_complaint(
 
     problems = [scenario] + [sample_scenario() for _ in range(n_problems - 1)]
 
-    # Photos?
-    has_photos = declare_photos and should_have_photos()
-    num_pics = sample_photo_count(has_photos)
-
     # Build prompt and call LLM (text only: user_text + timestamp)
     messages = build_generation_prompt(
         record_id=record_id,
         problems=problems,
         community=community,
-        num_pics=num_pics,
         persona=persona,
         modifier=modifier,
     )
@@ -413,7 +390,6 @@ def generate_complaint(
             record_id=record_id,
             problems=problems,
             community=community,
-            num_pics=num_pics,
             persona=persona,
             modifier=modifier,
             history=history,
@@ -441,7 +417,7 @@ def generate_complaint(
                                "attempts": len(transcript), "turns": transcript,
                                "persona": (persona or {}).get("id"),
                                "modifier": (modifier or {}).get("id"),
-                               "num_pics": num_pics})
+                               })
         if reject_sink is not None:
             reject_sink({
                 "id": record_id,
@@ -455,31 +431,9 @@ def generate_complaint(
             })
         return None
 
-    # Photo filenames (.png); actual files generated below if enabled
-    pic_names = [f"{record_id}_{i}.png" for i in range(1, num_pics + 1)]
-
-    # Optional image generation from scenario-derived prompts
-    image_prompts: list[str] = []
-    if image_gen is not None and num_pics > 0:
-        prompts = build_image_prompts(problems, community, num_pics)
-        img_dir = Path(images_dir) if images_dir else Path("data/images")
-        img_dir.mkdir(parents=True, exist_ok=True)
-        for i, p in enumerate(prompts, 1):
-            out_path = str(img_dir / f"{record_id}_{i}.png")
-            if Path(out_path).exists():
-                logger.debug(f"[{record_id}] image {i} exists, skipping")
-            else:
-                logger.info(f"[{record_id}] Generating image {i}/{num_pics}...")
-                try:
-                    image_gen.generate(p, _stable_seed(record_id, i, seed_base), out_path)
-                except Exception as e:
-                    logger.error(f"[{record_id}] image {i} generation failed: {e}")
-            image_prompts.append(p)
-
     complaint = {
         "id": record_id,
         "user_text": user_text,
-        "user_pics": pic_names,
         "timestamp": timestamp,
     }
 
@@ -498,7 +452,6 @@ def generate_complaint(
     ground_truth = {
         "complaint_id": record_id,
         "extractions": extractions,
-        "image_descriptions": [],  # filled by extractor (VLM), not by generator
     }
 
     metadata = {
@@ -506,8 +459,6 @@ def generate_complaint(
         "persona": persona["id"] if persona else None,
         "modifier": modifier["id"] if modifier else None,
         "community": community,
-        "num_pics": num_pics,
-        "image_prompts": image_prompts,
     }
 
     if conversation_sink is not None:
@@ -515,7 +466,7 @@ def generate_complaint(
                            "attempts": len(transcript), "turns": transcript,
                            "persona": (persona or {}).get("id"),
                            "modifier": (modifier or {}).get("id"),
-                           "num_pics": num_pics})
+                           })
 
     return complaint, ground_truth, metadata
 
@@ -526,18 +477,14 @@ def generate_dataset(
     start_id: int = 1,
     output_dir: str = "data",
     raw_subdir: str = "raw",
-    images_subdir: str = "images",
     complaints_file: str = "complaints.jsonl",
     ground_truth_file: str = "ground_truth.jsonl",
     metadata_file: str = "metadata.jsonl",
     resume: bool = True,
-    enable_images: bool = False,
-    ig_config: dict | None = None,
     validate: bool = False,
     max_validation_retries: int = 3,
     validator_client: LLMClient | None = None,
     num_workers: int = 1,
-    declare_photos: bool = True,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -546,10 +493,6 @@ def generate_dataset(
       - <output_dir>/<raw_subdir>/<complaints_file>
       - <output_dir>/<raw_subdir>/<ground_truth_file>
       - <output_dir>/<raw_subdir>/<metadata_file>
-      - <output_dir>/<images_subdir>/*.png  (only if enable_images is True)
-
-    When image generation is enabled, the FLUX backend is loaded ONCE here
-    and reused for every record.
     """
     raw_path = Path(output_dir) / raw_subdir / complaints_file
     ground_truth_path = Path(output_dir) / raw_subdir / ground_truth_file
@@ -562,31 +505,6 @@ def generate_dataset(
             if f.exists():
                 f.write_text("")
                 logger.info(f"Start fresh: truncated {f}")
-
-    # Optional image generation backend (loaded once)
-    image_gen = None
-    images_dir = Path(output_dir) / images_subdir
-    seed_base = 42
-    if enable_images:
-        ig = ig_config or {}
-        seed_base = ig.get("seed_base", 42)
-        try:
-            from .imagegen import FluxImageGenerator
-            print("Loading image generation backend (FLUX.2)...")
-            image_gen = FluxImageGenerator(
-                cache=ig.get("cache", "diffusers/FLUX.2-dev-bnb-4bit"),
-                size=ig.get("size", 1024),
-                steps=ig.get("steps", 28),
-                guidance=ig.get("guidance", 4.0),
-                device0=ig.get("device0", "cuda:0"),
-                device1=ig.get("device1", "cuda:1"),
-            )
-            image_gen.load()
-            images_dir.mkdir(parents=True, exist_ok=True)
-        except Exception as e:
-            logger.error(f"Image generation backend unavailable: {e}")
-            print(f"⚠️  Image generation disabled (backend error): {e}")
-            image_gen = None
 
     # Find already generated IDs for resume
     existing_ids = set()
@@ -626,16 +544,12 @@ def generate_dataset(
         """Generate one record and append it to the JSONL files (thread-safe)."""
         result = generate_complaint(
             client, record_id,
-            image_gen=image_gen,
-            images_dir=images_dir,
-            seed_base=seed_base,
             validate=validate,
             max_validation_retries=max_validation_retries,
             validator_client=validator_client,
             validation_log=validation_log,
             reject_sink=_reject_sink,
             conversation_sink=_conversation_sink,
-            declare_photos=declare_photos,
         )
         if result is None:
             logger.warning(f"[{record_id}] Generation failed")
@@ -693,13 +607,11 @@ def generate_dataset(
     return {
         "generated": generated,
         "failed": failed,
-        "images_enabled": image_gen is not None,
         "total_tokens_in": client.stats["tokens_in"],
         "total_tokens_out": client.stats["tokens_out"],
         "raw_path": str(raw_path),
         "ground_truth_path": str(ground_truth_path),
         "metadata_path": str(metadata_path),
-        "images_dir": str(images_dir) if image_gen is not None else None,
         "validation": dict(validation_counts) if validate else None,
     }
 

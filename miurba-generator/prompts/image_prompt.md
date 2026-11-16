@@ -1,1 +1,0 @@
-Documentary inspection photograph of {{cat_en}} damage ({{sub}}) in the {{zone_en}}{{detail_clause}} of {{base}}. Visible affected elements: {{elems_en}}. The damage looks {{urg_en}}. Realistic, professional maintenance inspection photo, natural lighting, sharp focus, no people, no text overlays.

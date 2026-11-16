@@ -13,7 +13,7 @@ PROBLEMA(S) A REPORTAR:
 
 CONTEXTO:
 - Comunidad: {{comm_desc}}
-{{persona_block}}- {{photo_text}}
+{{persona_block}}
 
 INSTRUCCIONES:
 1. Escribe el user_text como lo expresaría este vecino REAL a través de una app de gestión de comunidades.

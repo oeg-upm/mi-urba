@@ -13,14 +13,6 @@
       "type": "string",
       "description": "References the complaint this extraction belongs to"
     },
-    "image_descriptions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Textual descriptions of each attached photo, as produced by a VLM. One entry per photo in user_pics. Empty if no photos.",
-      "default": []
-    },
     "extractions": {
       "type": "array",
       "items": {

@@ -12,8 +12,7 @@ from pathlib import Path
 import pytest
 
 from src import prompt_loader
-from src.prompts import (build_generation_prompt, build_image_prompts,
-                         build_validation_prompt)
+from src.prompts import build_generation_prompt, build_validation_prompt
 
 GOLDEN = json.loads((Path(__file__).parent / "fixtures/prompt_golden.json")
                     .read_text(encoding="utf-8"))
@@ -71,11 +70,11 @@ MODIFIER = {"description": "Escribe con prisa", "style_override": "frases telegr
 
 
 def test_generation_prompt_simple_matches_golden():
-    assert build_generation_prompt("Q0001", [P1], COMMUNITY, 0) == GOLDEN["generation_simple"]
+    assert build_generation_prompt("Q0001", [P1], COMMUNITY) == GOLDEN["generation_simple"]
 
 
 def test_generation_prompt_multi_matches_golden():
-    got = build_generation_prompt("Q0002", [P1, P2], COMMUNITY, 2,
+    got = build_generation_prompt("Q0002", [P1, P2], COMMUNITY,
                                   persona=PERSONA, modifier=MODIFIER)
     assert got == GOLDEN["generation_multi"]
 
@@ -84,17 +83,13 @@ def test_validation_prompt_matches_golden():
     assert build_validation_prompt("Texto de prueba de la queja.", [P1, P2]) == GOLDEN["validation"]
 
 
-def test_image_prompts_match_golden():
-    assert build_image_prompts([P1, P2], COMMUNITY, 3) == GOLDEN["image_prompts"]
-
-
 def test_urgency_prohibitions_are_derived_from_config():
     """The forbidden urgency expressions must come from the config, never hand-written.
 
     For a 'media' scenario the expressions of every other level must be listed as
     prohibited, and the expressions of 'media' itself must not be.
     """
-    user = build_generation_prompt("Q0001", [P1], COMMUNITY, 0)[1]["content"]
+    user = build_generation_prompt("Q0001", [P1], COMMUNITY)[1]["content"]
     forbidden_block = user.split("PROHIBIDAS en este registro")[1].split("- Elementos")[0]
     for level, exprs in URGENCY_EXPRESSIONS.items():
         for e in exprs:
@@ -105,8 +100,8 @@ def test_urgency_prohibitions_are_derived_from_config():
 
 
 def test_loader_leaves_unknown_placeholders_visible():
-    text = prompt_loader.render("image_prompt")
-    assert "{{cat_en}}" in text, "a missing variable must stay visible, not vanish"
+    text = prompt_loader.render("generate_complaint", "user")
+    assert "{{problems_text}}" in text, "a missing variable must stay visible, not vanish"
 
 
 def test_loader_raises_on_unknown_section():
@@ -118,22 +113,22 @@ def test_fingerprint_is_stable_and_sha256():
     fp = prompt_loader.fingerprint("generate_complaint")
     assert len(fp) == 64 and fp == prompt_loader.fingerprint("generate_complaint")
     assert set(prompt_loader.fingerprint_all()) >= {"generate_complaint", "validate_record",
-                                                    "image_prompt"}
+                                                    "examples"}
 
 
 def test_retry_is_a_real_multi_turn_conversation():
     """Retries must be system,user + one assistant/user pair per rejected attempt."""
-    base = build_generation_prompt("Q0001", [P1], COMMUNITY, 0)
+    base = build_generation_prompt("Q0001", [P1], COMMUNITY)
     assert [m["role"] for m in base] == ["system", "user"]
 
-    one = build_generation_prompt("Q0001", [P1], COMMUNITY, 0,
+    one = build_generation_prompt("Q0001", [P1], COMMUNITY,
                                   history=[('{"user_text": "intento 1"}', "rechazado por urgency")])
     assert [m["role"] for m in one] == ["system", "user", "assistant", "user"]
     assert one[1]["content"] == base[1]["content"]      # el prompt base no se toca
     assert one[2]["content"] == '{"user_text": "intento 1"}'
     assert "rechazado por urgency" in one[3]["content"]
 
-    two = build_generation_prompt("Q0001", [P1], COMMUNITY, 0,
+    two = build_generation_prompt("Q0001", [P1], COMMUNITY,
                                   history=[("g1", "c1"), ("g2", "c2")])
     assert [m["role"] for m in two] == ["system", "user", "assistant", "user", "assistant", "user"]
     assert two[2]["content"] == "g1" and two[3]["content"] == "c1"

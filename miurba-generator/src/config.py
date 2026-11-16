@@ -248,25 +248,11 @@ def get_weights(cfg: dict | None = None) -> dict[str, Any]:
 _DEFAULT_PATHS = {
     "raw_subdir": "raw",
     "annotated_subdir": "annotated",
-    "images_subdir": "images",
     "complaints_file": "complaints.jsonl",
     "ground_truth_file": "ground_truth.jsonl",
     "metadata_file": "metadata.jsonl",
     "extractions_file": "extractions.jsonl",
 }
-
-
-def get_photos_enabled(cfg: dict | None = None) -> bool:
-    """Whether complaints may declare attached photos (user_pics).
-
-    Controlled by `generation.photos` (default true). When false, no
-    complaint declares photos: user_pics stays empty, the prompt states
-    the vecino attaches no photos, and num_pics is forced to 0 (so no
-    image filenames ever reach the model). Independent of
-    image_generation.enabled, which only controls rendering actual PNGs.
-    """
-    cfg = cfg if cfg is not None else get_config()
-    return bool(cfg.get("generation", {}).get("photos", True))
 
 
 def get_paths(cfg: dict | None = None) -> dict[str, str]:
@@ -311,7 +297,6 @@ _DEFAULT_GENERATION = {
     "model_load_wait": None,
     # Concurrent generation workers (1 = sequential, current behaviour).
     "workers": 1,
-    "photos": True,
 }
 
 
@@ -321,27 +306,3 @@ def get_generation_config(cfg: dict | None = None) -> dict[str, Any]:
     gen = dict(_DEFAULT_GENERATION)
     gen.update(cfg.get("generation", {}))
     return gen
-
-
-# ── Image generation config (optional) ──────────────────────────
-
-_DEFAULT_IMAGE_GEN = {
-    "enabled": False,
-    "backend": "flux2",
-    "cache": "diffusers/FLUX.2-dev-bnb-4bit",
-    "output_subdir": "images",
-    "size": 1024,
-    "steps": 28,
-    "guidance": 4.0,
-    "device0": "cuda:0",
-    "device1": "cuda:1",
-    "seed_base": 42,
-}
-
-
-def get_image_generation_config(cfg: dict | None = None) -> dict[str, Any]:
-    """Return the image-generation config (disabled by default)."""
-    cfg = cfg or get_config()
-    ig = dict(_DEFAULT_IMAGE_GEN)
-    ig.update(cfg.get("image_generation", {}))
-    return ig

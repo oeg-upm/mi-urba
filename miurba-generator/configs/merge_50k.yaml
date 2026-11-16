@@ -70,47 +70,16 @@ extraction:
   default_output_dir: null
   raw_dir: null
   annotated_dir: null
-  images_dir: null
   resume: true
   timeout: 300
   max_retries: 3
   retry_delay: 5.0
-  stage_split: false
-  vision_model: null
   model_load_wait: null
   workers: 1
 paths:
   raw_subdir: raw
   annotated_subdir: annotated
-  images_subdir: images
   complaints_file: complaints.jsonl
   extractions_file: extractions.jsonl
   ground_truth_file: ground_truth.jsonl
   metadata_file: metadata.jsonl
-image_generation:
-  enabled: false
-  backend: flux2
-  cache: diffusers/FLUX.2-dev-bnb-4bit
-  output_subdir: images
-  size: 1024
-  steps: 28
-  guidance: 4.0
-  device0: cuda:0
-  device1: cuda:1
-  seed_base: 42
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

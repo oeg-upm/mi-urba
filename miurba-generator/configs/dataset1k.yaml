@@ -70,5 +70,4 @@ generation:
   validate: true
   validator: juez-qwen38-27b
   max_validation_retries: 3
-  photos: false
   workers: 8

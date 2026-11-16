@@ -213,7 +213,6 @@ def get_weights(cfg: dict | None = None) -> dict[str, Any]:
 _DEFAULT_PATHS = {
     "raw_subdir": "raw",
     "annotated_subdir": "annotated",
-    "images_subdir": "images",
     "complaints_file": "complaints.jsonl",
     "ground_truth_file": "ground_truth.jsonl",
     "metadata_file": "metadata.jsonl",
@@ -227,15 +226,12 @@ def get_paths(cfg: dict | None = None) -> dict[str, str]:
     return {**_DEFAULT_PATHS, **cfg.get("paths", {})}
 
 
-def get_vision_model_params(name: str | None = None, cfg: dict | None = None) -> tuple[str, dict[str, Any]]:
-    """Return (resolved_name, model_params) for the VLM used to read images.
+def get_extraction_model_params(name: str | None = None, cfg: dict | None = None) -> tuple[str, dict[str, Any]]:
+    """Return (resolved_name, model_params) for the extraction model.
 
     Resolution order:
       1. explicit `name` argument
       2. extraction.model in config (REQUIRED — no fallback)
-
-    The chosen model MUST be vision-capable (multimodal) so it can see the
-    attached photos. Fail fast when no model is configured.
     """
     cfg = cfg or get_config()
     ext = cfg.get("extraction", {})
@@ -256,23 +252,16 @@ _DEFAULT_EXTRACTION = {
     # Sampling temperature for extraction calls.
     "temperature": 0.2,
     # Explicit directories. When None, each resolves to
-    # <default_output_dir>/<raw|annotated|images subdir> from `paths:`.
+    # <default_output_dir>/<raw|annotated subdir> from `paths:`.
     "default_output_dir": None,
     "raw_dir": None,
     "annotated_dir": None,
-    "images_dir": None,
     # Skip complaints already present in the extractions file.
     "resume": True,
     # Per-request timeout and retry policy for the LLM client.
     "timeout": 300,
     "max_retries": 3,
     "retry_delay": 5.0,
-    # P2 stage-split: two-call pipeline (vision describes, text extracts).
-    # Requires photos in the complaint; falls back to single-call otherwise.
-    "stage_split": False,
-    # Vision model (key in models:) for stage 1 when stage_split is true.
-    # null → stage-split falls back to single-call with a warning.
-    "vision_model": None,
     # Patience (seconds) with cold models: 5xx within this window are treated
     # as "model loading" and do not consume retries. null = disabled.
     "model_load_wait": None,
@@ -322,8 +311,3 @@ def get_extraction_json_schema(cfg: dict | None = None) -> dict[str, Any]:
     problem["affected_elements"]["maxItems"] = 5
     problem["risks"]["maxItems"] = 5
     return schema
-
-
-def get_image_description_json_schema(cfg: dict | None = None) -> dict[str, Any]:
-    """Load schemas/image_description_schema.json (stage-1 vision output)."""
-    return _load_schema("image_description_schema.json")
