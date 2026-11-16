@@ -1,4 +1,4 @@
-"""Unit tests for structured-output modes and record validation.
+"""Unit tests for structured-output modes and the stage-split pipeline.
 
 Pure code paths with stub clients and temp fixtures — no network, no
 real config values, no prompt-content assertions.
@@ -17,7 +17,10 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.llm import LLMClient, VALID_STRUCTURED_MODES  # noqa: E402
-from src.config import get_extraction_json_schema  # noqa: E402
+from src.config import (  # noqa: E402
+    get_extraction_json_schema,
+    get_image_description_json_schema,
+)
 from src.pipeline import extract_complaint  # noqa: E402
 
 
@@ -97,7 +100,7 @@ def fixture_cfg(tmp_path):
     """Minimal config with a custom taxonomy + copied schema files."""
     schemas_src = PROJECT_ROOT.parent / "schemas"
     (tmp_path / "schemas").mkdir()
-    for f in ("extraction_schema.json",):
+    for f in ("extraction_schema.json", "image_description_schema.json"):
         (tmp_path / "schemas" / f).write_text((schemas_src / f).read_text(encoding="utf-8"))
     cfg = {
         "taxonomy": "taxonomy.yaml",
@@ -126,7 +129,13 @@ def test_enum_sync_values(fixture_cfg, monkeypatch):
     assert props["risks"]["maxItems"] == 5
 
 
-# ── Stub client ───────────────────────────────────────────────
+def test_image_description_schema_loads(fixture_cfg, monkeypatch):
+    monkeypatch.setattr("src.config.DEFAULT_CONFIG_PATH", fixture_cfg)
+    schema = get_image_description_json_schema()
+    assert schema["required"] == ["complaint_id", "descriptions"]
+
+
+# ── Stage-split pipeline ──────────────────────────────────────
 
 class StubLLM:
     def __init__(self, responses):
@@ -144,52 +153,116 @@ class StubLLM:
         return json.loads(response["choices"][0]["message"]["content"])
 
 
+def _complaint_with_pics(tmp_path):
+    pics = []
+    for i in (1, 2):
+        p = tmp_path / f"Q0001_{i}.png"
+        p.write_bytes(b"\x89PNG fake")
+        pics.append(p.name)
+    return {"id": "Q0001", "user_text": "texto", "user_pics": pics}
+
+
+def test_stage_split_two_calls_and_caption_normalization(tmp_path, fake_taxonomy):
+    complaint = _complaint_with_pics(tmp_path)
+    vision = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001",
+        "descriptions": [{"caption": "cap1", "objects": [], "damage_indicators": [], "not_in_text": False},
+                          {"caption": "cap2", "objects": [], "damage_indicators": [], "not_in_text": True}]})}}]}])
+    text = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001", "extractions": [{"category": {"principal": "cubierta", "subcategory": "tejas"}}]})}}]}])
+
+    out = extract_complaint(text, complaint, tmp_path,
+                            stage_split=True, vision_client=vision)
+    assert vision.calls == 1 and text.calls == 1
+    assert out["image_descriptions"] == ["cap1", "cap2"]  # normalized to captions
+    assert out["extractions"]
+
+
+def test_stage_split_falls_back_when_vision_fails(tmp_path, fake_taxonomy):
+    complaint = _complaint_with_pics(tmp_path)
+
+    class BrokenVision:
+        def chat(self, messages):
+            raise RuntimeError("vision down")
+
+    text = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001", "extractions": [], "image_descriptions": []})}}]}])
+
+    out = extract_complaint(text, complaint, tmp_path,
+                            stage_split=True, vision_client=BrokenVision())
+    assert out is not None  # stage 2 ran with empty descriptions
+    assert out["image_descriptions"] == []
+
+
+def test_no_photos_falls_back_to_single_call(tmp_path, fake_taxonomy):
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
+    text = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001", "extractions": [], "image_descriptions": []})}}]}])
+    vision = StubLLM([])
+
+    out = extract_complaint(text, complaint, tmp_path,
+                            stage_split=True, vision_client=vision)
+    assert vision.calls == 0  # single-call path, vision never used
+    assert text.calls == 1
+
+
+def test_no_vision_client_falls_back_to_single_call(tmp_path, fake_taxonomy):
+    complaint = _complaint_with_pics(tmp_path)
+    text = StubLLM([{"choices": [{"message": {"content": json.dumps({
+        "complaint_id": "Q0001", "extractions": [], "image_descriptions": []})}}]}])
+
+    out = extract_complaint(text, complaint, tmp_path,
+                            stage_split=True, vision_client=None)
+    assert text.calls == 1  # single-call despite stage_split=True
+
+
 # ── M2: invalid extractions shape fails the record ────────────
 
-def test_non_list_extractions_fail_the_record(fake_taxonomy):
-    complaint = {"id": "Q0001", "user_text": "texto"}
+def test_non_list_extractions_fail_the_record(tmp_path, fake_taxonomy):
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
     text = StubLLM([{"choices": [{"message": {"content": json.dumps({
-        "complaint_id": "Q0001", "extractions": "no soy lista"})}}]}])
-    out = extract_complaint(text, complaint)
+        "complaint_id": "Q0001", "extractions": "no soy lista",
+        "image_descriptions": []})}}]}])
+    out = extract_complaint(text, complaint, tmp_path)
     assert out is None  # record failed, no garbage written
 
 
-def test_missing_extractions_fail_the_record(fake_taxonomy):
-    complaint = {"id": "Q0001", "user_text": "texto"}
+def test_missing_extractions_fail_the_record(tmp_path, fake_taxonomy):
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
     text = StubLLM([{"choices": [{"message": {"content": json.dumps({
-        "complaint_id": "Q0001"})}}]}])
-    out = extract_complaint(text, complaint)
+        "complaint_id": "Q0001", "image_descriptions": []})}}]}])
+    out = extract_complaint(text, complaint, tmp_path)
     assert out is None
 
 
 # ── M8: always-on schema validation ───────────────────────────
 
-def test_invalid_record_fails_when_schema_provided(fake_taxonomy, fixture_cfg, monkeypatch):
+def test_invalid_record_fails_when_schema_provided(tmp_path, fake_taxonomy, fixture_cfg, monkeypatch):
     monkeypatch.setattr("src.config.DEFAULT_CONFIG_PATH", fixture_cfg)
     from src.config import get_config, get_extraction_json_schema
     schema = get_extraction_json_schema(get_config(fixture_cfg))
-    complaint = {"id": "Q0001", "user_text": "texto"}
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
     # urgency "mega" no está en el enum del schema (alta/baja)
     text = StubLLM([{"choices": [{"message": {"content": json.dumps({
-        "complaint_id": "Q0001",
+        "complaint_id": "Q0001", "image_descriptions": [],
         "extractions": [{"category": {"principal": "cubierta", "subcategory": "tejas"},
                           "affected_elements": [],
                           "location": {"zone": "norte", "detail": ""},
                           "risks": ["riesgo_x"], "urgency": "mega"}]})}}]}])
-    out = extract_complaint(text, complaint, validation_schema=schema)
+    out = extract_complaint(text, complaint, tmp_path, validation_schema=schema)
     assert out is None  # invalid → record failed
 
 
-def test_valid_record_passes_schema_validation(fake_taxonomy, fixture_cfg, monkeypatch):
+def test_valid_record_passes_schema_validation(tmp_path, fake_taxonomy, fixture_cfg, monkeypatch):
     monkeypatch.setattr("src.config.DEFAULT_CONFIG_PATH", fixture_cfg)
     from src.config import get_config, get_extraction_json_schema
     schema = get_extraction_json_schema(get_config(fixture_cfg))
-    complaint = {"id": "Q0001", "user_text": "texto"}
+    complaint = {"id": "Q0001", "user_text": "texto", "user_pics": []}
     text = StubLLM([{"choices": [{"message": {"content": json.dumps({
-        "complaint_id": "Q0001",
+        "complaint_id": "Q0001", "image_descriptions": [],
         "extractions": [{"category": {"principal": "cubierta", "subcategory": "tejas"},
                           "affected_elements": [],
                           "location": {"zone": "norte", "detail": ""},
                           "risks": ["riesgo_x"], "urgency": "alta"}]})}}]}])
-    out = extract_complaint(text, complaint, validation_schema=schema)
+    out = extract_complaint(text, complaint, tmp_path, validation_schema=schema)
     assert out is not None

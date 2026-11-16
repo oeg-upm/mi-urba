@@ -19,7 +19,7 @@ from src.config import (  # noqa: E402
     DEFAULT_CONFIG_PATH,
     get_config,
     get_extraction_config,
-    get_extraction_model_params,
+    get_vision_model_params,
 )
 from src.llm import LLMClient  # noqa: E402
 
@@ -55,7 +55,7 @@ def test_extraction_defaults_fill_missing_keys(config_file):
     for key, default in [
         # ("model", None) excluded: the fixture sets it (it is REQUIRED anyway)
         ("temperature", 0.2), ("default_output_dir", None),
-        ("raw_dir", None), ("annotated_dir", None),
+        ("raw_dir", None), ("annotated_dir", None), ("images_dir", None),
         ("resume", True), ("timeout", 300), ("max_retries", 3),
         ("retry_delay", 5.0),
     ]:
@@ -75,14 +75,14 @@ def test_repo_config_extraction_section_fully_consumed():
 def test_vlm_resolves_extraction_model(config_file):
     """extraction.model resolves to its models: entry."""
     cfg = get_config(config_file)
-    name, params = get_extraction_model_params(None, cfg)
+    name, params = get_vision_model_params(None, cfg)
     assert name == "vlm-a" and params["model"] == "vlm-a-model"
 
 
 def test_vlm_explicit_name_wins(config_file):
     """An explicitly passed name overrides extraction.model."""
     cfg = get_config(config_file)
-    name, params = get_extraction_model_params("vlm-b", cfg)
+    name, params = get_vision_model_params("vlm-b", cfg)
     assert name == "vlm-b" and params["model"] == "vlm-b-model"
 
 
@@ -91,7 +91,7 @@ def test_vlm_missing_model_fails_fast(config_file):
     cfg = get_config(config_file)
     cfg["extraction"]["model"] = None
     with pytest.raises(ValueError, match="extraction.model is required"):
-        get_extraction_model_params(None, cfg)
+        get_vision_model_params(None, cfg)
 
 
 # ── Directory resolution ──────────────────────────────────────
@@ -99,29 +99,31 @@ def test_vlm_missing_model_fails_fast(config_file):
 PATHS = {
     "raw_subdir": "raw",
     "annotated_subdir": "annotated",
+    "images_subdir": "images",
 }
 
 
 def test_dirs_from_generation_default_output_dir(config_file):
     ext = get_extraction_config(get_config(config_file))
-    raw, ann = resolve_dirs(ext, PATHS, fallback_base="/base")
+    raw, ann, img = resolve_dirs(ext, PATHS, fallback_base="/base")
     assert raw == "/base/raw"
     assert ann == "/base/annotated"
+    assert img == "/base/images"
 
 
 def test_dirs_explicit_override(config_file):
     cfg = get_config(config_file)
     cfg["extraction"].update({
-        "raw_dir": "/x/raw", "annotated_dir": "/x/ann",
+        "raw_dir": "/x/raw", "annotated_dir": "/x/ann", "images_dir": "/x/img",
     })
-    raw, ann = resolve_dirs(get_extraction_config(cfg), PATHS, fallback_base="/base")
-    assert (raw, ann) == ("/x/raw", "/x/ann")
+    raw, ann, img = resolve_dirs(get_extraction_config(cfg), PATHS, fallback_base="/base")
+    assert (raw, ann, img) == ("/x/raw", "/x/ann", "/x/img")
 
 
 def test_dirs_extraction_base_wins_over_generation(config_file):
     cfg = get_config(config_file)
     cfg["extraction"]["default_output_dir"] = "/ext-base"
-    raw, _ = resolve_dirs(get_extraction_config(cfg), PATHS, fallback_base="/gen-base")
+    raw, _, _ = resolve_dirs(get_extraction_config(cfg), PATHS, fallback_base="/gen-base")
     assert raw == "/ext-base/raw"
 
 

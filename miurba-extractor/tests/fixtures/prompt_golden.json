@@ -2,11 +2,97 @@
   "extraction_text_only": [
     {
       "role": "system",
-      "content": "Eres un experto en mantenimiento de comunidades de vecinos. Recibes el texto que envió el vecino. Tu tarea: extraer información estructurada (extracciones): identificar TODOS los problemas mencionados (puede haber más de uno) y, para cada uno, extraer categoría, elementos afectados, ubicación, riesgos y urgencia.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+      "content": "Eres un experto en mantenimiento de comunidades de vecinos con capacidad de visión. Recibes el texto que envió el vecino y, si hay fotos, las propias imágenes. Tu tarea tiene dos partes:\n1. Describir CADA foto de forma detallada y objetiva (image_descriptions): tipo de daño, materiales, colores, iluminación, composición, entorno, escala, texturas. Indica también elementos relevantes que el vecino NO haya mencionado en su texto, marcándolos con la frase 'no mencionado por el vecino'.\n2. Extraer información estructurada (extracciones): identificar TODOS los problemas mencionados o visibles (puede haber más de uno) y, para cada uno, extraer categoría, elementos afectados, ubicación, riesgos y urgencia. Considera tanto el texto como lo que ves en las fotos.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
     },
     {
       "role": "user",
-      "content": "TEXTO DEL VECINO:\nEn el portal hay una fuga de agua en la tubería vertical.\n\n---\n\nExtrae la información estructurada de la queja.\n\nCATEGORÍAS VÁLIDAS (principal → subcategorías):\n- fontanería: fugas, atascos, rotura_tubería, presión_agua, desagües, grifos_cisternas, agua_caliente\n- electricidad: iluminación_común, cuadro_eléctrico, enchufes, cableado, timbres_porteros, cortes_suministro\n- cubierta: goteras, tejas, canalones, impermeabilización, sumideros_cubierta\n- fachada: grietas, pintura, revoco, baldosas_exterior, juntas_dilatación\n- carpintería: ventanas, persianas, puertas, cerrajería, cristales\n- jardinería: riego, árboles, setos, césped, drenaje_parcela\n- limpieza: basuras, barredura, desinfección, cristales_comunes, residuos_voluminosos\n- ascensor: avería, mantenimiento, accesibilidad, puertas_cabina\n- climatización: calefacción_común, ACS, aire_acondicionado, caldera\n- piscina: agua, infraestructura_vaso, seguridad_piscina, purificación\n- garaje: pavimento, ventilación, puertas_garaje, iluminación_garaje, desagüe_garaje\n- plagas: insectos, roedores, termitas, palomas, mosquitos\n- mobiliario: bancos, papeleras, columpios, vallas, buzones\n- seguridad: alumbrado_exterior, cámaras, portero_automático, valla_perimetral\n- ruido: obra, vecinos, vibraciones, maquinaria_común\n- varios: general\n\nZONAS VÁLIDAS: garaje, portal, exterior, zonas_verdes, piscina, trasteros, azotea, locales\nRIESGOS VÁLIDOS: eléctrico, estructural, sanitario, incendio, inundación, caída, accesibilidad, seguridad_persona, ninguno\nURGENCIAS VÁLIDAS: inmediata, urgente, alta, media, baja, planificable\n\nRESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0001\",\n  \"extractions\": [\n    {\n      \"category\": {\n        \"principal\": \"...\",\n        \"subcategory\": \"...\"\n      },\n      \"affected_elements\": [\n        {\n          \"principal\": \"...\",\n          \"subcategory\": \"...\"\n        }\n      ],\n      \"location\": {\n        \"zone\": \"...\",\n        \"detail\": \"...\"\n      },\n      \"risks\": [\n        \"...\"\n      ],\n      \"urgency\": \"inmediata|urgente|alta|media|baja|planificable\"\n    }\n  ]\n}"
+      "content": [
+        {
+          "type": "text",
+          "text": "TEXTO DEL VECINO:\nEn el portal hay una fuga de agua en la tubería vertical.\n\n---\n\nDescribe las fotos y extrae la información estructurada de la queja.\n\nCATEGORÍAS VÁLIDAS (principal → subcategorías):\n- fontanería: fugas, atascos, rotura_tubería, presión_agua, desagües, grifos_cisternas, agua_caliente\n- electricidad: iluminación_común, cuadro_eléctrico, enchufes, cableado, timbres_porteros, cortes_suministro\n- cubierta: goteras, tejas, canalones, impermeabilización, sumideros_cubierta\n- fachada: grietas, pintura, revoco, baldosas_exterior, juntas_dilatación\n- carpintería: ventanas, persianas, puertas, cerrajería, cristales\n- jardinería: riego, árboles, setos, césped, drenaje_parcela\n- limpieza: basuras, barredura, desinfección, cristales_comunes, residuos_voluminosos\n- ascensor: avería, mantenimiento, accesibilidad, puertas_cabina\n- climatización: calefacción_común, ACS, aire_acondicionado, caldera\n- piscina: agua, infraestructura_vaso, seguridad_piscina, purificación\n- garaje: pavimento, ventilación, puertas_garaje, iluminación_garaje, desagüe_garaje\n- plagas: insectos, roedores, termitas, palomas, mosquitos\n- mobiliario: bancos, papeleras, columpios, vallas, buzones\n- seguridad: alumbrado_exterior, cámaras, portero_automático, valla_perimetral\n- ruido: obra, vecinos, vibraciones, maquinaria_común\n- varios: general\n\nZONAS VÁLIDAS: garaje, portal, exterior, zonas_verdes, piscina, trasteros, azotea, locales\nRIESGOS VÁLIDOS: eléctrico, estructural, sanitario, incendio, inundación, caída, accesibilidad, seguridad_persona, ninguno\nURGENCIAS VÁLIDAS: inmediata, urgente, alta, media, baja, planificable\n\nIMPORTANTE: image_descriptions debe tener una entrada por cada foto adjunta (en el mismo orden). Si no hay fotos, deja image_descriptions como [].\n\nRESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0001\",\n  \"image_descriptions\": [\n    \"<descripción detallada y objetiva de lo que se ve en la foto 1>\"\n  ],\n  \"extractions\": [\n    {\n      \"category\": {\n        \"principal\": \"...\",\n        \"subcategory\": \"...\"\n      },\n      \"affected_elements\": [\n        {\n          \"principal\": \"...\",\n          \"subcategory\": \"...\"\n        }\n      ],\n      \"location\": {\n        \"zone\": \"...\",\n        \"detail\": \"...\"\n      },\n      \"risks\": [\n        \"...\"\n      ],\n      \"urgency\": \"inmediata|urgente|alta|media|baja|planificable\"\n    }\n  ]\n}"
+        }
+      ]
+    }
+  ],
+  "extraction_with_image": [
+    {
+      "role": "system",
+      "content": "Eres un experto en mantenimiento de comunidades de vecinos con capacidad de visión. Recibes el texto que envió el vecino y, si hay fotos, las propias imágenes. Tu tarea tiene dos partes:\n1. Describir CADA foto de forma detallada y objetiva (image_descriptions): tipo de daño, materiales, colores, iluminación, composición, entorno, escala, texturas. Indica también elementos relevantes que el vecino NO haya mencionado en su texto, marcándolos con la frase 'no mencionado por el vecino'.\n2. Extraer información estructurada (extracciones): identificar TODOS los problemas mencionados o visibles (puede haber más de uno) y, para cada uno, extraer categoría, elementos afectados, ubicación, riesgos y urgencia. Considera tanto el texto como lo que ves en las fotos.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "TEXTO DEL VECINO:\nComo se ve en la foto, la fachada tiene grietas.\n\nFOTOS ADJUNTAS: 1 foto(s) que se muestran a continuación.\n\n---\n\nDescribe las fotos y extrae la información estructurada de la queja.\n\nCATEGORÍAS VÁLIDAS (principal → subcategorías):\n- fontanería: fugas, atascos, rotura_tubería, presión_agua, desagües, grifos_cisternas, agua_caliente\n- electricidad: iluminación_común, cuadro_eléctrico, enchufes, cableado, timbres_porteros, cortes_suministro\n- cubierta: goteras, tejas, canalones, impermeabilización, sumideros_cubierta\n- fachada: grietas, pintura, revoco, baldosas_exterior, juntas_dilatación\n- carpintería: ventanas, persianas, puertas, cerrajería, cristales\n- jardinería: riego, árboles, setos, césped, drenaje_parcela\n- limpieza: basuras, barredura, desinfección, cristales_comunes, residuos_voluminosos\n- ascensor: avería, mantenimiento, accesibilidad, puertas_cabina\n- climatización: calefacción_común, ACS, aire_acondicionado, caldera\n- piscina: agua, infraestructura_vaso, seguridad_piscina, purificación\n- garaje: pavimento, ventilación, puertas_garaje, iluminación_garaje, desagüe_garaje\n- plagas: insectos, roedores, termitas, palomas, mosquitos\n- mobiliario: bancos, papeleras, columpios, vallas, buzones\n- seguridad: alumbrado_exterior, cámaras, portero_automático, valla_perimetral\n- ruido: obra, vecinos, vibraciones, maquinaria_común\n- varios: general\n\nZONAS VÁLIDAS: garaje, portal, exterior, zonas_verdes, piscina, trasteros, azotea, locales\nRIESGOS VÁLIDOS: eléctrico, estructural, sanitario, incendio, inundación, caída, accesibilidad, seguridad_persona, ninguno\nURGENCIAS VÁLIDAS: inmediata, urgente, alta, media, baja, planificable\n\nIMPORTANTE: image_descriptions debe tener una entrada por cada foto adjunta (en el mismo orden). Si no hay fotos, deja image_descriptions como [].\n\nRESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0002\",\n  \"image_descriptions\": [\n    \"<descripción detallada y objetiva de lo que se ve en la foto 1>\"\n  ],\n  \"extractions\": [\n    {\n      \"category\": {\n        \"principal\": \"...\",\n        \"subcategory\": \"...\"\n      },\n      \"affected_elements\": [\n        {\n          \"principal\": \"...\",\n          \"subcategory\": \"...\"\n        }\n      ],\n      \"location\": {\n        \"zone\": \"...\",\n        \"detail\": \"...\"\n      },\n      \"risks\": [\n        \"...\"\n      ],\n      \"urgency\": \"inmediata|urgente|alta|media|baja|planificable\"\n    }\n  ]\n}"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGNgAAACAAFUok9fAAAAAElFTkSuQmCC"
+          }
+        }
+      ]
+    }
+  ],
+  "describe_image": [
+    {
+      "role": "system",
+      "content": "Eres un descriptor objetivo de imágenes. Recibes las fotos que adjuntó un vecino junto a su queja. Para CADA foto produce una entrada con:\n- caption: descripción factual en una frase.\n- objects: objetos relevantes visibles.\n- damage_indicators: señales visuales de daño o deterioro.\n- not_in_text: true si la foto muestra algo que el texto NO menciona.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "TEXTO DEL VECINO:\nComo se ve en la foto, la fachada tiene grietas.\n\nFOTOS ADJUNTAS: 1 foto(s), a continuación en orden (foto 1 = user_pics[0], etc.).\n\nDescribe cada foto. RESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0002\",\n  \"descriptions\": [\n    {\n      \"caption\": \"...\",\n      \"objects\": [\n        \"...\"\n      ],\n      \"damage_indicators\": [\n        \"...\"\n      ],\n      \"not_in_text\": false\n    }\n  ]\n}"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGNgAAACAAFUok9fAAAAAElFTkSuQmCC"
+          }
+        }
+      ]
+    }
+  ],
+  "describe_image_missing_file": [
+    {
+      "role": "system",
+      "content": "Eres un descriptor objetivo de imágenes. Recibes las fotos que adjuntó un vecino junto a su queja. Para CADA foto produce una entrada con:\n- caption: descripción factual en una frase.\n- objects: objetos relevantes visibles.\n- damage_indicators: señales visuales de daño o deterioro.\n- not_in_text: true si la foto muestra algo que el texto NO menciona.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "TEXTO DEL VECINO:\nComo se ve en la foto, la fachada tiene grietas.\n\nFOTOS ADJUNTAS: 1 foto(s), a continuación en orden (foto 1 = user_pics[0], etc.).\n\nDescribe cada foto. RESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0002\",\n  \"descriptions\": [\n    {\n      \"caption\": \"...\",\n      \"objects\": [\n        \"...\"\n      ],\n      \"damage_indicators\": [\n        \"...\"\n      ],\n      \"not_in_text\": false\n    }\n  ]\n}"
+        },
+        {
+          "type": "text",
+          "text": "[Foto 1 no disponible: existe.png]"
+        }
+      ]
+    }
+  ],
+  "extract_text_stage2": [
+    {
+      "role": "system",
+      "content": "Eres un experto en mantenimiento de comunidades de vecinos. Recibes el texto de una queja y, si las hay, descripciones objetivas de las fotos adjuntas (producidas por un modelo de visión). Extrae la información estructurada: TODOS los problemas mencionados o visibles, con categoría, elementos afectados, ubicación, riesgos y urgencia.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+    },
+    {
+      "role": "user",
+      "content": "TEXTO DEL VECINO:\nComo se ve en la foto, la fachada tiene grietas.\n\nDESCRIPCIONES DE LAS FOTOS (etapa de visión):\n  Foto 1: Grietas en el revoco de la fachada [objetos: fachada, revoco] [daño: grietas]\n  Foto 2: Detalle del canalón [NO mencionado en el texto]\n\n---\n\nExtrae la información estructurada de la queja.\n\nCATEGORÍAS VÁLIDAS (principal → subcategorías):\n- fontanería: fugas, atascos, rotura_tubería, presión_agua, desagües, grifos_cisternas, agua_caliente\n- electricidad: iluminación_común, cuadro_eléctrico, enchufes, cableado, timbres_porteros, cortes_suministro\n- cubierta: goteras, tejas, canalones, impermeabilización, sumideros_cubierta\n- fachada: grietas, pintura, revoco, baldosas_exterior, juntas_dilatación\n- carpintería: ventanas, persianas, puertas, cerrajería, cristales\n- jardinería: riego, árboles, setos, césped, drenaje_parcela\n- limpieza: basuras, barredura, desinfección, cristales_comunes, residuos_voluminosos\n- ascensor: avería, mantenimiento, accesibilidad, puertas_cabina\n- climatización: calefacción_común, ACS, aire_acondicionado, caldera\n- piscina: agua, infraestructura_vaso, seguridad_piscina, purificación\n- garaje: pavimento, ventilación, puertas_garaje, iluminación_garaje, desagüe_garaje\n- plagas: insectos, roedores, termitas, palomas, mosquitos\n- mobiliario: bancos, papeleras, columpios, vallas, buzones\n- seguridad: alumbrado_exterior, cámaras, portero_automático, valla_perimetral\n- ruido: obra, vecinos, vibraciones, maquinaria_común\n- varios: general\n\nZONAS VÁLIDAS: garaje, portal, exterior, zonas_verdes, piscina, trasteros, azotea, locales\nRIESGOS VÁLIDOS: eléctrico, estructural, sanitario, incendio, inundación, caída, accesibilidad, seguridad_persona, ninguno\nURGENCIAS VÁLIDAS: inmediata, urgente, alta, media, baja, planificable\n\nIMPORTANTE: image_descriptions = captions breves de cada foto (mismo orden); [] si no hay fotos.\n\nRESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0002\",\n  \"image_descriptions\": [\n    \"<caption breve de cada foto, en orden>\"\n  ],\n  \"extractions\": [\n    {\n      \"category\": {\n        \"principal\": \"...\",\n        \"subcategory\": \"...\"\n      },\n      \"affected_elements\": [\n        {\n          \"principal\": \"...\",\n          \"subcategory\": \"...\"\n        }\n      ],\n      \"location\": {\n        \"zone\": \"...\",\n        \"detail\": \"...\"\n      },\n      \"risks\": [\n        \"...\"\n      ],\n      \"urgency\": \"inmediata|urgente|alta|media|baja|planificable\"\n    }\n  ]\n}"
+    }
+  ],
+  "extract_text_stage2_no_photos": [
+    {
+      "role": "system",
+      "content": "Eres un experto en mantenimiento de comunidades de vecinos. Recibes el texto de una queja y, si las hay, descripciones objetivas de las fotos adjuntas (producidas por un modelo de visión). Extrae la información estructurada: TODOS los problemas mencionados o visibles, con categoría, elementos afectados, ubicación, riesgos y urgencia.\n\nRESPONDE SOLO con JSON válido, sin markdown ni texto adicional."
+    },
+    {
+      "role": "user",
+      "content": "TEXTO DEL VECINO:\nEn el portal hay una fuga de agua en la tubería vertical.\n\nDESCRIPCIONES DE LAS FOTOS: (sin fotos o no disponibles)\n\n---\n\nExtrae la información estructurada de la queja.\n\nCATEGORÍAS VÁLIDAS (principal → subcategorías):\n- fontanería: fugas, atascos, rotura_tubería, presión_agua, desagües, grifos_cisternas, agua_caliente\n- electricidad: iluminación_común, cuadro_eléctrico, enchufes, cableado, timbres_porteros, cortes_suministro\n- cubierta: goteras, tejas, canalones, impermeabilización, sumideros_cubierta\n- fachada: grietas, pintura, revoco, baldosas_exterior, juntas_dilatación\n- carpintería: ventanas, persianas, puertas, cerrajería, cristales\n- jardinería: riego, árboles, setos, césped, drenaje_parcela\n- limpieza: basuras, barredura, desinfección, cristales_comunes, residuos_voluminosos\n- ascensor: avería, mantenimiento, accesibilidad, puertas_cabina\n- climatización: calefacción_común, ACS, aire_acondicionado, caldera\n- piscina: agua, infraestructura_vaso, seguridad_piscina, purificación\n- garaje: pavimento, ventilación, puertas_garaje, iluminación_garaje, desagüe_garaje\n- plagas: insectos, roedores, termitas, palomas, mosquitos\n- mobiliario: bancos, papeleras, columpios, vallas, buzones\n- seguridad: alumbrado_exterior, cámaras, portero_automático, valla_perimetral\n- ruido: obra, vecinos, vibraciones, maquinaria_común\n- varios: general\n\nZONAS VÁLIDAS: garaje, portal, exterior, zonas_verdes, piscina, trasteros, azotea, locales\nRIESGOS VÁLIDOS: eléctrico, estructural, sanitario, incendio, inundación, caída, accesibilidad, seguridad_persona, ninguno\nURGENCIAS VÁLIDAS: inmediata, urgente, alta, media, baja, planificable\n\nIMPORTANTE: image_descriptions = captions breves de cada foto (mismo orden); [] si no hay fotos.\n\nRESPONDE SOLO con JSON en este formato:\n{\n  \"complaint_id\": \"Q0001\",\n  \"image_descriptions\": [\n    \"<caption breve de cada foto, en orden>\"\n  ],\n  \"extractions\": [\n    {\n      \"category\": {\n        \"principal\": \"...\",\n        \"subcategory\": \"...\"\n      },\n      \"affected_elements\": [\n        {\n          \"principal\": \"...\",\n          \"subcategory\": \"...\"\n        }\n      ],\n      \"location\": {\n        \"zone\": \"...\",\n        \"detail\": \"...\"\n      },\n      \"risks\": [\n        \"...\"\n      ],\n      \"urgency\": \"inmediata|urgente|alta|media|baja|planificable\"\n    }\n  ]\n}"
     }
   ]
 }

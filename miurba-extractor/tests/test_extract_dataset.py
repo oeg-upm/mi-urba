@@ -26,7 +26,7 @@ class StubLLM:
     def chat(self, messages):
         self.calls += 1
         return {"choices": [{"message": {"content": json.dumps({
-            "extractions": []})}}]}
+            "extractions": [], "image_descriptions": []})}}]}
 
     def extract_content(self, response):
         return response["choices"][0]["message"]["content"]
@@ -41,14 +41,14 @@ class StubLLM:
 
 @pytest.fixture
 def raw_dataset(tmp_path):
-    """3 complaints in raw/."""
+    """3 complaints in raw/ without images (single-call path)."""
     raw = tmp_path / "raw"
     raw.mkdir(parents=True)
     with open(raw / "complaints.jsonl", "w") as f:
         for i in range(1, 4):
             f.write(json.dumps({
                 "id": f"Q{i:04d}", "user_text": f"texto {i}",
-                "timestamp": "t"}) + "\n")
+                "user_pics": [], "timestamp": "t"}) + "\n")
     return tmp_path
 
 
@@ -56,6 +56,7 @@ def _run(tmp_path, resume=True, workers=1, client=None):
     return extract_dataset(
         client=client or StubLLM(),
         raw_dir=str(tmp_path / "raw"),
+        images_dir=str(tmp_path / "images"),
         output_dir=str(tmp_path / "annotated"),
         resume=resume,
         num_workers=workers,
@@ -90,6 +91,7 @@ def test_missing_raw_dir_returns_complete_stats(tmp_path):
     stats = extract_dataset(
         client=StubLLM(),
         raw_dir=str(tmp_path / "nope"),
+        images_dir=None,
         output_dir=str(tmp_path / "ann"),
     )
     # pin fix b245330: complete stats even on early return
@@ -105,6 +107,7 @@ def test_workers_parallel_writes_all_records(raw_dataset):
 
 
 def test_failed_record_counted(raw_dataset):
+    # all complaints have no images; make the client raise on every call
     class Broken:
         stats = {"tokens_in": 0, "tokens_out": 0}
 
