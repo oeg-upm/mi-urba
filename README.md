@@ -75,9 +75,11 @@ docker compose run --rm miurba-generator generate --config /config/config.test.y
 docker compose run --rm miurba-extractor extract  --config /config/config.test.yaml
 ```
 
-Monta `config.yaml`, `schemas/`, los directorios de datos y `logs/`
-(activa `logging.file: /logs/run.log` para persistir el log del run).
+Monta `config.yaml`, `taxonomy.yaml`, `schemas/`, los directorios de datos y
+`logs/` (activa `logging.file: /logs/run.log` para persistir el log del run).
 `scripts/docker_smoke.sh` ejecuta la verificación completa.
+Para runs de campaña con los configs de ejemplo, usa
+`docker-compose-example.yaml` (ver `miurba-generator/configs/`).
 
 ## Configuración
 
@@ -91,13 +93,14 @@ subproyecto. Resumen:
 | `models` | config.yaml | sí | Modelos por nombre: `endpoint`, `model`, `temperature`, `structured_output` (extractor), `extra_params` |
 | Taxonomía (`categories`, `risks`, `location_zones`, `personas`, `communities`, `weights`, …) | taxonomy.yaml | sí (generador) | Dominio del muestreo y del prompt; se referencia con `taxonomy:` en el config. Claves de taxonomía en config.yaml → error fail-fast |
 | `risk_expressions`, `urgency_expressions` | taxonomy.yaml | sí (generador) | Expresiones obligatorias en el texto generado; cobertura validada al arrancar |
-| `generation` | no | Plan de batches, seed, workers, retries, validación con juez |
-| `extraction` | no (salvo `model`, obligatorio) | Modelo VLM, rutas, workers, retries |
-| `paths`, `logging` | no | Nombres de ficheros y log de run |
-| `image_generation` | no | FLUX.2 (`enabled: false` por defecto; requiere GPU) |
+| `generation` | config.yaml | no | Plan de batches, seed, workers, retries, validación con juez |
+| `extraction` | config.yaml | no (salvo `model`, obligatorio) | Modelo VLM, rutas, workers, retries |
+| `paths`, `logging` | config.yaml | no | Nombres de ficheros y log de run |
+| `image_generation` | config.yaml | no | FLUX.2 (`enabled: false` por defecto; requiere GPU) |
 
 Variantes típicas: `config.local.yaml` / `config.test.yaml` (gitignored,
-con IPs de LAN); se seleccionan con `--config`.
+con IPs de LAN) y los 5 samples de `miurba-generator/configs/`; se seleccionan
+con `--config`.
 
 ## Testing
 
