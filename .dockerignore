@@ -12,3 +12,12 @@ demo/output/
 *.egg-info/
 dist/
 build/
+docs/
+data_test*/
+data_test/
+logs/
+.env
+config.local.yaml
+config.neuralwatt.yaml
+config.test*.yaml
+*.bak

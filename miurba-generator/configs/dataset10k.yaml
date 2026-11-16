@@ -1,0 +1,88 @@
+# Corpus 10K — cuatro generadores × 3.000 intentos = 12.000 lanzamientos.
+#
+#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#     generate --config /configs/dataset10k.yaml
+#
+# Sin olmo: aportaba el 4,5 % del corpus anterior (17 % de aceptación y 118
+# errores de llamada absorbidos). Los cuatro que quedan dieron 82-98 %.
+#
+# 3.000 intentos por modelo porque `num_records` cuenta intentos, no aceptados:
+# con las tasas medidas (gemma ~82 %, qwen3.6/muse/gpt-oss ~96-98 %) se esperan
+# ~11.100 registros, por encima del objetivo de 10.000. Si no llega, un pase más
+# con `num_records` mayor y `resume: true` añade ids nuevos sin rehacer nada.
+#
+# Ids: el plan reparte bloques secuenciales por modelo
+#   gemma Q0001-3000 · qwen3.6 Q3001-6000 · muse Q6001-9000 · gpt-oss Q9001-12000
+# Salida: /data/dataset-10k/<modelo>/raw/ + rejected.jsonl + conversations.jsonl
+inherits: config.yaml
+
+logging:
+  level: INFO
+  file: /logs/generate-10k.log
+
+endpoints:
+  generadores:
+    base_url: http://192.168.10.11:9292
+    description: llama-swap .11 — generadores
+  juez:
+    base_url: http://192.168.10.100:9292
+    description: llama-swap .100 — juez gemma4-12b
+
+models:
+  gemma-3-12b-awq:
+    endpoint: generadores
+    model: gemma-3-12b-it-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  qwen3.6-27b-awq:
+    endpoint: generadores
+    model: qwen3.6-27b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+  muse-glimmer-30b-awq:
+    endpoint: generadores
+    model: muse-glimmer-30b-awq
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  gpt-oss-20b:
+    endpoint: generadores
+    model: gpt-oss-20b-vllm
+    temperature: 0.85
+    extra_params:
+      max_tokens: 4096
+  juez-gemma4-12b:
+    endpoint: juez
+    model: gemma4-12b-awq
+    temperature: 0.0
+    extra_params:
+      max_tokens: 3500
+      enable_thinking: false
+      chat_template_kwargs:
+        enable_thinking: false
+
+generation:
+  default_output_dir: /data/dataset-10k
+  models:
+  - gemma-3-12b-awq
+  - qwen3.6-27b-awq
+  - muse-glimmer-30b-awq
+  - gpt-oss-20b
+  num_records: 3000
+  start_id: 1
+  seed: 42
+  resume: true
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  model_load_wait: 600
+  validate: true
+  validator: juez-gemma4-12b
+  max_validation_retries: 3
+  photos: false
+  workers: 8

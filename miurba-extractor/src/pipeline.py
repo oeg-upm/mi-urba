@@ -17,11 +17,13 @@ It does NOT generate synthetic complaints; that is the generator project's job.
 import json
 import logging
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from .config import get_vision_model_params
 from .llm import LLMClient
-from .prompts import build_extraction_prompt
+from .prompts import build_extraction_prompt, build_image_description_prompt, build_extraction_text_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -32,19 +34,62 @@ def _resolve_image_paths(complaint: dict, images_dir: str | Path) -> list[str]:
     return [str(img_dir / pic) for pic in complaint.get("user_pics", [])]
 
 
+def validate_extraction(extraction: dict, schema: dict) -> str | None:
+    """Validate an extraction record against the schema.
+
+    Returns None when valid, or the human-readable error reason. This is
+    ALWAYS applied by the CLI regardless of the model's structured_output
+    mode: that flag controls sampling constraints server-side, not whether
+    our code trusts the output.
+    """
+    try:
+        import jsonschema
+    except ImportError:
+        raise RuntimeError(
+            "jsonschema is required for output validation "
+            "(pip install jsonschema) — refusing to skip validation"
+        )
+    try:
+        jsonschema.validate(instance=extraction, schema=schema)
+        return None
+    except jsonschema.ValidationError as e:
+        path = "/".join(str(p) for p in e.absolute_path) or "<root>"
+        return f"{e.message} (at {path})"
+
+
 def extract_complaint(
     client: LLMClient,
     complaint: dict,
     images_dir: str | Path,
+    stage_split: bool = False,
+    vision_client: LLMClient | None = None,
+    validation_schema: dict | None = None,
 ) -> dict | None:
     """
     Extract structured data + image descriptions from a single complaint.
 
-    Receives the user_text and the actual photo files; the VLM sees both and
-    produces {image_descriptions, extractions} conforming to
+    Default (single-call): the VLM sees user_text + photos and produces
+    {image_descriptions, extractions} conforming to
     schemas/extraction_schema.json.
+
+    If stage_split=True (P2) and there are photos and a vision_client:
+      1. vision_client describes photos (multimodal, image_description schema)
+      2. client extracts structure from text + descriptions (text-only)
+    Falls back to the single-call path when there are no photos or no
+    vision client.
     """
     image_paths = _resolve_image_paths(complaint, images_dir)
+
+    # P2 stage split: only when there are photos and a vision client
+    if stage_split and image_paths and vision_client is not None:
+        result = _extract_complaint_stage_split(client, vision_client, complaint, image_paths)
+        if result is not None and validation_schema is not None:
+            reason = validate_extraction(result, validation_schema)
+            if reason:
+                logger.warning(f"[{complaint['id']}] schema validation failed: {reason}")
+                return None
+        return result
+
     messages = build_extraction_prompt(complaint, image_paths)
 
     try:
@@ -73,16 +118,71 @@ def extract_complaint(
     if "extractions" not in extraction and "extracciones" in extraction:
         extraction["extractions"] = extraction.pop("extracciones")
 
+    if validation_schema is not None:
+        reason = validate_extraction(extraction, validation_schema)
+        if reason:
+            logger.warning(f"[{complaint['id']}] schema validation failed: {reason}")
+            return None
+
     # Ensure image_descriptions is present (default to [] if the model omitted it)
     if "image_descriptions" not in extraction:
         extraction["image_descriptions"] = []
     if not isinstance(extraction["image_descriptions"], list):
         extraction["image_descriptions"] = []
 
-    # Ensure extractions is a list
-    if "extractions" not in extraction or not isinstance(extraction["extractions"], list):
-        extraction.setdefault("extractions", [])
+    # extractions MUST be a list: anything else means the model output is
+    # untrustworthy — fail the record (caller counts it as failed) instead
+    # of writing schema-violating garbage to extractions.jsonl.
+    if not isinstance(extraction.get("extractions"), list):
+        logger.warning(f"[{complaint['id']}] 'extractions' is not a list — failing record")
+        return None
 
+    return extraction
+
+
+def _extract_complaint_stage_split(
+    text_client: LLMClient,
+    vision_client: LLMClient,
+    complaint: dict,
+    image_paths: list[str],
+) -> dict | None:
+    """P2 two-call pipeline: vision describes, then text extracts."""
+    # Stage 1: describe photos (vision)
+    desc_messages = build_image_description_prompt(complaint, image_paths)
+    try:
+        desc_response = vision_client.chat(desc_messages)
+        desc_data = vision_client.extract_json(desc_response)
+    except (RuntimeError, json.JSONDecodeError) as e:
+        logger.warning(f"[{complaint['id']}] Stage 1 (vision) failed: {e}")
+        desc_data = None
+
+    # Stage 2: extract structure (text-only), using descriptions if available
+    descriptions = []
+    if desc_data and isinstance(desc_data.get("descriptions"), list):
+        descriptions = desc_data["descriptions"]
+        logger.info(f"[{complaint['id']}] Stage 1 produced {len(descriptions)} descriptions")
+
+    ext_messages = build_extraction_text_prompt(complaint, descriptions)
+    try:
+        ext_response = text_client.chat(ext_messages)
+        content = text_client.extract_content(ext_response)
+        if not content:
+            logger.warning(f"[{complaint['id']}] Stage 2 empty content")
+            return None
+        extraction = text_client.extract_json(ext_response)
+    except (RuntimeError, json.JSONDecodeError) as e:
+        logger.error(f"[{complaint['id']}] Stage 2 (text) failed: {e}")
+        return None
+
+    # Normalize: image_descriptions as list of strings (captions)
+    if not isinstance(extraction.get("image_descriptions"), list):
+        extraction["image_descriptions"] = \
+            [d.get("caption", "") for d in descriptions] if descriptions else []
+    extraction["complaint_id"] = complaint["id"]
+    # Same rule as single-call: non-list extractions = untrustworthy output
+    if not isinstance(extraction.get("extractions"), list):
+        logger.warning(f"[{complaint['id']}] 'extractions' is not a list — failing record")
+        return None
     return extraction
 
 
@@ -94,6 +194,10 @@ def extract_dataset(
     raw_complaints_file: str = "complaints.jsonl",
     extractions_file: str = "extractions.jsonl",
     resume: bool = True,
+    stage_split: bool = False,
+    vision_client: LLMClient | None = None,
+    num_workers: int = 1,
+    validation_schema: dict | None = None,
 ) -> dict:
     """
     Extract structured data from all raw complaints.
@@ -116,7 +220,9 @@ def extract_dataset(
 
     if not raw_path.exists():
         logger.error(f"Raw complaints not found: {raw_path}")
-        return {"extracted": 0, "failed": 0, "skipped": 0}
+        return {"extracted": 0, "failed": 0, "skipped": 0, "total": 0,
+                "total_tokens_in": 0, "total_tokens_out": 0,
+                "images_dir": str(images_dir), "output_path": str(output_path)}
 
     # Resolve images dir: explicit > sibling of raw_dir
     if images_dir is None:
@@ -146,33 +252,60 @@ def extract_dataset(
     extracted = 0
     failed = 0
     skipped = 0
+    write_lock = threading.Lock()
 
-    for cid, complaint in complaints.items():
-        if cid in existing_ids:
-            skipped += 1
-            continue
-
-        logger.info(f"[{cid}] Extracting ({extracted + 1}/{len(complaints) - skipped})...")
-
-        extraction = extract_complaint(client, complaint, images_dir)
-
+    def _extract_and_write(cid: str, complaint: dict) -> bool:
+        extraction = extract_complaint(client, complaint, images_dir,
+                                       stage_split=stage_split,
+                                       vision_client=vision_client,
+                                       validation_schema=validation_schema)
         if extraction is None:
-            failed += 1
             logger.warning(f"[{cid}] Extraction failed")
-            continue
+            return False
+        with write_lock:
+            with open(output_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+        return True
 
-        with open(output_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
+    # resume=False means start fresh: truncate previous output
+    if not resume and output_path.exists():
+        output_path.write_text("")
+        logger.info(f"Start fresh: truncated {output_path}")
 
-        extracted += 1
+    pending = [(cid, c) for cid, c in complaints.items() if cid not in existing_ids]
+    skipped = len(complaints) - len(pending)
 
-        if extracted % 10 == 0:
-            logger.info(
-                f"Progress: {extracted} extracted, {failed} failed, "
-                f"{skipped} skipped, "
-                f"tokens: in={client.stats['tokens_in']:,}, "
-                f"out={client.stats['tokens_out']:,}"
-            )
+    if num_workers > 1:
+        logger.info(f"Extracting with {num_workers} parallel workers...")
+        with ThreadPoolExecutor(max_workers=num_workers) as pool:
+            futures = {pool.submit(_extract_and_write, cid, c): cid for cid, c in pending}
+            for n, future in enumerate(as_completed(futures), 1):
+                if future.result():
+                    extracted += 1
+                else:
+                    failed += 1
+                if n % 10 == 0:
+                    logger.info(
+                        f"Progress: {n}/{len(pending)} processed, {failed} failed, "
+                        f"tokens: in={client.stats['tokens_in']:,}, "
+                        f"out={client.stats['tokens_out']:,}"
+                    )
+    else:
+        for cid, complaint in pending:
+            logger.info(f"[{cid}] Extracting ({extracted + 1}/{len(pending)})...")
+
+            if _extract_and_write(cid, complaint):
+                extracted += 1
+            else:
+                failed += 1
+
+            if extracted % 10 == 0:
+                logger.info(
+                    f"Progress: {extracted} extracted, {failed} failed, "
+                    f"{skipped} skipped, "
+                    f"tokens: in={client.stats['tokens_in']:,}, "
+                    f"out={client.stats['tokens_out']:,}"
+                )
 
     return {
         "extracted": extracted,
