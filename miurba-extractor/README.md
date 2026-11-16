@@ -53,9 +53,9 @@ muestreo del modelo. Un registro inválido cuenta como fallo y no se escribe.
 ## Configuración
 
 Secciones consumidas: `extraction`, `models`, `endpoints`, `paths`,
-`logging` y la taxonomía (`categories`, `affected_elements`,
-`location_zones`, `risks`, `urgency_levels`). Defaults comentados en
-`config.yaml`.
+`logging` y la taxonomía de `taxonomy.yaml` (`categories`,
+`affected_elements`, `location_zones`, `risks`, `urgency_levels`). Defaults
+comentados en `config.yaml`.
 
 ### `extraction:`
 

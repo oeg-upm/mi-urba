@@ -33,14 +33,16 @@ python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
 ## Configuración
 
 Secciones del config que consume. Obligatorias para ejecutar:
-`endpoints`, `models`, la taxonomía del dominio (`categories`,
-`affected_elements`, `location_zones`, `risks`, `urgency_levels`,
-`communities`, `personas`, `modifiers`, `modifier_prob`, `weights`,
-`urgency_weights`, `category_risks`, `category_elements`, `category_zones`,
-`risk_expressions`, `urgency_expressions`) y un plan en `generation`.
+`endpoints`, `models`, un plan en `generation` y el vocabulario de dominio
+de `taxonomy.yaml` (referenciado con `taxonomy:` en el config:
+`categories`, `affected_elements`, `location_zones`, `risks`,
+`urgency_levels`, `communities`, `personas`, `modifiers`, `modifier_prob`,
+`weights`, `urgency_weights`, `category_risks`, `category_elements`,
+`category_zones`, `risk_expressions`, `urgency_expressions` y
+`element_subcategories`).
 Opcionales con defaults: `paths`, `image_generation`, `logging` y el resto de
 claves de `generation`. Detalle y valores por defecto comentados en
-`config.yaml`.
+`config.yaml` y `taxonomy.yaml`.
 
 ### `generation:`
 
