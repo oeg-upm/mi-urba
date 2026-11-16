@@ -55,6 +55,7 @@ config.test_d.yaml
 data_test/
 data_test_b/
 data_test_b2/
+data-campaigns/
 
 # Docker run logs
 logs/

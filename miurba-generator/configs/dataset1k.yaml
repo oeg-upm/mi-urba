@@ -1,20 +1,11 @@
-# Corpus 1K — generación predefinitiva (4 generadores × 300 intentos = 1.200).
+# Sample — campaña de corpus: 4 generadores × 300 intentos, juez distinto, resume.
 #
-#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
 #     generate --config /configs/dataset1k.yaml
 #
-# Config destinada a repetirse igual para el 10K si no aparece nada mejorable.
-# 300 intentos por modelo porque `num_records` cuenta intentos: a las tasas
-# medidas (gemma ~82 %, los otros tres ~96-98 %) se esperan ~1.080 registros.
-#
-# Cambios respecto a la campaña 10K:
-#   - juez qwen3.8-27b-ud-q4-dflash2 con prompt v12 (banco: 96,4 % exactitud,
-#     recall 1,00 sobre los defectos del panel, 0 colados, 4 falsos rechazos)
-#   - presupuesto del juez 6.000 (gasta ~1.500-2.400 entre razonamiento y JSON)
-#
-# Ids: gemma Q0001-300 · qwen3.6 Q0301-600 · muse Q0601-900 · gpt-oss Q0901-1200
+# Requiere los endpoints LAN de llama-swap (192.168.10.11/.100:9292).
 # Salida: /data/dataset-1k/<modelo>/raw/ + rejected.jsonl + conversations.jsonl
-inherits: config.yaml
+taxonomy: taxonomy.yaml
 
 logging:
   level: INFO

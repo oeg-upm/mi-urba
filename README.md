@@ -33,8 +33,9 @@ mi-urba/
 │   ├── extraction_schema.json
 │   └── image_description_schema.json
 ├── docker-compose.yml           # ejecución dockerizada
+├── docker-compose-example.yaml  # ejemplo: run de campaña con un config de configs/
 ├── scripts/docker_smoke.sh      # smoke test end-to-end
-├── miurba-generator/            # CLI: generate, merge
+├── miurba-generator/            # CLI: generate, merge (configs/ = 5 samples)
 └── miurba-extractor/            # CLI: extract
 ```
 

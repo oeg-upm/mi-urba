@@ -1,13 +1,8 @@
-# Campaña 5K — smoke con muestreo coherente.
+# Sample — smoke multi-modelo delgado: 5 generadores × 20 registros, resume.
 #
-# Config DELGADO: hereda toda la taxonomía (categories, affected_elements,
-# category_elements, zonas, riesgos, expresiones, personas, comunidades...) del
-# config compartido, para que no existan copias divergentes. Solo declara lo
-# propio de la ejecución.
-#
-#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
 #     generate --config /configs/dataset5k_smoke_coherent.yaml
-inherits: config.yaml
+taxonomy: taxonomy.yaml
 
 logging:
   level: INFO
