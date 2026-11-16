@@ -13,13 +13,15 @@ Uso:
 """
 import argparse
 import json
+import os
 import random
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path("/backup/pc1/data/miUrba2")
-CORPUS = ROOT / "mi-urba/eval/results/dataset-50k"
+EVAL = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "mi-urba/eval"))
+CORPUS = EVAL / "results/dataset-50k"
 SEVERITY = ROOT / "validacion-postfactum/gold1k_results.jsonl"
 MODELS = ["gemma-3-12b-awq", "gpt-oss-20b", "olmo-3.1-32b-awq",
           "qwen3.6-27b-awq", "muse-glimmer-30b-awq"]

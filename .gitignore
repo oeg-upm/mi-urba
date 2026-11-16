@@ -67,13 +67,7 @@ logs/
 .coverage.*
 htmlcov/
 
-# Generated corpora and benchmark runs (hundreds of MB of jsonl, logs and
-# per-model dumps). The frozen inputs stay tracked: eval/judge_bench/cases.jsonl,
-# eval/judge_bench/batches/, eval/judge_bench/labels/ and ANNOTATION_GUIDE.md.
-eval/results/
-eval/judge_bench/gold_100/
-eval/judge_bench/gold_smoke25/
-eval/judge_bench/pilot*/
-eval/judge_bench/results/
-eval/judge_bench/*.log
-eval/judge_bench/smoke_*.txt
+# Evaluation corpora, benchmarks and experiment dumps. Archived outside the repo
+# on 2026-11-16 (../eval-archivo): 394 MB of jsonl, logs and per-model dumps.
+# Point the bench tools at it with MIURBA_EVAL_DIR.
+eval/
