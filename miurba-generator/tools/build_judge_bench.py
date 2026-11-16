@@ -4,7 +4,7 @@
 Input: the raw outputs of previous campaigns (conversations.jsonl holds every
 candidate text the judge saw, with the scenario that was requested).
 
-Output (under eval/judge_bench/):
+Output (under $MIURBA_EVAL_DIR/judge_bench/, default `eval/judge_bench/`):
   cases.jsonl      one case per line: {case_id, model, scenario, text}. NOTHING
                    about the judge verdict is included: annotators must be blind.
   labels_hidden.jsonl  the judge's own verdict and the campaign it came from, keyed
@@ -16,11 +16,13 @@ judge accepted and texts it rejected, so both error rates can be measured.
 """
 import argparse
 import json
+import os
 import random
 from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
+EVAL = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval"))
 DEFAULT_RUNS = ["smoke-5x100", "smoke-5x100-t025", "smoke-5x100-t050"]
 MODELS = ["gemma-3-12b-awq", "olmo-3.1-32b-awq", "qwen3.6-27b-awq",
           "muse-glimmer-30b-awq", "gpt-oss-20b"]
@@ -31,7 +33,7 @@ def load_turns(runs):
     pool = []
     for run in runs:
         for model in MODELS:
-            path = ROOT / "eval/results" / run / model / "raw/conversations.jsonl"
+            path = EVAL / "results" / run / model / "raw/conversations.jsonl"
             if not path.exists():
                 continue
             for line in open(path, encoding="utf-8"):
@@ -81,7 +83,7 @@ def main():
                 cases.append(case)
     rnd.shuffle(cases)
 
-    out_dir = ROOT / "eval/judge_bench"
+    out_dir = EVAL / "judge_bench"
     (out_dir / "batches").mkdir(parents=True, exist_ok=True)
     with open(out_dir / "cases.jsonl", "w", encoding="utf-8") as fc, \
          open(out_dir / "labels_hidden.jsonl", "w", encoding="utf-8") as fh:

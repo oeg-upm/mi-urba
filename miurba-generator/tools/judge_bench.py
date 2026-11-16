@@ -6,11 +6,14 @@ Uso típico (una vuelta de iteración cuesta minutos, no una campaña):
     python tools/judge_bench.py --tag v5-baseline --model qwen3.5-9b-awq
     # editar prompts/validate_record.md y volver a lanzar con otro --tag
 
-Requiere que `tools/build_judge_bench.py` haya creado `eval/judge_bench/` y que
-los anotadores hayan dejado sus etiquetas en `eval/judge_bench/labels/`.
+Requiere que `tools/build_judge_bench.py` haya creado `$MIURBA_EVAL_DIR/judge_bench/`
+(por defecto `eval/judge_bench/`) y que los anotadores hayan dejado sus etiquetas
+en `$MIURBA_EVAL_DIR/judge_bench/labels/`. El corpus de evaluacion vive fuera del
+repo: exporta MIURBA_EVAL_DIR apuntando a su ruta.
 """
 import argparse
 import json
+import os
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -18,7 +21,7 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-BENCH = ROOT / "eval/judge_bench"
+BENCH = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval")) / "judge_bench"
 sys.path.insert(0, str(ROOT / "miurba-generator"))
 
 from src.llm import LLMClient              # noqa: E402

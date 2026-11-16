@@ -14,6 +14,7 @@ Uso:
 """
 import argparse
 import json
+import os
 import random
 import sys
 import threading
@@ -26,8 +27,8 @@ sys.path.insert(0, str(ROOT / "miurba-generator"))
 from src.llm import LLMClient              # noqa: E402
 from src.pipeline import validate_complaint  # noqa: E402
 
-GOLD = ROOT / "eval/judge_bench/gold_100"
-BIG = ROOT / "eval/judge_bench"
+GOLD = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval")) / "judge_bench/gold_100"
+BIG = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval")) / "judge_bench"
 
 
 def load_gold_big(aptos_limit: int = 270, only_consensus: bool = True):
