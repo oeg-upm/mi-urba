@@ -185,6 +185,8 @@ def pipeline_env(monkeypatch, tmp_path):
         "has_elevator": False, "has_pool": False, "has_garage": False})
     monkeypatch.setattr(p, "sample_persona", lambda: None)
     monkeypatch.setattr(p, "sample_modifier", lambda: None)
+    monkeypatch.setattr(p, "should_have_photos", lambda: False)
+    monkeypatch.setattr(p, "sample_photo_count", lambda has: 0)
     monkeypatch.setattr(p, "build_generation_prompt", lambda **kw: [
         {"role": "user", "content": "s"}])
     return p

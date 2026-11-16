@@ -3,7 +3,7 @@
 Genera datasets sintéticos de quejas vecinales: para cada registro muestrea un
 escenario (categoría, urgencia, ubicación, riesgos, elementos afectados,
 persona, comunidad) y pide a un LLM el texto del vecino (`user_text`) y un
-`timestamp`.
+`timestamp`. Opcionalmente genera las fotos adjuntas con FLUX.2.
 
 ## Uso
 
@@ -32,9 +32,10 @@ endpoints LAN de llama-swap son ilustrativos. Se usan con
 
 | Fichero | Contenido |
 |---|---|
-| `<out>/<modelo>/raw/complaints.jsonl` | `id`, `user_text`, `timestamp` |
+| `<out>/<modelo>/raw/complaints.jsonl` | `id`, `user_text`, `user_pics`, `timestamp` |
 | `<out>/<modelo>/raw/ground_truth.jsonl` | extracciones esperadas (`complaint_id`, `extractions`) |
-| `<out>/<modelo>/raw/metadata.jsonl` | persona, modifier, comunidad |
+| `<out>/<modelo>/raw/metadata.jsonl` | persona, modifier, comunidad, `image_prompts` |
+| `<out>/<modelo>/images/*.png` | fotos (solo con `image_generation.enabled: true`) |
 
 ## Configuración
 
@@ -46,7 +47,7 @@ de `taxonomy.yaml` (referenciado con `taxonomy:` en el config:
 `weights`, `urgency_weights`, `category_risks`, `category_elements`,
 `category_zones`, `risk_expressions`, `urgency_expressions` y
 `element_subcategories`).
-Opcionales con defaults: `paths`, `logging` y el resto de
+Opcionales con defaults: `paths`, `image_generation`, `logging` y el resto de
 claves de `generation`. Detalle y valores por defecto comentados en
 `config.yaml` y `taxonomy.yaml`.
 
@@ -87,7 +88,13 @@ endpoints:
     api_key: ${NEURALWATT_API_KEY}   # secreto: resolver desde .env
 ```
 
-### Validación con juez (opcional)
+### `image_generation:` (opcional, requiere GPU)
+
+`enabled: false` por defecto. Requiere `pip install -r requirements-images.txt`
+y un host con GPUs. Si se activa sin GPU o dependencias, el pipeline continúa
+sin imágenes. CLI standalone: `flux2_imagegen.py --metadata data/raw/metadata.jsonl`.
+
+## Validación con juez (opcional)
 
 Con `validate: true`, tras generar cada texto un modelo juez comprueba que
 alinea con el escenario (categoría, subcategoría, urgencia, elementos,

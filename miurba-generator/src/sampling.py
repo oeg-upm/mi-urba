@@ -173,6 +173,20 @@ def sample_community() -> dict:
     return random.choice(communities)
 
 
+def should_have_photos() -> bool:
+    """Decide if this complaint includes photos."""
+    prob = cfg.get_weights()["photo_prob"]
+    return random.random() < prob
+
+
+def sample_photo_count(has_photos: bool) -> int:
+    """Sample number of photos."""
+    if not has_photos:
+        return 0
+    dist = cfg.get_weights()["photo_count"]
+    return int(random.choices(list(dist.keys()), weights=list(dist.values()), k=1)[0])
+
+
 def should_be_multi_problem() -> bool:
     """Decide if this complaint has multiple problems."""
     prob = cfg.get_weights()["multi_problem"]

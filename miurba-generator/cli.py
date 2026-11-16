@@ -3,10 +3,10 @@
 miUrba — Generador de datasets sintéticos de quejas vecinales.
 
 Genera quejas/incidencias sintéticas reportadas por vecinos de una
-comunidad de vecinos. Produce tres ficheros JSONL por cada ejecución:
-  - complaints.jsonl  (el texto del vecino, timestamp)
+comunidad de vecinos. Produce dos ficheros JSONL por cada ejecución:
+  - complaints.jsonl  (el texto del vecino, timestamp, pics)
   - ground_truth.jsonl  (extracciones esperadas)
-  - metadata.jsonl      (persona, modifier, community)
+  - metadata.jsonl      (persona, modifier, community, image_prompts)
 
 La extracción estructurada de estas quejas es una tarea independiente
 que corresponde al proyecto `miurba-extractor`.
@@ -32,6 +32,8 @@ pertinente se lee de dos secciones:
     max_retries          Reintentos por petición
     retry_delay          Espera base entre reintentos (segundos)
 
+  paths:                 Nombres de subdirectorios y ficheros JSONL
+  image_generation:      Generación de imágenes (enabled: true/false)
 
 Cada modelo escribe en <default_output_dir>/<modelo>/; al final del plan
 `generate` fusiona todas las salidas en <default_output_dir>/<raw_subdir>/.
@@ -48,7 +50,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.config import (get_config, get_generation_config, get_model_params,
-                        get_paths, get_logging_config)
+                        get_paths, get_image_generation_config, get_logging_config,
+                        get_photos_enabled)
 from src.llm import LLMClient
 from src.pipeline import generate_dataset, merge_outputs
 
@@ -75,6 +78,9 @@ def cmd_generate(args):
     config = get_config(args.config)
     paths = get_paths(config)
     gen_cfg = get_generation_config(config)
+    ig_config = get_image_generation_config(config)
+    enable_images = bool(ig_config.get("enabled", False))
+    declare_photos = get_photos_enabled(config)
 
     from src.validators import (validate_element_subcategories,
                                 validate_expression_sections, validate_taxonomy)
@@ -124,6 +130,7 @@ def cmd_generate(args):
     print("=" * 60)
     print(f"  Config:     {args.config or 'config.yaml (repo root)'}")
     print(f"  Output:     {output_dir}/")
+    print(f"  Images:     {'enabled (FLUX.2)' if enable_images else 'disabled'}")
     print(f"  Seed:       {gen_cfg['seed']}")
     print(f"  Resume:     {gen_cfg['resume']}")
     print(f"  Workers:    {gen_cfg['workers']}")
@@ -165,10 +172,14 @@ def cmd_generate(args):
             start_id=id_offset + 1,
             output_dir=model_dir,
             raw_subdir=raw_subdir,
+            images_subdir=paths.get("images_subdir", "images"),
             complaints_file=paths["complaints_file"],
             ground_truth_file=paths["ground_truth_file"],
             metadata_file=paths["metadata_file"],
             resume=gen_cfg["resume"],
+            enable_images=enable_images,
+            ig_config=ig_config,
+            declare_photos=declare_photos,
             validate=gen_cfg["validate"],
             max_validation_retries=gen_cfg["max_validation_retries"],
             validator_client=validator_client,

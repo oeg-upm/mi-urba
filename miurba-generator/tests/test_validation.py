@@ -116,6 +116,8 @@ def fake_env(monkeypatch, tmp_path):
         "has_elevator": False, "has_pool": False, "has_garage": False})
     monkeypatch.setattr(pl, "sample_persona", lambda: None)
     monkeypatch.setattr(pl, "sample_modifier", lambda: None)
+    monkeypatch.setattr(pl, "should_have_photos", lambda: False)
+    monkeypatch.setattr(pl, "sample_photo_count", lambda has: 0)
     monkeypatch.setattr(pl, "build_generation_prompt", lambda **kw: [
         {"role": "user", "content": "stub"}])
     return pl
