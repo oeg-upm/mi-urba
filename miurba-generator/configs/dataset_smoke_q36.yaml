@@ -1,12 +1,9 @@
-# Smoke de iteración: UN solo generador (qwen3.6, el de mejor aceptación/velocidad
-# hasta ahora) y 50 registros, para iterar prompts sin pagar la carga en frío de
-# cinco modelos.
+# Sample — smoke de iteración rápida: UN solo generador × 50 registros, resume: false
+# (cada pasada empieza de cero y sobrescribe /data/smoke-q36).
 #
-#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
+#   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
 #     generate --config /configs/dataset_smoke_q36.yaml
-#
-# resume: false → cada pasada empieza de cero y sobrescribe /data/smoke-q36.
-inherits: config.yaml
+taxonomy: taxonomy.yaml
 
 logging:
   level: INFO

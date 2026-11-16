@@ -1,4 +1,7 @@
-inherits: config.yaml   # thin config: taxonomy comes from taxonomy.yaml
+# Sample — solo fusión de salidas por modelo (comando `merge`, no genera):
+#   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
+#     merge --config /configs/merge_50k.yaml
+taxonomy: taxonomy.yaml
 logging:
   level: INFO
   file: /logs/merge-50k.log

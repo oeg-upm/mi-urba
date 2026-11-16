@@ -1,12 +1,9 @@
-# Smoke largo 4K: los cinco generadores × 100 registros, con 4096 tokens de
-# salida en todos ellos (muse y gpt-oss razonan ~1400 tokens y con 2048 devolvían
-# contenido vacío o JSON cortado). Juez sin cambios: qwen3.5-9b, 2500 tokens.
+# Sample — variante paramétrica de smoke: 5 generadores × 100 registros con
+# temperatura 0.50 y salida 4K, resume: false.
 #
-#   docker compose -f docker-compose.5k.yml run --rm miurba-generator \
-#     generate --config /configs/dataset_smoke_5x100.yaml
-#
-# resume: false → cada pasada empieza de cero y sobrescribe /data/smoke-5x100-t050.
-inherits: config.yaml
+#   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
+#     generate --config /configs/dataset_smoke_5x100_t050.yaml
+taxonomy: taxonomy.yaml
 
 logging:
   level: INFO

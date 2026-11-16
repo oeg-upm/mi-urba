@@ -21,6 +21,13 @@ python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
 `<default_output_dir>/<modelo>/` y fusiona todo al final en
 `<default_output_dir>/<paths.raw_subdir>/`.
 
+`configs/` contiene 5 configs de ejemplo (campaña de corpus, smoke multi-modelo,
+smoke de iteración rápida, variante paramétrica y solo-merge). Todas son
+autocontenidas y referencian la taxonomía con `taxonomy: taxonomy.yaml`; los
+endpoints LAN de llama-swap son ilustrativos. Se usan con
+`python cli.py generate --config configs/<f>.yaml` o vía
+`docker-compose-example.yaml`.
+
 ## Salida
 
 | Fichero | Contenido |

@@ -30,7 +30,6 @@ DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.ya
 
 
 _VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
-
 # Domain vocabulary sections: they live in taxonomy.yaml, NOT in config.yaml.
 # Keeping them out of run configs is what prevents stale duplicated taxonomies
 # (the demo config once drifted ~950 lines this way).
@@ -82,27 +81,11 @@ def _expand_vars(node: Any) -> Any:
     return node
 
 
-def _deep_merge(base: dict, override: dict) -> dict:
-    """Recursively merge `override` on top of `base` (override wins)."""
-    out = dict(base)
-    for key, value in (override or {}).items():
-        if isinstance(value, dict) and isinstance(out.get(key), dict):
-            out[key] = _deep_merge(out[key], value)
-        else:
-            out[key] = value
-    return out
-
-
 def load_config(path: str | Path | None = None) -> dict[str, Any]:
     """Load and cache the YAML configuration, expanding ${VAR} references.
 
-    A config may declare `inherits: <path>` (relative to itself or absolute) to
-    reuse another config's sections. The deriving file only overrides what it
-    declares, so campaigns do not need to duplicate the taxonomy — duplicating it
-    is how a run once validated against a stale `category_elements`.
-
     Domain vocabulary is loaded from taxonomy.yaml (key `taxonomy:` in the
-    config, default `<repo root>/taxonomy.yaml`) and deep-merged into the
+    config, default `<repo root>/taxonomy.yaml`) and merged into the
     result, so every taxonomy accessor keeps working unchanged. Declaring any
     taxonomy key directly in the config fails fast.
     """
@@ -111,7 +94,8 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
         path = DEFAULT_CONFIG_PATH
     path = Path(path)
     _load_dotenv()
-    cfg = load_config_file(path)
+    with open(path, encoding="utf-8") as f:
+        cfg = yaml.safe_load(f) or {}
     _load_taxonomy(cfg, path)
     _CONFIG = _expand_vars(cfg)
     return _CONFIG
@@ -146,36 +130,6 @@ def _load_taxonomy(cfg: dict, child: Path) -> None:
     with open(tax_path, encoding="utf-8") as f:
         tax = yaml.safe_load(f) or {}
     cfg.update(tax)
-
-
-def _resolve_inherits(parent: str, child: Path) -> Path:
-    """Resolve an `inherits:` target.
-
-    Tried in order: absolute path, relative to the deriving file, and relative to
-    the shared config directory (repo root on the host, `/` inside the container,
-    where the shared config is mounted as /config.yaml).
-    """
-    candidate = Path(parent)
-    if candidate.is_absolute():
-        return candidate
-    for base_dir in (child.parent, DEFAULT_CONFIG_PATH.parent):
-        resolved = (base_dir / candidate).resolve()
-        if resolved.exists():
-            return resolved
-    raise FileNotFoundError(
-        f"inherits: {parent!r} not found relative to {child.parent} nor {DEFAULT_CONFIG_PATH.parent}"
-    )
-
-
-def load_config_file(path: str | Path) -> dict[str, Any]:
-    """Load a config file without caching (used for `inherits` chains)."""
-    path = Path(path)
-    with open(path, encoding="utf-8") as f:
-        cfg = yaml.safe_load(f) or {}
-    parent = cfg.pop("inherits", None)
-    if parent:
-        cfg = _deep_merge(load_config_file(_resolve_inherits(parent, path)), cfg)
-    return cfg
 
 
 def get_config(path: str | Path | None = None) -> dict[str, Any]:
