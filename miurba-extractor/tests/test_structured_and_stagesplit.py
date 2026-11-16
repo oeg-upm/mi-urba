@@ -103,13 +103,16 @@ def fixture_cfg(tmp_path):
     for f in ("extraction_schema.json", "image_description_schema.json"):
         (tmp_path / "schemas" / f).write_text((schemas_src / f).read_text(encoding="utf-8"))
     cfg = {
+        "taxonomy": "taxonomy.yaml",
+    }
+    p = tmp_path / "config.yaml"
+    p.write_text(yaml.safe_dump(cfg, allow_unicode=True), encoding="utf-8")
+    (tmp_path / "taxonomy.yaml").write_text(yaml.safe_dump({
         "risks": ["riesgo_x", "riesgo_y"],
         "urgency_levels": ["alta", "baja"],
         "location_zones": {"norte": [], "sur": []},
         "categories": {"cubierta": ["tejas"]},
-    }
-    p = tmp_path / "config.yaml"
-    p.write_text(yaml.safe_dump(cfg, allow_unicode=True), encoding="utf-8")
+    }, allow_unicode=True), encoding="utf-8")
     return p
 
 

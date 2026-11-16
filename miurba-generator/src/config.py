@@ -31,6 +31,17 @@ DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.ya
 
 _VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
+# Domain vocabulary sections: they live in taxonomy.yaml, NOT in config.yaml.
+# Keeping them out of run configs is what prevents stale duplicated taxonomies
+# (the demo config once drifted ~950 lines this way).
+TAXONOMY_KEYS = (
+    "categories", "affected_elements", "location_zones", "risks",
+    "risk_expressions", "urgency_expressions", "urgency_levels",
+    "communities", "personas", "weights", "modifiers", "modifier_prob",
+    "category_elements", "category_zones", "category_risks",
+    "urgency_weights", "element_subcategories",
+)
+
 
 def _load_dotenv() -> None:
     """Populate os.environ from the repo-root .env (existing vars win)."""
@@ -89,22 +100,52 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     reuse another config's sections. The deriving file only overrides what it
     declares, so campaigns do not need to duplicate the taxonomy — duplicating it
     is how a run once validated against a stale `category_elements`.
+
+    Domain vocabulary is loaded from taxonomy.yaml (key `taxonomy:` in the
+    config, default `<repo root>/taxonomy.yaml`) and deep-merged into the
+    result, so every taxonomy accessor keeps working unchanged. Declaring any
+    taxonomy key directly in the config fails fast.
     """
     global _CONFIG
     if path is None:
         path = DEFAULT_CONFIG_PATH
     path = Path(path)
     _load_dotenv()
-    with open(path, encoding="utf-8") as f:
-        cfg = yaml.safe_load(f) or {}
-
-    parent = cfg.pop("inherits", None)
-    if parent:
-        base = load_config_file(_resolve_inherits(parent, path))
-        cfg = _deep_merge(base, cfg)
-
+    cfg = load_config_file(path)
+    _load_taxonomy(cfg, path)
     _CONFIG = _expand_vars(cfg)
     return _CONFIG
+
+
+def _resolve_taxonomy_ref(ref: str | None, child: Path) -> Path:
+    """Resolve the `taxonomy:` reference (absolute, relative to the config,
+    or the repo-root default)."""
+    default = DEFAULT_CONFIG_PATH.parent / "taxonomy.yaml"
+    if ref is None:
+        return default
+    candidate = Path(ref)
+    if candidate.is_absolute():
+        return candidate
+    resolved = (child.parent / candidate).resolve()
+    return resolved if resolved.exists() else default
+
+
+def _load_taxonomy(cfg: dict, child: Path) -> None:
+    """Merge taxonomy.yaml into cfg; fail fast on stale inline taxonomy keys."""
+    stale = [k for k in TAXONOMY_KEYS if k in cfg]
+    if stale:
+        raise ValueError(
+            f"config {child.name} declares taxonomy keys ({', '.join(stale)}); "
+            f"they live in taxonomy.yaml — move them there and reference it with "
+            f"`taxonomy: <path>`"
+        )
+    ref = cfg.pop("taxonomy", None)
+    tax_path = _resolve_taxonomy_ref(ref, child)
+    if not tax_path.exists():
+        raise FileNotFoundError(f"taxonomy file not found: {tax_path}")
+    with open(tax_path, encoding="utf-8") as f:
+        tax = yaml.safe_load(f) or {}
+    cfg.update(tax)
 
 
 def _resolve_inherits(parent: str, child: Path) -> Path:
@@ -189,15 +230,23 @@ def get_categories(cfg: dict | None = None) -> dict[str, list[str]]:
 def get_element_subcategories() -> dict:
     """Coherence table: category -> problem subcategory -> element -> valid subcategories.
 
-    Lives next to the shared config (repo root) because it is domain knowledge, not
-    run configuration. Loading it is mandatory: without it, sampling would fall back
-    to incoherent element/subcategory pairs.
+    Lives in taxonomy.yaml (`element_subcategories:`) because it is domain
+    knowledge, not run configuration. Legacy standalone element_subcategories.yaml
+    next to the config is still honored with a deprecation warning.
     """
-    path = DEFAULT_CONFIG_PATH.parent / "element_subcategories.yaml"
-    if not path.exists():
-        raise FileNotFoundError(f"element_subcategories.yaml not found at {path}")
-    with open(path, encoding="utf-8") as f:
-        return yaml.safe_load(f)["element_subcategories"]
+    cfg = get_config()
+    if "element_subcategories" in cfg:
+        return cfg["element_subcategories"]
+    legacy = DEFAULT_CONFIG_PATH.parent / "element_subcategories.yaml"
+    if legacy.exists():
+        import warnings
+        warnings.warn(
+            f"{legacy.name} is deprecated: merge it into taxonomy.yaml "
+            f"(element_subcategories: key)", DeprecationWarning, stacklevel=2)
+        with open(legacy, encoding="utf-8") as f:
+            return yaml.safe_load(f)["element_subcategories"]
+    raise FileNotFoundError("element_subcategories not found: neither in the "
+                            "loaded config (taxonomy.yaml) nor as a legacy file")
 
 
 def get_affected_elements(cfg: dict | None = None) -> dict[str, list[str]]:

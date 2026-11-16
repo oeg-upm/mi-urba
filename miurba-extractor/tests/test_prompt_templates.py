@@ -35,7 +35,7 @@ def _pin_repo_config(monkeypatch):
     """Pin the config tables the prompts depend on (other tests mutate the cache)."""
     import yaml
     from src import config as cfg_module
-    data = yaml.safe_load((ROOT.parent / "config.yaml").read_text(encoding="utf-8"))
+    data = yaml.safe_load((ROOT.parent / "taxonomy.yaml").read_text(encoding="utf-8"))
     monkeypatch.setattr(cfg_module, "get_config", lambda path=None: data)
 
 
