@@ -455,7 +455,7 @@ personas:
     profile: Presidente de la comunidad de propietarios. Conoce estatutos, presupuestos, historial. Habla
       en nombre de otros.
     style: 'Institucional. "Como presidente", "en la última junta se acordó". Cita normativas. Estructura:
-      problema, urgencia, propuesta. Adjunta fotos de otros vecinos.'
+      problema, urgencia, propuesta.'
     weight: 4
   portero_encargado:
     profile: Conserje o portero del edificio. Conoce mejor que nadie el estado de las zonas comunes. Reporta
@@ -542,11 +542,6 @@ weights:
     C005: 1
     C006: 1
   multi_problem: 0.15
-  photo_prob: 0.55
-  photo_count:
-    1: 0.5
-    2: 0.35
-    3: 0.15
 modifiers:
   semianalfabeto:
     description: Escribe como habla, sin ortografía ni puntuación. faltas constantes.

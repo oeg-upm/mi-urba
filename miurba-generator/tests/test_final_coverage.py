@@ -1,8 +1,7 @@
 """Tests added after the final re-audit (informe/reaudit_y_cobertura.md).
 
 Covers: R2 (string verdict), resume truncate pin, judge end-to-end with
-validation_log, real build_generation_prompt, build_image_prompts, and
-extract_json tolerance.
+validation_log, real build_generation_prompt, and extract_json tolerance.
 
 Run from miurba-generator/:  python -m pytest tests/ -v
 """
@@ -18,7 +17,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.llm import LLMClient  # noqa: E402
 from src import pipeline as pl  # noqa: E402
-from src.prompts import build_generation_prompt, build_image_prompts  # noqa: E402
+from src.prompts import build_generation_prompt  # noqa: E402
 
 CLEAN_TEXT = 'Buenos días, escribo para reportar una fuga de agua en el garaje del edificio, concretamente en la plaza número veintitrés, donde el agua sale a presión de una tubería y empieza a extenderse por el suelo. Además se ha afectado la barandilla de la rampa de acceso y hay riesgo de inundación para los vehículos almacenados, por lo que ruego vengan cuanto antes a arreglarlo. Muchas gracias de antemano, un saludo del vecino de la plaza veintitrés.'
 
@@ -38,8 +37,6 @@ def env(monkeypatch):
         "has_elevator": False, "has_pool": False, "has_garage": False})
     monkeypatch.setattr(pl, "sample_persona", lambda: None)
     monkeypatch.setattr(pl, "sample_modifier", lambda: None)
-    monkeypatch.setattr(pl, "should_have_photos", lambda: False)
-    monkeypatch.setattr(pl, "sample_photo_count", lambda has: 0)
     monkeypatch.setattr(pl, "build_generation_prompt", lambda **kw: [
         {"role": "user", "content": "s"}])
     return pl
@@ -179,7 +176,7 @@ def test_generation_prompt_from_config_components():
     community = {"name": "X", "type": "bloque", "num_viviendas": 10,
                  "year": 2000, "has_elevator": False, "has_pool": False,
                  "has_garage": False}
-    messages = build_generation_prompt("Q0001", problems, community, 0)
+    messages = build_generation_prompt("Q0001", problems, community)
     user = messages[1]["content"]
 
     assert "enchufe (instalación eléctrica)" in user       # elements rendered (natural, no snake_case)
@@ -199,25 +196,9 @@ def test_generation_prompt_omits_ninguno_risks():
     community = {"name": "X", "type": "bloque", "num_viviendas": 10,
                  "year": 2000, "has_elevator": False, "has_pool": False,
                  "has_garage": False}
-    user = build_generation_prompt("Q0001", problems, community, 0)[1]["content"]
+    user = build_generation_prompt("Q0001", problems, community)[1]["content"]
     problems_section = user.split("CONTEXTO:")[0]
     assert "Riesgos:" not in problems_section  # scenario desc omits risks
-
-
-# ── build_image_prompts ───────────────────────────────────────
-
-def test_build_image_prompts_basic_mapping():
-    problems = [{
-        "category": "fontanería", "subcategory": "fugas",
-        "location_zone": "garaje", "location_detail": "plaza 12",
-        "urgency": "alta", "affected_elements": [], "risks": ["ninguno"],
-    }]
-    community = {"name": "X", "type": "bloque", "num_viviendas": 10,
-                 "year": 2000, "has_elevator": False, "has_pool": False,
-                 "has_garage": True}
-    prompts = build_image_prompts(problems, community, 2)
-    assert len(prompts) == 2
-    assert all(isinstance(p, str) and p for p in prompts)
 
 
 # ── extract_json tolerance ────────────────────────────────────

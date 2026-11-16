@@ -14,14 +14,6 @@
       "type": "string",
       "description": "Free-form text from the user describing the issue(s)"
     },
-    "user_pics": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "List of image filenames referenced by this complaint",
-      "default": []
-    },
     "timestamp": {
       "type": "string",
       "format": "date-time",

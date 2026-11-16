@@ -4,23 +4,21 @@ Generación sintética y extracción estructurada de quejas vecinales.
 Dos herramientas independientes sobre una configuración compartida:
 
 - **`miurba-generator/`** — genera datasets sintéticos de quejas: texto del
-  vecino (LLM), ground truth estructurado y, opcionalmente, imágenes (FLUX.2).
+  vecino (LLM) y ground truth estructurado.
 - **`miurba-extractor/`** — extrae estructura de quejas reales o sintéticas
-  (texto + fotos) con un VLM, conforme a un JSON Schema.
+  (texto) con un LLM, conforme a un JSON Schema.
 
 ## Flujo de datos
 
 ```
 miurba-generator                          miurba-extractor
-  escenario ─► LLM ─► user_text             user_text + PNGs ─► VLM
-  escenario ─► FLUX ─► PNGs (opcional)                            │
-       ▼                                                          ▼
+  escenario ─► LLM ─► user_text                user_text ─► LLM
+       ▼                                          ▼
   complaints.jsonl + ground_truth.jsonl + metadata.jsonl    extractions.jsonl
        └────────────── entrada del extractor ──────────────┘
 ```
 
-El nexo entre ambas es el formato de datos (`schemas/` y los PNG
-referenciados por `user_pics`), no código.
+El nexo entre ambas es el formato de datos (`schemas/`), no código.
 
 ## Estructura
 
@@ -30,8 +28,7 @@ mi-urba/
 ├── taxonomy.yaml                # vocabulario de dominio: taxonomías, personas, pesos
 ├── schemas/                     # contratos de datos
 │   ├── complaint_schema.json
-│   ├── extraction_schema.json
-│   └── image_description_schema.json
+│   └── extraction_schema.json
 ├── docker-compose.yml           # ejecución dockerizada
 ├── docker-compose-example.yaml  # ejemplo: run de campaña con un config de configs/
 ├── scripts/docker_smoke.sh      # smoke test end-to-end
@@ -43,7 +40,6 @@ mi-urba/
 
 - Python 3.10+ (probado con 3.12)
 - Un endpoint LLM OpenAI-compatible (vLLM, llama.cpp/llama-swap, Ollama…)
-- Opcional: GPU + FLUX.2 para generación de imágenes
 
 ## Inicio rápido
 
@@ -64,7 +60,7 @@ pip install -r requirements.txt
 python cli.py extract --config ../config.yaml
 ```
 
-Salidas por defecto: `<default_output_dir>/<modelo>/{raw,images}` en el
+Salidas por defecto: `<default_output_dir>/<modelo>/raw/` en el
 generador y `<default_output_dir>/annotated/extractions.jsonl` en el extractor.
 
 ## Docker
@@ -96,7 +92,6 @@ subproyecto. Resumen:
 | `generation` | config.yaml | no | Plan de batches, seed, workers, retries, validación con juez |
 | `extraction` | config.yaml | no (salvo `model`, obligatorio) | Modelo VLM, rutas, workers, retries |
 | `paths`, `logging` | config.yaml | no | Nombres de ficheros y log de run |
-| `image_generation` | config.yaml | no | FLUX.2 (`enabled: false` por defecto; requiere GPU) |
 
 Variantes típicas: `config.local.yaml` / `config.test.yaml` (gitignored,
 con IPs de LAN) y los 5 samples de `miurba-generator/configs/`; se seleccionan

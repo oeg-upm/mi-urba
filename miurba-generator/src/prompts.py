@@ -4,59 +4,13 @@ Prompt templates for synthetic complaint GENERATION.
 This module belongs to the generator project. It contains:
 
 * `build_generation_prompt`  — messages for the LLM that produces the raw
-  complaint text (user_text + timestamp). It does NOT produce image
-  descriptions: describing images is the extractor's job.
-
-* `build_image_prompts`      — English text-to-image prompts derived from the
-  sampled scenario, used by the (optional) image-generation step to produce
-  the actual photo files. The prompts are built from the scenario fields
-  (category, location, affected elements, urgency, community), never from a
-  textual description of the image.
+  complaint text (user_text + timestamp).
 """
 
 import json
 
 from . import config as cfg
 from .prompt_loader import render as _render_prompt
-
-
-# ── English maps for image prompts ──────────────────────────────
-
-_CATEGORY_EN: dict[str, str] = {
-    "fontanería": "plumbing", "electricidad": "electrical", "cubierta": "roof",
-    "fachada": "facade", "carpintería": "window and door carpentry",
-    "jardinería": "gardening and landscaping", "limpieza": "cleaning and waste",
-    "ascensor": "elevator", "climatización": "HVAC and heating",
-    "piscina": "swimming pool", "garaje": "garage", "plagas": "pest infestation",
-    "mobiliario": "communal furniture", "seguridad": "security",
-    "ruido": "noise nuisance", "varios": "maintenance",
-}
-
-_ZONE_EN: dict[str, str] = {
-    "garaje": "underground garage", "portal": "building entrance lobby",
-    "exterior": "exterior facade", "zonas_verdes": "communal garden areas",
-    "piscina": "pool area", "trasteros": "storage room",
-    "azotea": "rooftop", "locales": "commercial premises",
-}
-
-_URGENCY_EN: dict[str, str] = {
-    "inmediata": "severe and urgent", "urgente": "clearly urgent",
-    "alta": "notable", "media": "moderate", "baja": "minor",
-    "planificable": "early-stage preventive",
-}
-
-_ELEMENT_EN: dict[str, str] = {
-    "tubería": "pipes", "instalación_sanitaria": "plumbing fixtures",
-    "revestimiento": "plaster and wall coating", "suelo": "flooring",
-    "instalación_eléctrica": "electrical wiring", "equipamiento": "equipment",
-    "cubierta": "roof surface", "muro": "wall", "ventana": "window",
-    "puerta": "door", "jardín": "garden", "cerramiento": "fence and enclosure",
-    "mobiliario_común": "common furniture", "estructura": "structural element",
-}
-
-
-def _en(map_: dict, key: str) -> str:
-    return map_.get(key, key.replace("_", " "))
 
 
 # ── Generation prompts (text LLM) ───────────────────────────────────
@@ -94,7 +48,6 @@ def build_generation_prompt(
     record_id: str,
     problems: list[dict],
     community: dict,
-    num_pics: int,
     persona: dict | None = None,
     modifier: dict | None = None,
     history: list[tuple[str, str]] | None = None,
@@ -102,9 +55,7 @@ def build_generation_prompt(
     """
     Build messages for generating raw complaint text.
 
-    The LLM produces ONLY: user_text and timestamp. It does NOT produce
-    image descriptions (those are the extractor's responsibility) nor
-    structured extractions.
+    The LLM produces ONLY: user_text and timestamp.
 
     Args:
         persona: Optional persona dict with 'profile' and 'style' keys.
@@ -141,18 +92,6 @@ def build_generation_prompt(
         comm_desc += ", con piscina"
     if comm["has_garage"]:
         comm_desc += ", con garaje"
-
-    # Photo info (the vecino may mention photos, but the LLM does NOT describe
-    # them and must NEVER cite internal filenames — only natural references)
-    if num_pics > 0:
-        plural = "" if num_pics == 1 else "s"
-        photo_text = (
-            f"El vecino adjunta {num_pics} foto{plural} del problema. "
-            f"Puede referirse a ellas de forma natural ('adjunto foto', 'como se ve en la imagen', etc.), "
-            f"pero NUNCA menciones nombres de archivo, identificadores internos ni describas su contenido."
-        )
-    else:
-        photo_text = "El vecino no adjunta fotos."
 
     # JSON template — only user_text and timestamp
     json_template = {
@@ -221,7 +160,6 @@ def build_generation_prompt(
         problems_text=problems_text,
         comm_desc=comm_desc,
         persona_block=persona_block,
-        photo_text=photo_text,
         urgency_block=urgency_block,
         examples_block=examples_block,
         json_template=json.dumps(json_template, indent=2, ensure_ascii=False),
@@ -235,61 +173,6 @@ def build_generation_prompt(
         messages.append({"role": "assistant", "content": assistant_json})
         messages.append({"role": "user", "content": judge_comment})
     return messages
-
-
-# ── Image prompts (text-to-image, derived from the scenario) ────
-
-def build_image_prompts(
-    problems: list[dict],
-    community: dict,
-    num_pics: int,
-) -> list[str]:
-    """
-    Build English text-to-image prompts, one per photo.
-
-    Prompts are derived from the scenario fields (category, subcategory,
-    location, affected elements, urgency, community) — NOT from any textual
-    description of the image. Each photo focuses on one of the sampled
-    problems (cycling through them when there are more photos than problems).
-    """
-    if num_pics <= 0:
-        return []
-
-    comm_type_en = {
-        "bloque_pisos": "apartment block", "casa_pareada": "paired house",
-        "urbanizacion": "residential complex",
-    }.get(community.get("type", ""), "residential building")
-
-    base = (
-        f"a {comm_type_en} with {community.get('num_viviendas', 20)} apartments, "
-        f"built around {community.get('year', 2000)}"
-    )
-
-    prompts = []
-    for i in range(num_pics):
-        p = problems[i % len(problems)]
-        cat_en = _en(_CATEGORY_EN, p["category"])
-        zone_en = _en(_ZONE_EN, p.get("location_zone", ""))
-        urg_en = _en(_URGENCY_EN, p.get("urgency", "media"))
-
-        elements = p.get("affected_elements", [])
-        if elements:
-            elems_en = ", ".join(_en(_ELEMENT_EN, e["principal"]) for e in elements)
-        else:
-            elems_en = "building fixtures"
-
-        detail = p.get("location_detail", "")
-        detail_clause = f", specific area: {detail}" if detail else ""
-
-        sub = p.get("subcategory", "general").replace("_", " ")
-
-        prompt = _render_prompt("image_prompt",
-                                cat_en=cat_en, sub=sub, zone_en=zone_en,
-                                detail_clause=detail_clause, base=base,
-                                elems_en=elems_en, urg_en=urg_en)
-        prompts.append(prompt)
-
-    return prompts
 
 
 def build_validation_prompt(user_text: str, problems: list[dict]) -> list[dict]:
