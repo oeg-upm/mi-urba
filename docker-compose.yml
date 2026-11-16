@@ -18,6 +18,7 @@ services:
     build: ./miurba-generator
     volumes:
       - ./config.yaml:/config.yaml:ro
+      - ./element_subcategories.yaml:/element_subcategories.yaml:ro
       - ./config.test.yaml:/config/config.test.yaml:ro
       - ./data_test:/data
       - ./logs:/logs
@@ -26,6 +27,7 @@ services:
     build: ./miurba-extractor
     volumes:
       - ./config.yaml:/config.yaml:ro
+      - ./element_subcategories.yaml:/element_subcategories.yaml:ro
       - ./config.test.yaml:/config/config.test.yaml:ro
       - ./schemas:/schemas:ro
       - ./data_test:/data
