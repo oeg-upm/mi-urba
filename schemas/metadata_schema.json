@@ -4,7 +4,7 @@
   "title": "Metadata",
   "description": "Generation context and provenance of one synthetic complaint. Joined with complaints.jsonl by complaint_id.",
   "type": "object",
-  "required": ["complaint_id", "persona", "community", "provenance"],
+  "required": ["complaint_id", "persona", "modifier", "community", "provenance"],
   "properties": {
     "complaint_id": {
       "type": "string",

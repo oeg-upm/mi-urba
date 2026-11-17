@@ -46,18 +46,26 @@ def _now_iso() -> str:
 def normalize_timestamp(value: str) -> str | None:
     """Return the timestamp as canonical ISO 8601, or None if unparseable.
 
-    Models emit offsets both as +0000 and +00:00 (and sometimes prose), so the
-    pipeline normalises instead of trusting the literal string. A record whose
-    timestamp cannot be parsed is rejected: the corpus contract requires a real
-    date-time.
+    Models emit offsets as `+0000`, `+00:00` or `Z`, so the value is normalised
+    before parsing (this also keeps the code valid on Python 3.10, where
+    `fromisoformat` accepts neither `Z` nor `+0000`). A naive value is assumed
+    to be UTC; a record whose timestamp cannot be parsed is rejected, because
+    the corpus contract requires a real date-time.
     """
-    from datetime import datetime
+    from datetime import datetime, timezone
     if not isinstance(value, str) or not value.strip():
         return None
+    text = value.strip()
+    if text.endswith(("Z", "z")):
+        text = text[:-1] + "+00:00"
+    text = re.sub(r"([+-]\d{2})(\d{2})$", r"\1:\2", text)
     try:
-        return datetime.fromisoformat(value.strip()).isoformat()
+        parsed = datetime.fromisoformat(text)
     except ValueError:
         return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.isoformat()
 
 
 # ── Validation (2-stage) ──────────────────────────────────────────────

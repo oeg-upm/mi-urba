@@ -87,6 +87,24 @@ def check_schemas() -> None:
 
 
 def config_hash(cfg_dict: dict[str, Any]) -> str:
-    """Stable SHA-256 of the effective config (provenance fingerprint)."""
-    payload = json.dumps(cfg_dict, sort_keys=True, ensure_ascii=False, default=str)
+    """Stable SHA-256 of the effective config (provenance fingerprint).
+
+    Secrets are redacted first: the hash identifies the configuration, not the
+    credentials, so two campaigns with the same config and different API keys
+    produce the same fingerprint.
+    """
+    payload = json.dumps(_redact(cfg_dict), sort_keys=True, ensure_ascii=False, default=str)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _redact(node: Any) -> Any:
+    """Replace credential values by a placeholder, recursively."""
+    if isinstance(node, dict):
+        return {
+            key: "***" if str(key).lower() in {"api_key", "apikey", "token", "password"}
+            else _redact(value)
+            for key, value in node.items()
+        }
+    if isinstance(node, list):
+        return [_redact(item) for item in node]
+    return node
