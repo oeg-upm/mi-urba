@@ -13,11 +13,11 @@ que corresponde al proyecto `miurba-extractor`.
 
 Uso (config-only — TODOS los parámetros viven en el config):
 
-  python cli.py generate --config ../config.yaml    # generar según el plan
-  python cli.py merge    --config ../config.yaml    # fusionar salidas por modelo
+  python cli.py generate --config config/config.yaml    # generar según el plan
+  python cli.py merge    --config config/config.yaml    # fusionar salidas por modelo
 
 El comando `generate` acepta un único argumento, `--config` (por defecto
-el config compartido en la raíz del repositorio). Toda la configuración
+config/config.yaml del subproyecto). Toda la configuración
 pertinente se lee de dos secciones:
 
   generation:
@@ -122,7 +122,7 @@ def cmd_generate(args):
 
     print("miUrba — Generation (config-only)")
     print("=" * 60)
-    print(f"  Config:     {args.config or 'config.yaml (repo root)'}")
+    print(f"  Config:     {args.config or 'config/config.yaml (subproject default)'}")
     print(f"  Output:     {output_dir}/")
     print(f"  Seed:       {gen_cfg['seed']}")
     print(f"  Resume:     {gen_cfg['resume']}")
@@ -239,14 +239,14 @@ def cmd_merge(args):
 def main():
     parser = argparse.ArgumentParser(
         description="miUrba — Generador de datasets sintéticos de quejas vecinales "
-                    "(todos los parámetros se leen del config compartido)"
+                    "(todos los parámetros se leen del config)"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── Shared arguments (config-only) ─────────────────────
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--config", default=None,
-                        help="Path to shared config.yaml (default: ../config.yaml at repo root)")
+                        help="Path to config.yaml (default: config/config.yaml in this subproject)")
 
     subparsers.add_parser("generate", parents=[common],
                           help="Generate synthetic raw complaints (plan from config)")

@@ -7,13 +7,14 @@ persona, comunidad) y pide a un LLM el texto del vecino (`user_text`) y un
 
 ## Uso
 
-Todos los parámetros se leen del config compartido. Único argumento:
-`--config` (por defecto, `../config.yaml`). El nivel de log se controla con
+Todos los parámetros se leen de un config. Único argumento: `--config`
+(por defecto, `config/config.yaml`). El nivel de log se controla con
 `logging.level`.
 
 ```bash
-python cli.py generate --config ../config.yaml   # generar según el plan
-python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
+python cli.py generate                # genera según el plan de config/config.yaml
+python cli.py merge                   # fusiona salidas por modelo
+python cli.py generate --config config/config-smoke.yaml
 ```
 
 `generate` recorre el plan (`generation.batches` o `generation.models` +
@@ -21,12 +22,19 @@ python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
 `<default_output_dir>/<modelo>/` y fusiona todo al final en
 `<default_output_dir>/<paths.raw_subdir>/`.
 
-`configs/` contiene 5 configs de ejemplo (campaña de corpus, smoke multi-modelo,
-smoke de iteración rápida, variante paramétrica y solo-merge). Todas son
-autocontenidas y referencian la taxonomía con `taxonomy: taxonomy.yaml`; los
-endpoints LAN de llama-swap son ilustrativos. Se usan con
-`python cli.py generate --config configs/<f>.yaml` o vía
-`docker-compose-example.yaml`.
+### `config/`
+
+| Fichero | Uso |
+|---|---|
+| `config.yaml` | Default: endpoints de ejemplo (Ollama local), plan pequeño |
+| `config-smoke.yaml` | Iteración rápida: 1 modelo × 50, resume: false |
+| `config-corpus.yaml` | Campaña de corpus: 4 generadores × 300, juez, resume |
+| `config-merge.yaml` | Solo `merge` (no genera) |
+
+Todas referencian la taxonomía compartida con
+`taxonomy: ../../schemas/taxonomy.yaml`. Los endpoints LAN de llama-swap de
+los ejemplos smoke/corpus son ilustrativos. Los secretos van en
+`miurba-generator/.env` (copia `.env.example`) y se referencian como `${VAR}`.
 
 ## Salida
 
@@ -40,7 +48,7 @@ endpoints LAN de llama-swap son ilustrativos. Se usan con
 
 Secciones del config que consume. Obligatorias para ejecutar:
 `endpoints`, `models`, un plan en `generation` y el vocabulario de dominio
-de `taxonomy.yaml` (referenciado con `taxonomy:` en el config:
+de `schemas/taxonomy.yaml` (referenciado con `taxonomy:` en el config:
 `categories`, `affected_elements`, `location_zones`, `risks`,
 `urgency_levels`, `communities`, `personas`, `modifiers`, `modifier_prob`,
 `weights`, `urgency_weights`, `category_risks`, `category_elements`,
@@ -48,7 +56,7 @@ de `taxonomy.yaml` (referenciado con `taxonomy:` en el config:
 `element_subcategories`).
 Opcionales con defaults: `paths`, `logging` y el resto de
 claves de `generation`. Detalle y valores por defecto comentados en
-`config.yaml` y `taxonomy.yaml`.
+`config/config.yaml` y `schemas/taxonomy.yaml`.
 
 ### `generation:`
 

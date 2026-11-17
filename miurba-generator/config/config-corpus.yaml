@@ -5,7 +5,7 @@
 #
 # Requiere los endpoints LAN de llama-swap (192.168.10.11/.100:9292).
 # Salida: /data/dataset-1k/<modelo>/raw/ + rejected.jsonl + conversations.jsonl
-taxonomy: taxonomy.yaml
+taxonomy: ../../schemas/taxonomy.yaml
 
 logging:
   level: INFO

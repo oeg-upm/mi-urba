@@ -11,7 +11,11 @@ Default path resolution (miurba-generator/src/config.py):
     __file__          -> .../miurba-generator/src/config.py
     parent            -> .../miurba-generator/src
     parent.parent     -> .../miurba-generator
-    parent.parent.parent -> .../mi-urba  (repo root, where config.yaml lives)
+    parent.parent / "config" / "config.yaml"  (default run config)
+
+The repo root holds only shared contracts: schemas/ (JSON Schemas and
+taxonomy.yaml). Each subproject owns its config/ directory with the default
+config and examples.
 """
 
 from __future__ import annotations
@@ -25,8 +29,15 @@ import yaml
 
 _CONFIG: dict | None = None
 
-# Shared config lives at the repo root, two levels up from this file.
-DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.yaml"
+# Subproject root (miurba-generator/) and repo root (mi-urba/).
+_SUBPROJECT_ROOT = Path(__file__).resolve().parent.parent
+_REPO_ROOT = _SUBPROJECT_ROOT.parent
+
+# Default run config: <subproject>/config/config.yaml
+DEFAULT_CONFIG_PATH = _SUBPROJECT_ROOT / "config" / "config.yaml"
+
+# Shared domain contracts live at the repo root: schemas/taxonomy.yaml
+DEFAULT_TAXONOMY_PATH = _REPO_ROOT / "schemas" / "taxonomy.yaml"
 
 
 _VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
@@ -42,11 +53,26 @@ TAXONOMY_KEYS = (
 )
 
 
-def _load_dotenv() -> None:
-    """Populate os.environ from the repo-root .env (existing vars win)."""
-    env_path = DEFAULT_CONFIG_PATH.parent / ".env"
-    if not env_path.exists():
-        return
+def _load_dotenv(config_path: Path | None = None) -> None:
+    """Populate os.environ from .env files (existing vars win).
+
+    Tried in order: the subproject root, next to the loaded config, and the
+    config's parent directory.
+    """
+    candidates = [_SUBPROJECT_ROOT / ".env"]
+    if config_path is not None:
+        candidates.append(config_path.parent / ".env")
+        candidates.append(config_path.parent.parent / ".env")
+    seen: set[Path] = set()
+    for env_path in candidates:
+        if env_path in seen or not env_path.exists():
+            continue
+        seen.add(env_path)
+        _apply_dotenv(env_path)
+
+
+def _apply_dotenv(env_path: Path) -> None:
+    """Populate os.environ from one .env file (existing vars win)."""
     for line in env_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
@@ -93,7 +119,7 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     if path is None:
         path = DEFAULT_CONFIG_PATH
     path = Path(path)
-    _load_dotenv()
+    _load_dotenv(path)
     with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f) or {}
     _load_taxonomy(cfg, path)
@@ -104,7 +130,7 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
 def _resolve_taxonomy_ref(ref: str | None, child: Path) -> Path:
     """Resolve the `taxonomy:` reference (absolute, relative to the config,
     or the repo-root default)."""
-    default = DEFAULT_CONFIG_PATH.parent / "taxonomy.yaml"
+    default = DEFAULT_TAXONOMY_PATH
     if ref is None:
         return default
     candidate = Path(ref)
@@ -191,7 +217,7 @@ def get_element_subcategories() -> dict:
     cfg = get_config()
     if "element_subcategories" in cfg:
         return cfg["element_subcategories"]
-    legacy = DEFAULT_CONFIG_PATH.parent / "element_subcategories.yaml"
+    legacy = _REPO_ROOT / "element_subcategories.yaml"
     if legacy.exists():
         import warnings
         warnings.warn(

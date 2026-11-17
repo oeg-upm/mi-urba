@@ -1,0 +1,14 @@
+# miurba-generator — dockerized runs.
+#
+#   docker compose build
+#   docker compose run --rm miurba-generator generate --config /config/config.yaml
+#
+# Override files/dirs with your own mounts; run logs via logging.file: /logs/run.log.
+services:
+  miurba-generator:
+    build: .
+    volumes:
+      - ./config:/config:ro
+      - ../schemas:/schemas:ro
+      - ./data:/data
+      - ./logs:/logs

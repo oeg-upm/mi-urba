@@ -3,7 +3,7 @@
 #
 #   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
 #     generate --config /configs/dataset_smoke_q36.yaml
-taxonomy: taxonomy.yaml
+taxonomy: ../../schemas/taxonomy.yaml
 
 logging:
   level: INFO

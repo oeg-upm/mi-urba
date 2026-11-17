@@ -1,9 +1,0 @@
-services:
-  miurba-generator:
-    build: ./miurba-generator
-    volumes:
-      - ./config.yaml:/config.yaml:ro
-      - ./taxonomy.yaml:/taxonomy.yaml:ro
-      - ./miurba-generator/configs:/configs:ro
-      - ./data-campaigns:/data
-      - ./logs:/logs

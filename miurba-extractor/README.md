@@ -6,15 +6,27 @@ Lee el `complaints.jsonl` producido por `miurba-generator` y produce
 
 ## Uso
 
-Todos los parámetros se leen del config compartido. Único argumento:
-`--config` (por defecto, `../config.yaml`).
+Todos los parámetros se leen de un config. Único argumento: `--config`
+(por defecto, `config/config.yaml`).
 
 ```bash
-python cli.py extract --config ../config.yaml
+python cli.py extract                          # usa config/config.yaml
+python cli.py extract --config config/config-jsonschema.yaml
 ```
 
-Entrada: `<raw_dir>/<complaints_file>` (producido por el generador).
-Salida: `<annotated_dir>/<extractions_file>`.
+Entrada: `<raw_dir>/<complaints_file>` (producido por el generador — apunta
+`extraction.raw_dir` a su salida). Salida:
+`<annotated_dir>/<extractions_file>`.
+
+### `config/`
+
+| Fichero | Uso |
+|---|---|
+| `config.yaml` | Default: endpoints de ejemplo (Ollama local) |
+| `config-jsonschema.yaml` | Ejemplo con `structured_output: json_schema` (vLLM) |
+
+Ambas referencian `taxonomy: ../../schemas/taxonomy.yaml`. Los secretos van
+en `miurba-extractor/.env` (copia `.env.example`), referenciados como `${VAR}`.
 
 ## Salida
 
@@ -42,9 +54,9 @@ muestreo del modelo. Un registro inválido cuenta como fallo y no se escribe.
 ## Configuración
 
 Secciones consumidas: `extraction`, `models`, `endpoints`, `paths`,
-`logging` y la taxonomía de `taxonomy.yaml` (`categories`,
+`logging` y la taxonomía de `schemas/taxonomy.yaml` (`categories`,
 `affected_elements`, `location_zones`, `risks`, `urgency_levels`). Defaults
-comentados en `config.yaml`.
+comentados en `config/config.yaml`.
 
 ### `extraction:`
 

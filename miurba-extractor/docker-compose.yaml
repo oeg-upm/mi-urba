@@ -1,0 +1,14 @@
+# miurba-extractor — dockerized runs.
+#
+#   docker compose build
+#   docker compose run --rm miurba-extractor extract --config /config/config.yaml
+#
+# Mount the generator's raw output at /data/raw; run logs via logging.file: /logs/run.log.
+services:
+  miurba-extractor:
+    build: .
+    volumes:
+      - ./config:/config:ro
+      - ../schemas:/schemas:ro
+      - ./data:/data
+      - ./logs:/logs

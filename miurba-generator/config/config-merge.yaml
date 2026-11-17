@@ -1,7 +1,7 @@
 # Sample — solo fusión de salidas por modelo (comando `merge`, no genera):
 #   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
 #     merge --config /configs/merge_50k.yaml
-taxonomy: taxonomy.yaml
+taxonomy: ../../schemas/taxonomy.yaml
 logging:
   level: INFO
   file: /logs/merge-50k.log

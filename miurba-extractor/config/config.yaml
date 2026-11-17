@@ -1,0 +1,42 @@
+# miurba-extractor — default config (example).
+# Secrets go in miurba-extractor/.env (gitignored), referenced as ${VAR}.
+taxonomy: ../../schemas/taxonomy.yaml
+
+logging:
+  level: INFO
+  file: null
+
+endpoints:
+  ollama:
+    base_url: http://localhost:11434
+    description: Local Ollama (OpenAI-compatible)
+
+models:
+  llama:
+    endpoint: ollama
+    model: llama3.1
+    temperature: 0.2
+
+extraction:
+  # Model key in models: — REQUIRED.
+  model: llama
+  temperature: 0.2
+  # Directories. When null, each resolves to
+  # <default_output_dir>/<raw|annotated subdir> from paths:.
+  default_output_dir: data
+  raw_dir: null
+  annotated_dir: null
+  resume: true
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  model_load_wait: null
+  workers: 1
+
+paths:
+  raw_subdir: raw
+  annotated_subdir: annotated
+  complaints_file: complaints.jsonl
+  extractions_file: extractions.jsonl
+  ground_truth_file: ground_truth.jsonl
+  metadata_file: metadata.jsonl

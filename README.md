@@ -1,12 +1,34 @@
 # miUrba
 
 Generación sintética y extracción estructurada de quejas vecinales.
-Dos herramientas independientes sobre una configuración compartida:
+Dos herramientas independientes sobre contratos compartidos:
 
 - **`miurba-generator/`** — genera datasets sintéticos de quejas: texto del
   vecino (LLM) y ground truth estructurado.
 - **`miurba-extractor/`** — extrae estructura de quejas reales o sintéticas
   (texto) con un LLM, conforme a un JSON Schema.
+
+La raíz del repo solo contiene **contratos**: los JSON Schema de datos y el
+vocabulario de dominio (`schemas/taxonomy.yaml`). Cada subproyecto posee su
+propio `config/` con su config por defecto y ejemplos.
+
+## Estructura
+
+```
+mi-urba/
+├── schemas/                     # contratos compartidos
+│   ├── complaint_schema.json
+│   ├── extraction_schema.json
+│   └── taxonomy.yaml            # vocabulario de dominio (taxonomías, personas, pesos)
+├── miurba-generator/
+│   ├── cli.py                   # generate, merge
+│   ├── config/                  # config.yaml + ejemplos (smoke, corpus, merge)
+│   └── docker-compose.yaml
+└── miurba-extractor/
+    ├── cli.py                   # extract
+    ├── config/                  # config.yaml + ejemplo json_schema
+    └── docker-compose.yaml
+```
 
 ## Flujo de datos
 
@@ -20,20 +42,162 @@ miurba-generator                          miurba-extractor
 
 El nexo entre ambas es el formato de datos (`schemas/`), no código.
 
-## Estructura
+### Generator — `cli.py generate`
 
+```mermaid
+flowchart TB
+
+    subgraph CFG["Carga de config y contratos"]
+        direction TB
+        START(["python cli.py generate"]) --> LOAD["config/config.yaml<br/>endpoints · models · generation · paths"]
+        LOAD --> DOTENV[".env del subproyecto<br/>secrets como ${VAR}"]
+        LOAD --> TAXCHECK{"claves de taxonomía<br/>inline en el config"}
+        TAXCHECK -->|"sí"| FASTFAIL["FAIL-FAST — el dominio<br/>solo vive en taxonomy.yaml"]
+        TAXCHECK -->|"no"| TAX["schemas/taxonomy.yaml<br/>categorías · elementos · zonas · riesgos<br/>urgencias · expresiones · personas · pesos"]
+        TAX --> MERGETAX["merge de taxonomía en el config"]
+        MERGETAX --> VALTAX["validadores fail-fast<br/>taxonomy · coherencia · expresiones"]
+        VALTAX -->|"inconsistente"| FASTFAIL
+    end
+
+    subgraph PLAN["Plan de lotes y clientes LLM"]
+        direction TB
+        VALTAX --> GENPLAN["plan — models+num_records<br/>o batches por modelo"]
+        GENPLAN --> CHECKVAL{"validate activo"}
+        CHECKVAL -->|"sin validator"| FASTFAIL
+        CHECKVAL -->|"true"| JUDGE["LLMClient juez — distinto<br/>del generador"]
+        GENPLAN --> GENCLI["LLMClient generador<br/>retries · model_load_wait · extra_params"]
+    end
+
+    subgraph REC["Por registro"]
+        direction TB
+        GENCLI --> SCEN["muestreo de escenario<br/>categoría por pesos · urgencia · zona<br/>riesgos · elementos coherentes<br/>persona · modifier · multi-problema"]
+        SCEN --> PROMPT["build_generation_prompt<br/>plantillas + expresiones de urgencia"]
+        PROMPT --> CHAT["LLM — user_text + timestamp en JSON"]
+        CHAT --> EJSON["extract_json"]
+        EJSON -->|"vacío · inválido"| REJGEN["rejected.jsonl"]
+        EJSON --> HYG["higiene SIEMPRE — leaks de ids<br/>snake_case · markdown · 12-grama"]
+        HYG -->|"leak"| REGEN
+        HYG --> VALACT{"validate activo"}
+        VALACT -->|"no"| WRITE
+        VALACT -->|"sí"| VCALL["juez — veredicto por campos<br/>fail-closed"]
+        VCALL -->|"ok"| WRITE["escritura con lock<br/>complaints · ground_truth · metadata"]
+        VCALL -->|"rechazado"| REGEN{"presupuesto de reintentos"}
+        REGEN -->|"queda"| TURN["regeneración multi-turn<br/>con judge_comment"]
+        TURN --> CHAT
+        REGEN -->|"agotado"| DISC["descartado — rejected.jsonl<br/>+ conversations.jsonl"]
+    end
+
+    subgraph FIN["Fusión"]
+        direction TB
+        WRITE --> MERGEOUT["merge por modelo → data/raw/<br/>ordenado por id"]
+    end
+
+    classDef failnode fill:#fce8e6,stroke:#d93025,color:#5f1b16
+    classDef llmnode fill:#fef7e0,stroke:#e37400,color:#5c3d00
+    class FASTFAIL,REJGEN,DISC failnode
+    class CHAT,VCALL,JUDGE,GENCLI llmnode
 ```
-mi-urba/
-├── config.yaml                  # configuración de ejecución (obligatoria)
-├── taxonomy.yaml                # vocabulario de dominio: taxonomías, personas, pesos
-├── schemas/                     # contratos de datos
-│   ├── complaint_schema.json
-│   └── extraction_schema.json
-├── docker-compose.yml           # ejecución dockerizada
-├── docker-compose-example.yaml  # ejemplo: run de campaña con un config de configs/
-├── scripts/docker_smoke.sh      # smoke test end-to-end
-├── miurba-generator/            # CLI: generate, merge (configs/ = 5 samples)
-└── miurba-extractor/            # CLI: extract
+
+- La higiene determinista corre **siempre**; el juez semántico es opcional y
+  **fail-closed**: un juez inalcanzable nunca aprueba.
+- El ground truth se construye en código desde el escenario muestreado
+  (alineado con `schemas/extraction_schema.json`); nunca lo escribe el LLM.
+
+### Extractor — `cli.py extract`
+
+```mermaid
+flowchart TB
+
+    subgraph CFGX["Config y schema"]
+        direction TB
+        STARTX(["python cli.py extract"]) --> LOADX["config/config.yaml<br/>+ taxonomy de schemas/"]
+        LOADX --> SCHEMA["extraction_schema.json con enums<br/>sincronizados de la taxonomía"]
+        LOADX --> MODELP["models → endpoint + extra_params"]
+    end
+
+    subgraph MODE["Salida estructurada (por modelo)"]
+        direction TB
+        MODELP --> SMODE{"structured_output"}
+        SMODE -->|json_object| JOBJ["response_format json_object"]
+        SMODE -->|json_schema| JSCHEMA["response_format json_schema<br/>el servidor fuerza el schema"]
+        SMODE -->|"off"| FREEMODE["texto libre"]
+    end
+
+    subgraph LOOPX["Por queja"]
+        direction TB
+        FREEMODE --> ONEX
+        JOBJ --> ONEX
+        JSCHEMA --> ONEX
+        ONEX["build_extraction_prompt<br/>enums de taxonomía en el prompt"] --> CHATX["LLM — extractions en JSON"]
+        CHATX -->|"error · vacío · JSON inválido"| FAILED["failed — no se escribe"]
+        CHATX --> NORM["normaliza complaint_id e hispanismos"]
+        NORM --> VALIDX["jsonschema SIEMPRE<br/>contra extraction_schema.json"]
+        VALIDX -->|"no conforme"| FAILED
+        VALIDX -->|"conforme"| WRITEX["extractions.jsonl"]
+    end
+
+    classDef failnode fill:#fce8e6,stroke:#d93025,color:#5f1b16
+    classDef llmnode fill:#fef7e0,stroke:#e37400,color:#5c3d00
+    class FAILED failnode
+    class CHATX llmnode
+```
+
+- El modo `structured_output` restringe el muestreo **en el servidor**; la
+  validación local contra el schema (enums sincronizados desde
+  `taxonomy.yaml`) se aplica **siempre**.
+
+### Pipeline end-to-end
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Usuario
+    participant GC as cli.py generate
+    participant GL as LLM generador
+    participant JV as LLM juez
+    participant FS as JSONL en data/
+    participant EC as cli.py extract
+    participant XL as LLM extractor
+
+    U->>GC: generate
+    activate GC
+    GC->>GC: config + taxonomy + .env — validadores fail-fast
+    loop por registro del plan
+        GC->>GC: muestreo de escenario · persona · modifier
+        GC->>GL: prompt de generación
+        GL-->>GC: JSON con user_text y timestamp
+        GC->>GC: higiene determinista
+        opt validate activo
+            GC->>JV: prompt de validación
+            JV-->>GC: veredicto con evidencia
+            alt rechazado
+                GC->>GL: regeneración multi-turn
+                GL-->>GC: nuevo user_text
+            end
+        end
+        alt aceptado
+            GC->>FS: complaints · ground_truth · metadata
+        else presupuesto agotado
+            GC->>FS: rejected.jsonl + conversations.jsonl
+        end
+    end
+    GC->>FS: merge por modelo → data/raw
+    deactivate GC
+
+    U->>EC: extract
+    activate EC
+    EC->>EC: schema con enums sincronizados
+    loop por queja pendiente
+        EC->>XL: prompt de extracción
+        XL-->>EC: JSON de extractions
+        EC->>EC: normaliza + jsonschema SIEMPRE
+        alt válido
+            EC->>FS: annotated/extractions.jsonl
+        else inválido
+            EC->>EC: cuenta como failed
+        end
+    end
+    deactivate EC
 ```
 
 ## Requisitos
@@ -44,58 +208,44 @@ mi-urba/
 ## Inicio rápido
 
 ```bash
-# 1. Configura el endpoint y los modelos en config.yaml (ver abajo).
-#    Los secretos van en .env (copia .env.example) y se referencian como ${VAR}.
+# 1. Configura endpoints y modelos en <subproyecto>/config/config.yaml.
+#    Los secretos van en <subproyecto>/.env (copia .env.example) y se
+#    referencian como ${VAR}.
 
 # 2. Generar quejas sintéticas
 cd miurba-generator
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python cli.py generate --config ../config.yaml
+python cli.py generate                # usa config/config.yaml
 
-# 3. Extraer estructura de las quejas generadas
-cd ../miurba-extractor
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python cli.py extract --config ../config.yaml
+# 3. Extraer estructura de las quejas generadas: apunta raw_dir del
+#    config del extractor a la salida del generador y ejecuta
+#    python cli.py extract    # usa config/config.yaml
 ```
 
-Salidas por defecto: `<default_output_dir>/<modelo>/raw/` en el
-generador y `<default_output_dir>/annotated/extractions.jsonl` en el extractor.
+Salidas por defecto: `miurba-generator/data/<modelo>/raw/` en el generador y
+`miurba-extractor/data/annotated/extractions.jsonl` en el extractor.
 
 ## Docker
 
+Cada subproyecto tiene su propio compose:
+
 ```bash
-docker compose build
-docker compose run --rm miurba-generator generate --config /config/config.test.yaml
-docker compose run --rm miurba-extractor extract  --config /config/config.test.yaml
+cd miurba-generator && docker compose run --rm miurba-generator generate --config /app/config/config.yaml
+cd miurba-extractor  && docker compose run --rm miurba-extractor  extract  --config /app/config/config.yaml
 ```
 
-Monta `config.yaml`, `taxonomy.yaml`, `schemas/`, los directorios de datos y
-`logs/` (activa `logging.file: /logs/run.log` para persistir el log del run).
-`scripts/docker_smoke.sh` ejecuta la verificación completa.
-Para runs de campaña con los configs de ejemplo, usa
-`docker-compose-example.yaml` (ver `miurba-generator/configs/`).
+Montan `./config` (configs), `../schemas` (contratos), `./data` y `./logs`.
 
 ## Configuración
 
-Un único `config.yaml` compartido en la raíz. Detalle completo de claves,
-defaults y comentarios en el propio fichero y en los README de cada
-subproyecto. Resumen:
+Cada subproyecto lee `config/config.yaml` (default) o lo que se pase con
+`--config`. El vocabulario de dominio (taxonomías, personas, pesos) vive en
+`schemas/taxonomy.yaml` y se referencia con `taxonomy:`; declararlo inline en
+un config es un error fail-fast. Detalle en los README de cada subproyecto.
 
-| Sección | Fichero | Obligatoria | Uso |
-|---|---|---|---|
-| `endpoints` | config.yaml | sí | URLs base y `api_key` (referenciada como `${VAR}` desde `.env`) |
-| `models` | config.yaml | sí | Modelos por nombre: `endpoint`, `model`, `temperature`, `structured_output` (extractor), `extra_params` |
-| Taxonomía (`categories`, `risks`, `location_zones`, `personas`, `communities`, `weights`, …) | taxonomy.yaml | sí (generador) | Dominio del muestreo y del prompt; se referencia con `taxonomy:` en el config. Claves de taxonomía en config.yaml → error fail-fast |
-| `risk_expressions`, `urgency_expressions` | taxonomy.yaml | sí (generador) | Expresiones obligatorias en el texto generado; cobertura validada al arrancar |
-| `generation` | config.yaml | no | Plan de batches, seed, workers, retries, validación con juez |
-| `extraction` | config.yaml | no (salvo `model`, obligatorio) | Modelo VLM, rutas, workers, retries |
-| `paths`, `logging` | config.yaml | no | Nombres de ficheros y log de run |
-
-Variantes típicas: `config.local.yaml` / `config.test.yaml` (gitignored,
-con IPs de LAN) y los 5 samples de `miurba-generator/configs/`; se seleccionan
-con `--config`.
+Ejemplos: `miurba-generator/config/{config-smoke,config-corpus,config-merge}.yaml`
+y `miurba-extractor/config/config-jsonschema.yaml`.
 
 ## Testing
 

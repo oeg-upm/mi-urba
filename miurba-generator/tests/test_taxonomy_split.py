@@ -22,7 +22,7 @@ import src.config as sc  # noqa: E402
 
 
 def test_repo_config_loads_with_taxonomy():
-    cfg = sc.load_config(REPO_ROOT / "config.yaml")
+    cfg = sc.load_config(PROJECT_ROOT / "config" / "config.yaml")
     for key in sc.TAXONOMY_KEYS:
         assert key in cfg, f"taxonomy key {key!r} missing after load"
     assert "taxonomy" not in cfg  # the reference key is consumed, not kept
@@ -64,6 +64,7 @@ def test_custom_taxonomy_path(tmp_path, monkeypatch):
 def test_missing_taxonomy_file_fails_fast(tmp_path, monkeypatch):
     (tmp_path / "config.yaml").write_text(yaml.safe_dump({"endpoints": {}}))
     monkeypatch.setattr(sc, "DEFAULT_CONFIG_PATH", tmp_path / "config.yaml")
+    monkeypatch.setattr(sc, "DEFAULT_TAXONOMY_PATH", tmp_path / "no-taxonomy.yaml")
     sc._CONFIG = None
     try:
         with pytest.raises(FileNotFoundError, match="taxonomy"):
@@ -75,7 +76,7 @@ def test_missing_taxonomy_file_fails_fast(tmp_path, monkeypatch):
 
 def test_element_subcategories_come_from_taxonomy():
     """The coherence table now lives inside taxonomy.yaml."""
-    cfg = sc.load_config(REPO_ROOT / "config.yaml")
+    cfg = sc.load_config(PROJECT_ROOT / "config" / "config.yaml")
     table = cfg["element_subcategories"]
     assert "fontanería" in table
     # and the accessor reads the merged config

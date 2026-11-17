@@ -14,10 +14,10 @@ y produce:
 
 Uso (config-only — TODOS los parámetros viven en el config):
 
-  python cli.py extract --config ../config.yaml
+  python cli.py extract --config config/config.yaml
 
 El comando `extract` acepta un único argumento, `--config` (por defecto
-el config compartido en la raíz del repositorio). Toda la configuración
+config/config.yaml del subproyecto). Toda la configuración
 pertinente se lee de tres secciones:
 
   extraction:
@@ -109,7 +109,7 @@ def cmd_extract(args):
 
     print(f"miUrba — Extraction (raw → structured, LLM)")
     print(f"{'=' * 55}")
-    print(f"  Config:     {args.config or 'config.yaml (repo root)'}")
+    print(f"  Config:     {args.config or 'config/config.yaml (subproject default)'}")
     print(f"  Model:      {model_name}")
     print(f"  Endpoint:   {model_cfg['base_url']}")
     print(f"  Source:     {raw_dir}/{paths['complaints_file']}")
@@ -147,14 +147,14 @@ def cmd_extract(args):
 def main():
     parser = argparse.ArgumentParser(
         description="miUrba — Extractor / summarizador de quejas vecinales (VLM) "
-                    "(todos los parámetros se leen del config compartido)"
+                    "(todos los parámetros se leen del config)"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # ── Shared arguments (config-only) ─────────────────────
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--config", default=None,
-                        help="Path to shared config.yaml (default: ../config.yaml at repo root)")
+                        help="Path to config.yaml (default: config/config.yaml in this subproject)")
 
     subparsers.add_parser("extract", parents=[common],
                           help="Extract structured data (config-only)")

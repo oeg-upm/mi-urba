@@ -23,7 +23,7 @@ import src.config as sc  # noqa: E402
 
 
 def test_repo_config_loads_with_taxonomy():
-    cfg = sc.load_config(REPO_ROOT / "config.yaml")
+    cfg = sc.load_config(PROJECT_ROOT / "config" / "config.yaml")
     for key in ("categories", "location_zones", "risks", "urgency_levels"):
         assert key in cfg, f"taxonomy key {key!r} missing after load"
     assert "taxonomy" not in cfg  # the reference key is consumed, not kept
@@ -64,6 +64,7 @@ def test_custom_taxonomy_path(tmp_path, monkeypatch):
 def test_missing_taxonomy_file_fails_fast(tmp_path, monkeypatch):
     (tmp_path / "config.yaml").write_text(yaml.safe_dump({"extraction": {}}))
     monkeypatch.setattr(sc, "DEFAULT_CONFIG_PATH", tmp_path / "config.yaml")
+    monkeypatch.setattr(sc, "DEFAULT_TAXONOMY_PATH", tmp_path / "no-taxonomy.yaml")
     sc._CONFIG = None
     try:
         with pytest.raises(FileNotFoundError, match="taxonomy"):

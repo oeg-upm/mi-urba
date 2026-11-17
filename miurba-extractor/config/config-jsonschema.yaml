@@ -1,0 +1,41 @@
+# Example: server-side constrained decoding (json_schema).
+# The endpoint must support structured outputs (vLLM+XGrammar, llama.cpp, ...).
+# Local validation against schemas/extraction_schema.json always applies.
+taxonomy: ../../schemas/taxonomy.yaml
+
+logging:
+  level: INFO
+  file: null
+
+endpoints:
+  vllm:
+    base_url: http://localhost:8000
+    description: vLLM server (OpenAI-compatible, structured outputs)
+
+models:
+  qwen:
+    endpoint: vllm
+    model: qwen3.5-9b
+    temperature: 0.2
+    structured_output: json_schema
+
+extraction:
+  model: qwen
+  temperature: 0.2
+  default_output_dir: data
+  raw_dir: null
+  annotated_dir: null
+  resume: true
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  model_load_wait: null
+  workers: 1
+
+paths:
+  raw_subdir: raw
+  annotated_subdir: annotated
+  complaints_file: complaints.jsonl
+  extractions_file: extractions.jsonl
+  ground_truth_file: ground_truth.jsonl
+  metadata_file: metadata.jsonl
