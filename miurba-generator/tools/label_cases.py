@@ -259,7 +259,8 @@ def main():
             log(f"accepted\t{case_id}\t{gen_model}\ttotal={accepted}/{total}"
                 f"\tmodelo={accepted_per_model[gen_model]}/"
                 f"{quota[gen_model] if quota else '-'}")
-            print(f"[{accepted}/{total}] {case_id} ({gen_model}) 6/6 apto  "
+            print(f"[{accepted}/{total}] {case_id} ({gen_model}) "
+                  f"{len(votes)}/{len(votes)} apto  "
                   f"{accepted_per_model[gen_model]}/{quota[gen_model] if quota else '-'}",
                   flush=True)
         else:

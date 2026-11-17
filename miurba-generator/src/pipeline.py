@@ -330,7 +330,7 @@ def _call_judge(client, messages, diagnostics: list, max_attempts: int = 2):
     raise last_exc
 
 
-def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str], bool]:
+def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) -> tuple[bool, list[str], bool, dict]:
     """Validate that user_text faithfully describes the scenario.
 
     Fail-closed: a validation error (LLM call, malformed JSON) returns

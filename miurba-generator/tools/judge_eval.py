@@ -76,9 +76,6 @@ def _resolve_cases(args):
     return load_gold()
 
 
-_PRISTINE_LOAD_TEMPLATE = None
-
-
 def install_prompt_override(directory: str) -> None:
     """Sirve un validate_record.md alternativo sin tocar el pipeline.
 
@@ -91,12 +88,12 @@ def install_prompt_override(directory: str) -> None:
 
     variant = Path(directory)
     if not variant.is_absolute():
-        variant = ROOT / "miurba-generator" / variant
+        variant = ROOT / variant
     source = variant / "validate_record.md"
     if not source.exists():
         raise SystemExit(f"no hay validate_record.md en {variant}")
 
-    staging = ROOT / "miurba-generator" / ".tmp" / "prompt_variant"
+    staging = ROOT / ".tmp" / "prompt_variant"
     if staging.exists():
         shutil.rmtree(staging)
     shutil.copytree(pl.PROMPTS_DIR, staging)

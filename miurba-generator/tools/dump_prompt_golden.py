@@ -3,6 +3,7 @@
 
 Run from miurba-generator/:  python tools/dump_prompt_golden.py [out.json]
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -30,6 +31,10 @@ P2 = {"category": "cubierta", "subcategory": "goteras", "location_zone": "exteri
 PERSONA = {"profile": "Inquilino transeúnte", "style": "mensajes cortos y directos"}
 MODIFIER = {"description": "Escribe con prisa", "style_override": "frases telegráficas"}
 
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("out", nargs="?", help="output path (default: tests/fixtures/prompt_golden.json)")
+args = parser.parse_args()
+
 out = {
     "generation_simple": build_generation_prompt("Q0001", [P1], COMMUNITY),
     "generation_multi": build_generation_prompt("Q0002", [P1, P2], COMMUNITY,
@@ -37,7 +42,7 @@ out = {
     "validation": build_validation_prompt("Texto de prueba de la queja.", [P1, P2]),
 }
 
-path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "tests/fixtures/prompt_golden.json"
+path = Path(args.out) if args.out else ROOT / "tests/fixtures/prompt_golden.json"
 path.parent.mkdir(parents=True, exist_ok=True)
 path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
 print(f"golden escrito en {path} ({len(out)} prompts)")

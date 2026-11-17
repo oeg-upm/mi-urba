@@ -3,6 +3,7 @@
 
 Run from miurba-extractor/:  python tools/dump_prompt_golden.py [out.json]
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -19,7 +20,11 @@ out = {
     "extraction_text_only": build_extraction_prompt(COMPLAINT),
 }
 
-path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "tests/fixtures/prompt_golden.json"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("out", nargs="?", help="output path (default: tests/fixtures/prompt_golden.json)")
+args = parser.parse_args()
+
+path = Path(args.out) if args.out else ROOT / "tests/fixtures/prompt_golden.json"
 path.parent.mkdir(parents=True, exist_ok=True)
 path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
 print(f"golden escrito en {path} ({len(out)} prompts)")

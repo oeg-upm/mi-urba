@@ -123,7 +123,7 @@ def main():
             model, text = texts[cid]
             scenario = gt_to_scenario(gts[cid])
             try:
-                is_valid, issues, degraded = validate_complaint(client, text, scenario)
+                is_valid, issues, degraded, _raw = validate_complaint(client, text, scenario)
             except Exception as e:  # a judge crash must not kill the calibration
                 is_valid, issues, degraded = False, [f"crash:{type(e).__name__}"], True
             verdict = "apta" if (is_valid and not degraded) else "defectuosa"
