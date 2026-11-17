@@ -24,6 +24,8 @@ logs/
 config.local.yaml
 config.test*.yaml
 .env
+.env*
+!.env.example
 *.key
 *.pem
 
