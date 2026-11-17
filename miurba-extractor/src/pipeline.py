@@ -168,27 +168,38 @@ def extract_dataset(
 
     # Find already extracted IDs for resume; extractions whose complaint no
     # longer exists are dropped so text and extraction cannot drift apart.
+    # Known limitation: the match is by id only, so regenerating the corpus with
+    # the same ids but different text leaves the old extraction in place. A
+    # source-text fingerprint would be needed to detect that.
     existing_ids: set[str] = set()
     if resume and output_path.exists():
-        kept: list[dict] = []
-        stale = 0
-        with open(output_path, encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                try:
-                    e = json.loads(line)
-                except json.JSONDecodeError:
-                    logger.warning(f"{output_path.name}: unreadable line, skipped")
-                    continue
-                if str(e.get("complaint_id", "")) not in complaints:
-                    stale += 1
-                    continue
-                kept.append(e)
-                existing_ids.add(str(e.get("complaint_id", "")))
-        if stale:
-            _write_jsonl_atomic(output_path, kept)
-            logger.warning(f"Dropped {stale} stale extractions (complaint no longer present)")
+        if not complaints:
+            # Nothing to compare against: pruning here would erase a valid
+            # extraction file when the input corpus is empty or misconfigured.
+            logger.warning("Input corpus is empty: keeping existing extractions as they are")
+        else:
+            kept: list[dict] = []
+            stale = 0
+            with open(output_path, encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        e = json.loads(line)
+                    except json.JSONDecodeError:
+                        logger.warning(f"{output_path.name}: unreadable line, skipped")
+                        continue
+                    if not isinstance(e, dict):
+                        logger.warning(f"{output_path.name}: line is not a JSON object, skipped")
+                        continue
+                    if str(e.get("complaint_id", "")) not in complaints:
+                        stale += 1
+                        continue
+                    kept.append(e)
+                    existing_ids.add(str(e.get("complaint_id", "")))
+            if stale:
+                _write_jsonl_atomic(output_path, kept)
+                logger.warning(f"Dropped {stale} stale extractions (complaint no longer present)")
         logger.info(f"Resuming: {len(existing_ids)} extractions already exist")
 
     extracted = 0
@@ -220,9 +231,11 @@ def extract_dataset(
                 f.write(json.dumps(extraction, ensure_ascii=False) + "\n")
         return True
 
-    # resume=False means start fresh: truncate previous output
-    if not resume and output_path.exists():
-        output_path.write_text("")
+    # resume=False means start fresh: truncate previous output and its audit trail
+    if not resume:
+        for p_ in (output_path, reject_path):
+            if p_.exists():
+                p_.write_text("")
         logger.info(f"Start fresh: truncated {output_path}")
 
     pending = [(cid, c) for cid, c in complaints.items() if cid not in existing_ids]

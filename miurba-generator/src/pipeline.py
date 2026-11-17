@@ -62,6 +62,9 @@ def _read_jsonl_ids(path: Path, key: str = "id") -> list[str]:
             except json.JSONDecodeError:
                 logger.warning(f"{path.name}:{number} unreadable line, skipped")
                 continue
+            if not isinstance(record, dict):
+                logger.warning(f"{path.name}:{number} line is not a JSON object, skipped")
+                continue
             ids.append(str(record.get(key, "")))
     return ids
 
@@ -78,11 +81,17 @@ def _write_jsonl_atomic(path: Path, records: list[dict]) -> None:
 
 
 def _filter_jsonl(path: Path, keep: set[str], key: str) -> int:
-    """Rewrite a JSONL file keeping only the given ids; return how many were dropped."""
+    """Rewrite a JSONL file keeping only the given ids; return how many lines went.
+
+    Truncated or non-object lines are dropped too, and the file is always
+    rewritten when anything was discarded: a file left without its final
+    newline would make the next append glue a record onto the corrupt line.
+    """
     if not path.exists():
         return 0
     kept: list[dict] = []
-    parsed = 0
+    seen: set[str] = set()
+    discarded = 0
     with open(path, encoding="utf-8") as f:
         for line in f:
             if not line.strip():
@@ -90,14 +99,26 @@ def _filter_jsonl(path: Path, keep: set[str], key: str) -> int:
             try:
                 record = json.loads(line)
             except json.JSONDecodeError:
+                discarded += 1
+                logger.warning(f"{path.name}: unreadable line, dropped")
                 continue
-            parsed += 1
-            if str(record.get(key, "")) in keep:
-                kept.append(record)
-    dropped = parsed - len(kept)
-    if dropped:
+            if not isinstance(record, dict):
+                discarded += 1
+                logger.warning(f"{path.name}: line is not a JSON object, dropped")
+                continue
+            record_id = str(record.get(key, ""))
+            if record_id not in keep:
+                discarded += 1
+                continue
+            if record_id in seen:
+                discarded += 1
+                logger.warning(f"{path.name}: duplicate {key} {record_id}, dropped")
+                continue
+            seen.add(record_id)
+            kept.append(record)
+    if discarded:
         _write_jsonl_atomic(path, kept)
-    return dropped
+    return discarded
 
 
 def reconcile_outputs(raw_path: Path, ground_truth_path: Path,
@@ -801,14 +822,14 @@ def merge_outputs(
     written atomically: a failed merge never truncates a previous good merge.
     """
     raw_out = Path(output_dir) / raw_subdir
-    model_dirs = [Path(output_dir) / d / raw_subdir for d in (batch_dirs or [])]
-    present = [d for d in model_dirs if d.is_dir()]
+    model_dirs = [(d, Path(output_dir) / d / raw_subdir) for d in (batch_dirs or [])]
+    present = [(name, path) for name, path in model_dirs if path.is_dir()]
     if not present:
         raise FileNotFoundError(
-            f"merge: no per-model output directory found under {output_dir} "
-            f"(expected {', '.join(d.name for d in model_dirs) or 'none'})"
+            f"merge: no model output found under {output_dir} "
+            f"(looked for {', '.join(n for n, _ in model_dirs) or 'no model'})"
         )
-    missing = [d.name for d in model_dirs if d not in present]
+    missing = [name for name, path in model_dirs if not path.is_dir()]
     if missing:
         logger.warning(f"merge: model directories not found, skipped: {', '.join(missing)}")
 
@@ -818,7 +839,7 @@ def merge_outputs(
     key_of = {complaints_file: "id", ground_truth_file: "complaint_id",
               metadata_file: "complaint_id"}
 
-    for model_path in present:
+    for _model_name, model_path in present:
         for fname in merged:
             fpath = model_path / fname
             if not fpath.exists():

@@ -63,10 +63,32 @@ def test_reconcile_drops_record_missing_metadata(tmp_path):
 
 def test_reconcile_skips_corrupt_lines(tmp_path):
     raw, gt, md = (tmp_path / "c.jsonl", tmp_path / "g.jsonl", tmp_path / "m.jsonl")
-    raw.write_text(json.dumps({"id": "Q0001"}) + "\n{\"id\": \"Q0002\"" )  # truncated
+    raw.write_text(json.dumps({"id": "Q0001"}) + "\n{\"id\": \"Q0002\"")  # truncated, no newline
     _write(gt, [{"complaint_id": "Q0001"}])
     _write(md, [{"complaint_id": "Q0001"}])
     assert pl.reconcile_outputs(raw, gt, md) == {"Q0001"}
+    # the corrupt tail is gone and the file ends with a newline, so the next
+    # append cannot be glued onto it
+    assert raw.read_text() == json.dumps({"id": "Q0001"}) + "\n"
+
+
+def test_reconcile_drops_non_object_lines(tmp_path):
+    raw, gt, md = (tmp_path / "c.jsonl", tmp_path / "g.jsonl", tmp_path / "m.jsonl")
+    raw.write_text(json.dumps(["not", "an", "object"]) + "\n"
+                   + json.dumps({"id": "Q0001"}) + "\n")
+    _write(gt, [{"complaint_id": "Q0001"}])
+    _write(md, [{"complaint_id": "Q0001"}])
+    assert pl.reconcile_outputs(raw, gt, md) == {"Q0001"}
+    assert _ids(raw, "id") == ["Q0001"]
+
+
+def test_reconcile_drops_duplicate_ids(tmp_path):
+    raw, gt, md = (tmp_path / "c.jsonl", tmp_path / "g.jsonl", tmp_path / "m.jsonl")
+    _write(raw, [{"id": "Q0001"}, {"id": "Q0001"}])
+    _write(gt, [{"complaint_id": "Q0001"}])
+    _write(md, [{"complaint_id": "Q0001"}])
+    assert pl.reconcile_outputs(raw, gt, md) == {"Q0001"}
+    assert _ids(raw, "id") == ["Q0001"]
 
 
 def test_reconcile_is_noop_when_files_absent(tmp_path):
@@ -76,7 +98,7 @@ def test_reconcile_is_noop_when_files_absent(tmp_path):
 # ── merge safety ──────────────────────────────────────────────
 
 def test_merge_without_model_dirs_fails(tmp_path):
-    with pytest.raises(FileNotFoundError, match="no per-model output"):
+    with pytest.raises(FileNotFoundError, match="no model output"):
         pl.merge_outputs(str(tmp_path), ["missing"], raw_subdir="raw")
 
 

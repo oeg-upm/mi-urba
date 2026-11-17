@@ -146,10 +146,11 @@ def cmd_extract(args):
         print(f"  ⚠ errors absorbed: {client._stats['errors']}  "
               f"(load waits: {client._stats['load_waits']})")
 
-    # Exit codes: 2 = input missing, 1 = nothing produced, 0 = at least one record.
+    # Exit codes: 2 = input missing, 1 = every pending record failed, 0 otherwise
+    # (a fully resumed run produces nothing but is a success).
     if stats.get("input_missing"):
         sys.exit(2)
-    if stats["extracted"] == 0 and stats["total"] > 0:
+    if stats["failed"] > 0 and stats["extracted"] == 0:
         sys.exit(1)
 
 

@@ -249,7 +249,11 @@ def _merge(config, output_dir: str | None = None) -> dict:
 def cmd_merge(args):
     """Merge per-model outputs into the shared raw dir (config-only)."""
     config = get_config(args.config)
-    _merge(config)
+    try:
+        _merge(config)
+    except FileNotFoundError as e:
+        print(f"Nothing to merge: {e}")
+        sys.exit(2)
 
 
 def main():
