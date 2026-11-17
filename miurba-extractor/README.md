@@ -70,6 +70,16 @@ comentados en `config/config.yaml`.
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
 | `model_load_wait` | Paciencia (s) con modelos en frío; `null` = off | `null` |
 | `workers` | Extracción en paralelo | `1` |
+| `constrain_vocabulary` | Restringir categoría/subcategoría y elementos afectados al vocabulario de la taxonomía (modo cerrado) | `false` |
+
+### Modo cerrado y modo abierto
+
+El schema con el que se valida localmente siempre impone los enums de `risks`,
+`urgency_levels` y `location_zones`. Los campos de clasificación (categoría y
+elementos afectados) son libres por defecto (modo abierto); con
+`constrain_vocabulary: true` el schema los restringe a la taxonomía (modo
+cerrado), de modo que el servidor y la validación local rechazan cualquier
+etiqueta que no exista en el vocabulario.
 
 ### `models:` — salida estructurada
 

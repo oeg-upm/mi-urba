@@ -26,6 +26,8 @@ extraction:
   default_output_dir: data
   raw_dir: null
   annotated_dir: null
+  # Closed mode: category/subcategory and affected elements restricted to the taxonomy.
+  constrain_vocabulary: true
   resume: true
   timeout: 300
   max_retries: 3
