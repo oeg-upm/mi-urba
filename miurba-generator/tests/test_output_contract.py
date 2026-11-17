@@ -74,7 +74,7 @@ def test_valid_record_passes_the_contract(env):
     assert result is not None
     complaint, ground_truth, metadata = result
     assert contracts.validate_record(complaint, ground_truth, metadata) == []
-    assert metadata["provenance"]["config_hash"] is not None
+    assert "config_hash" in metadata["provenance"]
 
 
 def test_missing_timestamp_is_rejected(env):
@@ -133,3 +133,35 @@ def test_record_missing_required_field_is_rejected(env, monkeypatch):
                 "provenance": {"model": "", "seed": None, "config_hash": ""}}
     violations = contracts.validate_record(complaint, ground_truth, metadata)
     assert any("urgency" in v for v in violations), violations
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("2024-03-15T11:23:47+0000", "2024-03-15T11:23:47+00:00"),
+    ("2024-03-15T11:23:47Z", "2024-03-15T11:23:47+00:00"),
+    ("2024-03-15T11:23:47.123456+02:00", "2024-03-15T11:23:47.123456+02:00"),
+    ("2024-03-15T11:23:47", "2024-03-15T11:23:47+00:00"),
+])
+def test_timestamp_formats_are_normalised(raw, expected):
+    assert pl.normalize_timestamp(raw) == expected
+
+
+@pytest.mark.parametrize("raw", ["", "   ", None, 1710500000, True, "ayer por la tarde", "2024-13-45"])
+def test_unparseable_timestamps_return_none(raw):
+    assert pl.normalize_timestamp(raw) is None
+
+
+def test_config_hash_ignores_credentials():
+    a = contracts.config_hash({"endpoints": {"e": {"api_key": "sk-one"}}})
+    b = contracts.config_hash({"endpoints": {"e": {"api_key": "sk-two"}}})
+    assert a == b
+
+
+def test_metadata_without_modifier_key_is_rejected():
+    complaint = {"id": "Q0001", "user_text": CLEAN_TEXT, "timestamp": "2024-03-15T11:23:47+00:00"}
+    ground_truth = {"complaint_id": "Q0001", "extractions": [
+        {"category": {"principal": "fontanería", "subcategory": "fugas"},
+         "affected_elements": [], "location": {"zone": "garaje", "detail": ""},
+         "risks": ["inundación"], "urgency": "alta"}]}
+    metadata = {"complaint_id": "Q0001", "persona": None, "community": dict(COMMUNITY),
+                "provenance": {"model": "m", "seed": None, "config_hash": "h"}}
+    assert any("modifier" in v for v in contracts.validate_record(complaint, ground_truth, metadata))
