@@ -10,65 +10,41 @@ env/
 *.egg-info/
 dist/
 build/
+.pytest_cache/
 
 # Data outputs (generated)
 *.parquet
 *.csv
-data/raw/
-data/annotated/
-data/merged/
-**/data/raw/
-**/data/annotated/
-**/data/merged/
+data/
+data_test/
+data-campaigns/
+logs/
 
-# Config with local endpoints / secrets
+# Local configs / secrets
 config.local.yaml
 config.test*.yaml
-
-# Secrets
 .env
 *.key
 *.pem
 
-# IDE
+# Evaluation artifacts
+eval/
+test_results.json
+
+# Backups
+*.bak
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE / OS / scratch
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Agent scratch
 .tmp/
-.pytest_cache/
-
-# Generated test output
-test_results.json
-
-# Test configs (local endpoints)
-config.test_b.yaml
-config.test_c.yaml
-config.test_d.yaml
-data_test/
-data_test_b/
-data_test_b2/
-data-campaigns/
-
-# Docker run logs
-logs/
-
-# Prompt iteration backups
-*.bak
-
-# Coverage artifacts
-.coverage
-.coverage.*
-htmlcov/
-
-# Evaluation corpora, benchmarks and experiment dumps. Archived outside the repo
-# on 2026-11-16 (../eval-archivo): 394 MB of jsonl, logs and per-model dumps.
-# Point the bench tools at it with MIURBA_EVAL_DIR.
-eval/
