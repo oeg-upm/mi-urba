@@ -34,7 +34,9 @@ def test_all_example_configs_load(monkeypatch):
     """Every example config in config/ must load with the real loader."""
     for var in ("OPENAI_API_ENDPOINT", "OPENAI_API_MODEL", "OPENAI_API_KEY"):
         monkeypatch.setenv(var, "dummy")
-    for p in sorted((PROJECT_ROOT / "config").glob("*.yaml")):
+    for p in sorted((PROJECT_ROOT / "config").glob("config*.yaml")):
+        if "test" in p.stem:
+            continue  # local untracked test configs are not part of the examples
         cfg = sc.load_config(p)
         assert all(k in cfg for k in sc.TAXONOMY_KEYS), p
 

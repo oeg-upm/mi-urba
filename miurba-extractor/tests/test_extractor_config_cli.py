@@ -32,10 +32,10 @@ def config_file(tmp_path):
             "test": {"base_url": "http://localhost:9999", "api_key": "sk-test"},
         },
         "models": {
-            "vlm-a": {"endpoint": "test", "model": "vlm-a-model", "temperature": 0.1},
-            "vlm-b": {"endpoint": "test", "model": "vlm-b-model", "temperature": 0.2},
+            "model-a": {"endpoint": "test", "model": "model-a-model", "temperature": 0.1},
+            "model-b": {"endpoint": "test", "model": "model-b-model", "temperature": 0.2},
         },
-        "extraction": {"model": "vlm-a", "temperature": 0.2},
+        "extraction": {"model": "model-a", "temperature": 0.2},
         "generation": {"default_output_dir": str(tmp_path / "out")},
         "paths": {},
     }
@@ -72,21 +72,21 @@ def test_repo_config_extraction_section_fully_consumed():
 
 # ── Extraction model resolution (required, no fallback) ──
 
-def test_vlm_resolves_extraction_model(config_file):
+def test_resolves_extraction_model(config_file):
     """extraction.model resolves to its models: entry."""
     cfg = get_config(config_file)
     name, params = get_extraction_model_params(None, cfg)
-    assert name == "vlm-a" and params["model"] == "vlm-a-model"
+    assert name == "model-a" and params["model"] == "model-a-model"
 
 
-def test_vlm_explicit_name_wins(config_file):
+def test_explicit_name_wins(config_file):
     """An explicitly passed name overrides extraction.model."""
     cfg = get_config(config_file)
-    name, params = get_extraction_model_params("vlm-b", cfg)
-    assert name == "vlm-b" and params["model"] == "vlm-b-model"
+    name, params = get_extraction_model_params("model-b", cfg)
+    assert name == "model-b" and params["model"] == "model-b-model"
 
 
-def test_vlm_missing_model_fails_fast(config_file):
+def test_missing_model_fails_fast(config_file):
     """extraction.model missing/null → ValueError (required)."""
     cfg = get_config(config_file)
     cfg["extraction"]["model"] = None
@@ -133,7 +133,7 @@ def test_llm_client_receives_extraction_retry_policy(config_file):
     ext.update({"timeout": 120, "max_retries": 5, "retry_delay": 2.0})
     client = LLMClient(
         base_url="http://localhost:9999",
-        model="vlm-a-model",
+        model="model-a-model",
         temperature=ext["temperature"],
         timeout=ext["timeout"],
         max_retries=ext["max_retries"],

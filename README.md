@@ -157,11 +157,14 @@ Salidas por defecto: `miurba-generator/data/<modelo>/raw/` en el generador y
 Cada subproyecto tiene su propio compose:
 
 ```bash
-cd miurba-generator && docker compose run --rm miurba-generator generate --config /app/config/config.yaml
-cd miurba-extractor  && docker compose run --rm miurba-extractor  extract  --config /app/config/config.yaml
+cd miurba-generator && mkdir -p data logs && docker compose run --rm miurba-generator generate --config /app/config/config.yaml
+cd miurba-extractor  && mkdir -p data logs && docker compose run --rm miurba-extractor  extract  --config /app/config/config.yaml
 ```
 
-Montan `./config` (configs), `../schemas` (contratos), `./data` y `./logs`.
+Montan `./config` (configs), `../schemas` (contratos), `./data` y `./logs`;
+el `.env` pasa vía `env_file`. Crea `data/` y `logs/` antes del primer run:
+si no existen, docker los crea como root y el usuario del contenedor no
+podrá escribir en ellos.
 
 ## Configuración
 

@@ -1,7 +1,7 @@
 """
 LLM API client with retry logic.
 
-Supports any OpenAI-compatible endpoint (Ollama cloud, llama-swap, etc.).
+Supports any OpenAI-compatible endpoint.
 Automatically normalizes base_url to avoid double /v1 paths.
 Does NOT impose artificial token limits — the model decides when to stop.
 """

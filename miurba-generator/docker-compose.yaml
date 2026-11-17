@@ -5,10 +5,14 @@
 #
 # The compose file passes .env (OPENAI_API_*) via env_file and mounts your
 # local config/, the shared contracts (../schemas), data/ and logs/.
+# NOTE: create the host dirs first (docker creates them root-owned otherwise):
+#   mkdir -p data logs
 services:
   miurba-generator:
     build: .
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - ./config:/app/config:ro
       - ../schemas:/schemas:ro

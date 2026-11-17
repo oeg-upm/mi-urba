@@ -23,7 +23,7 @@ data/merged/
 
 # Config with local endpoints / secrets
 config.local.yaml
-config.neuralwatt.yaml
+config.test*.yaml
 
 # Secrets
 .env
@@ -43,12 +43,12 @@ Thumbs.db
 
 # Agent scratch
 .tmp/
+.pytest_cache/
 
 # Generated test output
 test_results.json
 
-# Test config with LAN endpoint
-config.test.yaml
+# Test configs (local endpoints)
 config.test_b.yaml
 config.test_c.yaml
 config.test_d.yaml
