@@ -4,7 +4,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # System deps: none beyond stdlib (requests/pyyaml/fastapi-free project)
-COPY requirements.txt requirements-dev.txt ./
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Project code (src/ + cli.py + example configs). Tests and data are NOT baked in.
@@ -17,10 +17,8 @@ COPY config ./config
 RUN useradd -m appuser
 USER appuser
 
-# Defaults resolve to /app/config/config.yaml (baked examples above; override
-# with mounts) and the shared taxonomy at /schemas/taxonomy.yaml (mount it):
-#   -v ./config:/app/config:ro
-#   -v ../schemas:/schemas:ro
-#   -v ./data:/data
-#   -v ./logs:/logs   (config → logging.file: /logs/run.log)
+# Defaults resolve to /app/config/config.yaml (mounted over the baked
+# examples) and the shared taxonomy at /schemas/taxonomy.yaml (mounted from
+# ../schemas). Data and logs persist via ./data:/app/data and ./logs:/app/logs;
+# .env (OPENAI_API_*) is passed by docker compose via env_file.
 ENTRYPOINT ["python", "cli.py"]

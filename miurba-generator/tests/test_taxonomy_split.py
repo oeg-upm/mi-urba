@@ -21,11 +21,22 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import src.config as sc  # noqa: E402
 
 
-def test_repo_config_loads_with_taxonomy():
+def test_repo_config_loads_with_taxonomy(monkeypatch):
+    for var in ("OPENAI_API_ENDPOINT", "OPENAI_API_MODEL", "OPENAI_API_KEY"):
+        monkeypatch.setenv(var, "dummy")
     cfg = sc.load_config(PROJECT_ROOT / "config" / "config.yaml")
     for key in sc.TAXONOMY_KEYS:
         assert key in cfg, f"taxonomy key {key!r} missing after load"
     assert "taxonomy" not in cfg  # the reference key is consumed, not kept
+
+
+def test_all_example_configs_load(monkeypatch):
+    """Every example config in config/ must load with the real loader."""
+    for var in ("OPENAI_API_ENDPOINT", "OPENAI_API_MODEL", "OPENAI_API_KEY"):
+        monkeypatch.setenv(var, "dummy")
+    for p in sorted((PROJECT_ROOT / "config").glob("*.yaml")):
+        cfg = sc.load_config(p)
+        assert all(k in cfg for k in sc.TAXONOMY_KEYS), p
 
 
 def test_stale_taxonomy_keys_fail_fast(tmp_path, monkeypatch):
@@ -74,8 +85,10 @@ def test_missing_taxonomy_file_fails_fast(tmp_path, monkeypatch):
         sc._CONFIG = None
 
 
-def test_element_subcategories_come_from_taxonomy():
+def test_element_subcategories_come_from_taxonomy(monkeypatch):
     """The coherence table now lives inside taxonomy.yaml."""
+    for var in ("OPENAI_API_ENDPOINT", "OPENAI_API_MODEL", "OPENAI_API_KEY"):
+        monkeypatch.setenv(var, "dummy")
     cfg = sc.load_config(PROJECT_ROOT / "config" / "config.yaml")
     table = cfg["element_subcategories"]
     assert "fontanería" in table

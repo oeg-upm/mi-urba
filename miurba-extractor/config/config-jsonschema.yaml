@@ -8,19 +8,20 @@ logging:
   file: null
 
 endpoints:
-  vllm:
-    base_url: http://localhost:8000
-    description: vLLM server (OpenAI-compatible, structured outputs)
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
 
 models:
-  qwen:
-    endpoint: vllm
-    model: qwen3.5-9b
+  extractor:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
     temperature: 0.2
     structured_output: json_schema
 
 extraction:
-  model: qwen
+  model: extractor
   temperature: 0.2
   default_output_dir: data
   raw_dir: null

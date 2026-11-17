@@ -4,7 +4,8 @@
 # zonas, riesgos, urgencias, expresiones, comunidades, personas, modificadores,
 # pesos de muestreo y la tabla de coherencia element_subcategories).
 # config.yaml solo contiene parámetros de ejecución y la referencia
-# `taxonomy: taxonomy.yaml`.
+# `taxonomy:` (p. ej. `taxonomy: ../../schemas/taxonomy.yaml` desde el
+# config/ de un subproyecto).
 # Este fichero alimenta los prompts, el muestreo, los validadores fail-fast y
 # los enums de schemas/extraction_schema.json (sincronizados en runtime).
 categories:

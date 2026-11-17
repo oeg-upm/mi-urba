@@ -26,15 +26,16 @@ python cli.py generate --config config/config-smoke.yaml
 
 | Fichero | Uso |
 |---|---|
-| `config.yaml` | Default: endpoints de ejemplo (Ollama local), plan pequeño |
-| `config-smoke.yaml` | Iteración rápida: 1 modelo × 50, resume: false |
-| `config-corpus.yaml` | Campaña de corpus: 4 generadores × 300, juez, resume |
+| `config.yaml` | Default: endpoint genérico vía `OPENAI_API_*`, plan pequeño |
+| `config-smoke.yaml` | Iteración rápida: 1 generador × 50 con juez, resume: false |
+| `config-corpus.yaml` | Campaña de corpus: N generadores × M intentos, juez, resume |
 | `config-merge.yaml` | Solo `merge` (no genera) |
 
 Todas referencian la taxonomía compartida con
-`taxonomy: ../../schemas/taxonomy.yaml`. Los endpoints LAN de llama-swap de
-los ejemplos smoke/corpus son ilustrativos. Los secretos van en
-`miurba-generator/.env` (copia `.env.example`) y se referencian como `${VAR}`.
+`taxonomy: ../../schemas/taxonomy.yaml`. La configuración de ejemplo usa las
+variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
+`OPENAI_API_KEY` (en `miurba-generator/.env`, copia `.env.example`); los ids
+`your-*-model` de los ejemplos smoke/corpus son placeholders a sustituir.
 
 ## Salida
 
@@ -73,26 +74,24 @@ claves de `generation`. Detalle y valores por defecto comentados en
 | `workers` | Generación en paralelo | `1` |
 | `validate` | Validación en 2ª pasada (juez LLM) | `false` |
 | `max_validation_retries` | Regeneraciones si el juez rechaza | `3` |
-| `validator` | Modelo juez; `null` = el propio generador | `null` |
+| `validator` | Modelo juez (**obligatorio** si `validate: true`); tiene que ser distinto del generador | — |
 
 ### `models:` y `endpoints:`
 
 ```yaml
 models:
-  qwen3.5:
-    endpoint: llama_swap
-    model: qwen3.5-122b-a10b
+  generator:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
     temperature: 0.85
     extra_params:              # claves verbatim al payload (opcional)
       enable_thinking: false
 
 endpoints:
-  llama_swap:
-    base_url: http://llama-swap.local:9292
-    connection_backoff: true   # backoff generoso ante caídas (opcional)
-  neuralwatt:
-    base_url: https://api.neuralwatt.com/v1
-    api_key: ${NEURALWATT_API_KEY}   # secreto: resolver desde .env
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    api_key: ${OPENAI_API_KEY}        # secreto: resolver desde .env
+    connection_backoff: true          # backoff generoso ante caídas (opcional)
 ```
 
 ### Validación con juez (opcional)

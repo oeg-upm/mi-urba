@@ -32,185 +32,111 @@ mi-urba/
 
 ## Flujo de datos
 
-```
-miurba-generator                          miurba-extractor
-  escenario ─► LLM ─► user_text                user_text ─► LLM
-       ▼                                          ▼
-  complaints.jsonl + ground_truth.jsonl + metadata.jsonl    extractions.jsonl
-       └────────────── entrada del extractor ──────────────┘
+Vista funcional general: el **generador** construye un corpus sintético de
+quejas a partir de escenarios muestreados de la taxonomía; el **extractor**
+lee ese corpus y devuelve estructura conforme al contrato. Las dos
+herramientas no comparten código: solo los contratos (taxonomía y schemas).
+
+```mermaid
+flowchart LR
+    K["Contratos compartidos<br/>taxonomía · schemas JSON"]
+
+    subgraph GEN["Generador"]
+        M["Muestreo de<br/>escenarios"] --> G["Redacción LLM con<br/>control de calidad"] --> C["Corpus sintético<br/>texto · ground truth · metadata"]
+    end
+
+    subgraph EXT["Extractor"]
+        X["Extracción estructurada<br/>guiada por taxonomía"] --> V["Validación de contrato"] --> E["Extracciones estructuradas"]
+    end
+
+    K -.->|"dominio del muestreo"| M
+    K -.->|"vocabulario y reglas"| G
+    C --> X
+    K -.->|"enums del schema"| V
+
+    classDef contract fill:#f3e8fd,stroke:#8430ce,color:#3c1a5c
+    classDef gen fill:#e6f4ea,stroke:#188038,color:#0d3d1d
+    classDef ext fill:#e4f7fb,stroke:#00838f,color:#00363c
+    class K contract
+    class M,G,C gen
+    class X,V,E ext
 ```
 
-El nexo entre ambas es el formato de datos (`schemas/`), no código.
-
-### Generator — `cli.py generate`
+### Generador — bloques funcionales
 
 ```mermaid
 flowchart TB
+    PREP["Preparación<br/>config + taxonomía<br/>verificación de consistencia"] -->|"inconsistencia"| STOP["Parada inmediata<br/>fail-fast"]
+    PREP --> SAMPLE["Muestreo del escenario<br/>problema · urgencia · ubicación · riesgos<br/>elementos afectados coherentes"]
+    SAMPLE --> VOICE["Perfil del vecino<br/>persona · estilo · posible 2º problema"]
+    VOICE --> WRITE["Redacción LLM<br/>mensaje del vecino en estilo del perfil"]
+    WRITE --> QUALITY{ "Control de calidad" }
+    QUALITY -->|"leaks o degeneración"| RETRY
+    QUALITY -->|"juez lo rechaza"| RETRY["Regeneración con feedback<br/>mismo escenario · presupuesto limitado"]
+    RETRY --> WRITE
+    QUALITY -->|"aprobado"| OUT["Corpus<br/>texto + ground truth derivado del escenario"]
+    RETRY -->|"presupuesto agotado"| DISC["Descarte auditado<br/>reinteligible en una reanudación"]
+    OUT --> MERGE["Fusión por modelo<br/>corpus final ordenado"]
 
-    subgraph CFG["Carga de config y contratos"]
-        direction TB
-        START(["python cli.py generate"]) --> LOAD["config/config.yaml<br/>endpoints · models · generation · paths"]
-        LOAD --> DOTENV[".env del subproyecto<br/>secrets como ${VAR}"]
-        LOAD --> TAXCHECK{"claves de taxonomía<br/>inline en el config"}
-        TAXCHECK -->|"sí"| FASTFAIL["FAIL-FAST — el dominio<br/>solo vive en taxonomy.yaml"]
-        TAXCHECK -->|"no"| TAX["schemas/taxonomy.yaml<br/>categorías · elementos · zonas · riesgos<br/>urgencias · expresiones · personas · pesos"]
-        TAX --> MERGETAX["merge de taxonomía en el config"]
-        MERGETAX --> VALTAX["validadores fail-fast<br/>taxonomy · coherencia · expresiones"]
-        VALTAX -->|"inconsistente"| FASTFAIL
-    end
-
-    subgraph PLAN["Plan de lotes y clientes LLM"]
-        direction TB
-        VALTAX --> GENPLAN["plan — models+num_records<br/>o batches por modelo"]
-        GENPLAN --> CHECKVAL{"validate activo"}
-        CHECKVAL -->|"sin validator"| FASTFAIL
-        CHECKVAL -->|"true"| JUDGE["LLMClient juez — distinto<br/>del generador"]
-        GENPLAN --> GENCLI["LLMClient generador<br/>retries · model_load_wait · extra_params"]
-    end
-
-    subgraph REC["Por registro"]
-        direction TB
-        GENCLI --> SCEN["muestreo de escenario<br/>categoría por pesos · urgencia · zona<br/>riesgos · elementos coherentes<br/>persona · modifier · multi-problema"]
-        SCEN --> PROMPT["build_generation_prompt<br/>plantillas + expresiones de urgencia"]
-        PROMPT --> CHAT["LLM — user_text + timestamp en JSON"]
-        CHAT --> EJSON["extract_json"]
-        EJSON -->|"vacío · inválido"| REJGEN["rejected.jsonl"]
-        EJSON --> HYG["higiene SIEMPRE — leaks de ids<br/>snake_case · markdown · 12-grama"]
-        HYG -->|"leak"| REGEN
-        HYG --> VALACT{"validate activo"}
-        VALACT -->|"no"| WRITE
-        VALACT -->|"sí"| VCALL["juez — veredicto por campos<br/>fail-closed"]
-        VCALL -->|"ok"| WRITE["escritura con lock<br/>complaints · ground_truth · metadata"]
-        VCALL -->|"rechazado"| REGEN{"presupuesto de reintentos"}
-        REGEN -->|"queda"| TURN["regeneración multi-turn<br/>con judge_comment"]
-        TURN --> CHAT
-        REGEN -->|"agotado"| DISC["descartado — rejected.jsonl<br/>+ conversations.jsonl"]
-    end
-
-    subgraph FIN["Fusión"]
-        direction TB
-        WRITE --> MERGEOUT["merge por modelo → data/raw/<br/>ordenado por id"]
-    end
-
-    classDef failnode fill:#fce8e6,stroke:#d93025,color:#5f1b16
+    classDef stopnode fill:#fce8e6,stroke:#d93025,color:#5f1b16
     classDef llmnode fill:#fef7e0,stroke:#e37400,color:#5c3d00
-    class FASTFAIL,REJGEN,DISC failnode
-    class CHAT,VCALL,JUDGE,GENCLI llmnode
+    class STOP,DISC stopnode
+    class WRITE,RETRY llmnode
 ```
 
-- La higiene determinista corre **siempre**; el juez semántico es opcional y
-  **fail-closed**: un juez inalcanzable nunca aprueba.
-- El ground truth se construye en código desde el escenario muestreado
-  (alineado con `schemas/extraction_schema.json`); nunca lo escribe el LLM.
+Dos propiedades importantes del control de calidad: la **higiene**
+determinista (sin ids internos, snake_case, markdown, bucles de degeneración)
+corre siempre; el **juez** semántico es opcional y *fail-closed* — un juez
+inalcanzable nunca cuenta como aprobación. El ground truth lo deriva el
+sistema del escenario muestreado; nunca lo escribe el LLM.
 
-### Extractor — `cli.py extract`
+### Extractor — bloques funcionales
 
 ```mermaid
 flowchart TB
-
-    subgraph CFGX["Config y schema"]
-        direction TB
-        STARTX(["python cli.py extract"]) --> LOADX["config/config.yaml<br/>+ taxonomy de schemas/"]
-        LOADX --> SCHEMA["extraction_schema.json con enums<br/>sincronizados de la taxonomía"]
-        LOADX --> MODELP["models → endpoint + extra_params"]
-    end
-
-    subgraph MODE["Salida estructurada (por modelo)"]
-        direction TB
-        MODELP --> SMODE{"structured_output"}
-        SMODE -->|json_object| JOBJ["response_format json_object"]
-        SMODE -->|json_schema| JSCHEMA["response_format json_schema<br/>el servidor fuerza el schema"]
-        SMODE -->|"off"| FREEMODE["texto libre"]
-    end
-
-    subgraph LOOPX["Por queja"]
-        direction TB
-        FREEMODE --> ONEX
-        JOBJ --> ONEX
-        JSCHEMA --> ONEX
-        ONEX["build_extraction_prompt<br/>enums de taxonomía en el prompt"] --> CHATX["LLM — extractions en JSON"]
-        CHATX -->|"error · vacío · JSON inválido"| FAILED["failed — no se escribe"]
-        CHATX --> NORM["normaliza complaint_id e hispanismos"]
-        NORM --> VALIDX["jsonschema SIEMPRE<br/>contra extraction_schema.json"]
-        VALIDX -->|"no conforme"| FAILED
-        VALIDX -->|"conforme"| WRITEX["extractions.jsonl"]
-    end
+    IN["Corpus de quejas<br/>texto del vecino"] --> PROMPT["Prompt guiado por taxonomía<br/>solo vocabulario válido"]
+    PROMPT --> LLM["Extracción LLM<br/>JSON estructurado"]
+    LLM -->|"modo estructurado del servidor"| LLM
+    LLM --> NORM["Normalización<br/>ids · sinonimia del modelo"]
+    NORM --> VALID{ "Validación de contrato<br/>schema con enums de taxonomía" }
+    VALID -->|"conforme"| OUT["Extracciones<br/>categorías · elementos · ubicación<br/>riesgos · urgencia"]
+    VALID -->|"inválido o caída"| FAIL["Registro descartado<br/>contabilizado como fallo"]
 
     classDef failnode fill:#fce8e6,stroke:#d93025,color:#5f1b16
     classDef llmnode fill:#fef7e0,stroke:#e37400,color:#5c3d00
-    class FAILED failnode
-    class CHATX llmnode
+    class FAIL failnode
+    class LLM llmnode
 ```
 
-- El modo `structured_output` restringe el muestreo **en el servidor**; la
-  validación local contra el schema (enums sincronizados desde
-  `taxonomy.yaml`) se aplica **siempre**.
+La validación local contra el schema se aplica **siempre**, sea cual sea el
+modo de muestreo del servidor (`json_object`, `json_schema` o libre).
 
-### Pipeline end-to-end
+### Ciclo de vida de un registro generado
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor U as Usuario
-    participant GC as cli.py generate
-    participant GL as LLM generador
-    participant JV as LLM juez
-    participant FS as JSONL en data/
-    participant EC as cli.py extract
-    participant XL as LLM extractor
-
-    U->>GC: generate
-    activate GC
-    GC->>GC: config + taxonomy + .env — validadores fail-fast
-    loop por registro del plan
-        GC->>GC: muestreo de escenario · persona · modifier
-        GC->>GL: prompt de generación
-        GL-->>GC: JSON con user_text y timestamp
-        GC->>GC: higiene determinista
-        opt validate activo
-            GC->>JV: prompt de validación
-            JV-->>GC: veredicto con evidencia
-            alt rechazado
-                GC->>GL: regeneración multi-turn
-                GL-->>GC: nuevo user_text
-            end
-        end
-        alt aceptado
-            GC->>FS: complaints · ground_truth · metadata
-        else presupuesto agotado
-            GC->>FS: rejected.jsonl + conversations.jsonl
-        end
-    end
-    GC->>FS: merge por modelo → data/raw
-    deactivate GC
-
-    U->>EC: extract
-    activate EC
-    EC->>EC: schema con enums sincronizados
-    loop por queja pendiente
-        EC->>XL: prompt de extracción
-        XL-->>EC: JSON de extractions
-        EC->>EC: normaliza + jsonschema SIEMPRE
-        alt válido
-            EC->>FS: annotated/extractions.jsonl
-        else inválido
-            EC->>EC: cuenta como failed
-        end
-    end
-    deactivate EC
+stateDiagram-v2
+    direction LR
+    [*] --> Generado: redacción LLM
+    Generado --> Aceptado: supera higiene y juez
+    Generado --> Regenerado: rechazado con feedback
+    Regenerado --> Generado: nueva redacción<br/>mismo escenario
+    Regenerado --> Descartado: presupuesto agotado
+    Aceptado --> [*]: escrito en el corpus
+    Descartado --> [*]: auditado y reinteligible con resume
 ```
 
 ## Requisitos
 
 - Python 3.10+ (probado con 3.12)
-- Un endpoint LLM OpenAI-compatible (vLLM, llama.cpp/llama-swap, Ollama…)
+- Un endpoint LLM OpenAI-compatible (configurado con `OPENAI_API_ENDPOINT`,
+  `OPENAI_API_MODEL` y `OPENAI_API_KEY` en el `.env` del subproyecto)
 
 ## Inicio rápido
 
 ```bash
-# 1. Configura endpoints y modelos en <subproyecto>/config/config.yaml.
-#    Los secretos van en <subproyecto>/.env (copia .env.example) y se
-#    referencian como ${VAR}.
+# 1. Configura tu endpoint en <subproyecto>/.env (copia .env.example):
+#    OPENAI_API_ENDPOINT, OPENAI_API_MODEL, OPENAI_API_KEY.
+#    Ajusta <subproyecto>/config/config.yaml solo si quieres cambiar el plan.
 
 # 2. Generar quejas sintéticas
 cd miurba-generator

@@ -1,14 +1,16 @@
 # miurba-generator — dockerized runs.
 #
 #   docker compose build
-#   docker compose run --rm miurba-generator generate --config /config/config.yaml
+#   docker compose run --rm miurba-generator generate --config /app/config/config.yaml
 #
-# Override files/dirs with your own mounts; run logs via logging.file: /logs/run.log.
+# The compose file passes .env (OPENAI_API_*) via env_file and mounts your
+# local config/, the shared contracts (../schemas), data/ and logs/.
 services:
   miurba-generator:
     build: .
+    env_file: .env
     volumes:
-      - ./config:/config:ro
+      - ./config:/app/config:ro
       - ../schemas:/schemas:ro
-      - ./data:/data
-      - ./logs:/logs
+      - ./data:/app/data
+      - ./logs:/app/logs

@@ -1,5 +1,6 @@
-# miurba-generator — default config (example).
-# Secrets go in miurba-generator/.env (gitignored), referenced as ${VAR}.
+# miurba-generator — default config.
+# Configure via .env (gitignored): OPENAI_API_ENDPOINT, OPENAI_API_MODEL,
+# OPENAI_API_KEY. See .env.example.
 taxonomy: ../../schemas/taxonomy.yaml
 
 logging:
@@ -7,20 +8,21 @@ logging:
   file: null
 
 endpoints:
-  ollama:
-    base_url: http://localhost:11434
-    description: Local Ollama (OpenAI-compatible)
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
 
 models:
-  llama:
-    endpoint: ollama
-    model: llama3.1
+  generator:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
     temperature: 0.85
 
 generation:
   default_output_dir: data
   batches:
-  - model: llama
+  - model: generator
     count: 10
   start_id: 1
   seed: null

@@ -146,7 +146,7 @@ def cmd_extract(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="miUrba — Extractor / summarizador de quejas vecinales (VLM) "
+        description="miUrba — Extractor / summarizador de quejas vecinales "
                     "(todos los parámetros se leen del config)"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")

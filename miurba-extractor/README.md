@@ -22,7 +22,7 @@ Entrada: `<raw_dir>/<complaints_file>` (producido por el generador — apunta
 
 | Fichero | Uso |
 |---|---|
-| `config.yaml` | Default: endpoints de ejemplo (Ollama local) |
+| `config.yaml` | Default: endpoint genérico vía `OPENAI_API_*` |
 | `config-jsonschema.yaml` | Ejemplo con `structured_output: json_schema` (vLLM) |
 
 Ambas referencian `taxonomy: ../../schemas/taxonomy.yaml`. Los secretos van

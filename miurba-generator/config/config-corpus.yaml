@@ -1,73 +1,60 @@
-# Sample — campaña de corpus: 4 generadores × 300 intentos, juez distinto, resume.
+# Example — corpus campaign: N generators × M attempts, judge, resume: true.
+# Replace the your-*-model placeholders with real model ids of your endpoint.
 #
-#   docker compose -f docker-compose-example.yaml run --rm miurba-generator \
-#     generate --config /configs/dataset1k.yaml
-#
-# Requiere los endpoints LAN de llama-swap (192.168.10.11/.100:9292).
-# Salida: /data/dataset-1k/<modelo>/raw/ + rejected.jsonl + conversations.jsonl
+#   python cli.py generate --config config/config-corpus.yaml
 taxonomy: ../../schemas/taxonomy.yaml
 
 logging:
   level: INFO
-  file: /logs/generate-1k.log
+  file: null
 
 endpoints:
-  generadores:
-    base_url: http://192.168.10.11:9292
-  juez:
-    base_url: http://192.168.10.100:9292
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
 
 models:
-  gemma-3-12b-awq:
-    endpoint: generadores
-    model: gemma-3-12b-it-awq
+  generator-a:
+    endpoint: openai
+    model: your-generator-model-a
     temperature: 0.85
     extra_params:
       max_tokens: 4096
-  qwen3.6-27b-awq:
-    endpoint: generadores
-    model: qwen3.6-27b-awq
+  generator-b:
+    endpoint: openai
+    model: your-generator-model-b
     temperature: 0.85
     extra_params:
       max_tokens: 4096
-      enable_thinking: false
-      chat_template_kwargs:
-        enable_thinking: false
-  muse-glimmer-30b-awq:
-    endpoint: generadores
-    model: muse-glimmer-30b-awq
+  generator-c:
+    endpoint: openai
+    model: your-generator-model-c
     temperature: 0.85
     extra_params:
       max_tokens: 4096
-  gpt-oss-20b:
-    endpoint: generadores
-    model: gpt-oss-20b-vllm
-    temperature: 0.85
-    extra_params:
-      max_tokens: 4096
-  juez-qwen38-27b:
-    endpoint: juez
-    model: qwen3.8-27b-ud-q4-dflash2
-    temperature: 0.0
+  judge:
+    endpoint: openai
+    model: your-judge-model
+    temperature: 0.1
     extra_params:
       max_tokens: 6000
 
 generation:
-  default_output_dir: /data/dataset-1k
+  default_output_dir: data/corpus
   models:
-  - gemma-3-12b-awq
-  - qwen3.6-27b-awq
-  - muse-glimmer-30b-awq
-  - gpt-oss-20b
+  - generator-a
+  - generator-b
+  - generator-c
   num_records: 300
   start_id: 1
-  seed: 42
+  seed: null
   resume: true
   timeout: 300
   max_retries: 3
   retry_delay: 5.0
-  model_load_wait: 600
   validate: true
-  validator: juez-qwen38-27b
   max_validation_retries: 3
+  validator: judge
+  model_load_wait: null
   workers: 8

@@ -7,19 +7,20 @@ logging:
   file: null
 
 endpoints:
-  ollama:
-    base_url: http://localhost:11434
-    description: Local Ollama (OpenAI-compatible)
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
 
 models:
-  llama:
-    endpoint: ollama
-    model: llama3.1
+  extractor:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
     temperature: 0.2
 
 extraction:
   # Model key in models: — REQUIRED.
-  model: llama
+  model: extractor
   temperature: 0.2
   # Directories. When null, each resolves to
   # <default_output_dir>/<raw|annotated subdir> from paths:.

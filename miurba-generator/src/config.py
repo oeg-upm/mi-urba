@@ -1,11 +1,6 @@
 """
-Configuration loader — reads the SHARED config.yaml at the repo root
+Configuration loader — reads the subproject's config/ directory
 and provides typed access.
-
-The generator and the extractor share a single config.yaml located at
-the repository root (one level above this project folder). All
-configuration lives there; this module loads it once and exposes the
-parsed data. No hardcoded values elsewhere.
 
 Default path resolution (miurba-generator/src/config.py):
     __file__          -> .../miurba-generator/src/config.py
@@ -87,7 +82,7 @@ def _expand_vars(node: Any) -> Any:
     """Recursively expand ${VAR} references from the environment.
 
     Secrets (API keys) never live in config.yaml: reference them as
-    ${VAR_NAME} and define them in the environment or the repo-root .env.
+    ${VAR_NAME} and define them in the environment or the subproject's .env.
     Missing variables fail fast with a clear error.
     """
     if isinstance(node, dict):
@@ -100,7 +95,7 @@ def _expand_vars(node: Any) -> Any:
             if name not in os.environ:
                 raise ValueError(
                     f"config references ${{{name}}} but it is not defined "
-                    f"in the environment or the repo-root .env"
+                    f"in the environment or the subproject's .env"
                 )
             return os.environ[name]
         return _VAR_RE.sub(repl, node)
@@ -111,7 +106,7 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     """Load and cache the YAML configuration, expanding ${VAR} references.
 
     Domain vocabulary is loaded from taxonomy.yaml (key `taxonomy:` in the
-    config, default `<repo root>/taxonomy.yaml`) and merged into the
+    config, default `<repo root>/schemas/taxonomy.yaml`) and merged into the
     result, so every taxonomy accessor keeps working unchanged. Declaring any
     taxonomy key directly in the config fails fast.
     """
@@ -137,7 +132,13 @@ def _resolve_taxonomy_ref(ref: str | None, child: Path) -> Path:
     if candidate.is_absolute():
         return candidate
     resolved = (child.parent / candidate).resolve()
-    return resolved if resolved.exists() else default
+    if resolved.exists():
+        return resolved
+    import warnings
+    warnings.warn(
+        f"taxonomy: {ref!r} not found at {resolved}; falling back to the "
+        f"default {default}", stacklevel=3)
+    return default
 
 
 def _load_taxonomy(cfg: dict, child: Path) -> None:

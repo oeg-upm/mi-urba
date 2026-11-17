@@ -1,5 +1,5 @@
 """Tests for the config-only extractor CLI: extraction config, dir resolution
-and the VLM model fallback chain.
+and the extraction model resolution.
 
 Run from miurba-extractor/:  python -m pytest tests/ -v
 No network access is required.
@@ -70,7 +70,7 @@ def test_repo_config_extraction_section_fully_consumed():
     assert not unknown, f"config.yaml has extraction keys the code ignores: {unknown}"
 
 
-# ── VLM model resolution (required, no fallback) ──────────────
+# ── Extraction model resolution (required, no fallback) ──
 
 def test_vlm_resolves_extraction_model(config_file):
     """extraction.model resolves to its models: entry."""

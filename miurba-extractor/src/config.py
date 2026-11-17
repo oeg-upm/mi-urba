@@ -74,7 +74,7 @@ def _expand_vars(node: Any) -> Any:
     """Recursively expand ${VAR} references from the environment.
 
     Secrets (API keys) never live in config.yaml: reference them as
-    ${VAR_NAME} and define them in the environment or the repo-root .env.
+    ${VAR_NAME} and define them in the environment or the subproject's .env.
     Missing variables fail fast with a clear error.
     """
     if isinstance(node, dict):
@@ -87,22 +87,11 @@ def _expand_vars(node: Any) -> Any:
             if name not in os.environ:
                 raise ValueError(
                     f"config references ${{{name}}} but it is not defined "
-                    f"in the environment or the repo-root .env"
+                    f"in the environment or the subproject's .env"
                 )
             return os.environ[name]
         return _VAR_RE.sub(repl, node)
     return node
-
-
-def _deep_merge(base: dict, override: dict) -> dict:
-    """Recursively merge `override` on top of `base` (override wins)."""
-    out = dict(base)
-    for key, value in (override or {}).items():
-        if isinstance(value, dict) and isinstance(out.get(key), dict):
-            out[key] = _deep_merge(out[key], value)
-        else:
-            out[key] = value
-    return out
 
 
 def _load_taxonomy(cfg: dict, child: Path) -> None:
@@ -116,9 +105,20 @@ def _load_taxonomy(cfg: dict, child: Path) -> None:
         )
     ref = cfg.pop("taxonomy", None)
     default = DEFAULT_TAXONOMY_PATH
-    tax_path = Path(ref) if ref and Path(ref).is_absolute() else (
-        (child.parent / ref).resolve() if ref and (child.parent / ref).resolve().exists() else default
-    )
+    if ref is None:
+        tax_path = default
+    elif Path(ref).is_absolute():
+        tax_path = Path(ref)
+    else:
+        resolved = (child.parent / ref).resolve()
+        if resolved.exists():
+            tax_path = resolved
+        else:
+            import warnings
+            warnings.warn(
+                f"taxonomy: {ref!r} not found at {resolved}; falling back to "
+                f"the default {default}", stacklevel=3)
+            tax_path = default
     if not tax_path.exists():
         raise FileNotFoundError(f"taxonomy file not found: {tax_path}")
     with open(tax_path, encoding="utf-8") as f:
@@ -129,7 +129,7 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     """Load and cache the YAML configuration, expanding ${VAR} references.
 
     Domain vocabulary is loaded from taxonomy.yaml (key `taxonomy:` in the
-    config, default `<repo root>/taxonomy.yaml`) and merged into the result;
+    config, default `<repo root>/schemas/taxonomy.yaml`) and merged into the result;
     declaring taxonomy keys directly in the config fails fast.
     """
     global _CONFIG
