@@ -199,3 +199,7 @@ cd miurba-extractor && python -m pytest tests/
 ```
 
 No requieren red.
+
+## Licencia
+
+MIT — ver [LICENSE](LICENSE).
