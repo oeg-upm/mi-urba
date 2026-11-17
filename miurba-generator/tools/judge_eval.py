@@ -22,8 +22,8 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-sys.path.insert(0, str(ROOT / "miurba-generator"))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 from src.llm import LLMClient              # noqa: E402
 from src.pipeline import validate_complaint  # noqa: E402
 
@@ -166,7 +166,7 @@ def to_flat(extractions: list[dict]) -> list[dict]:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--judge", required=True)
-    ap.add_argument("--base-url", default="http://192.168.10.100:9292")
+    ap.add_argument("--base-url", required=True, help="OpenAI-compatible base URL")
     ap.add_argument("--temperature", type=float, default=0.0)
     ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--workers", type=int, default=6)

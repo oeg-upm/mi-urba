@@ -20,9 +20,9 @@ from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
+ROOT = Path(__file__).resolve().parent.parent
 BENCH = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval")) / "judge_bench"
-sys.path.insert(0, str(ROOT / "miurba-generator"))
+sys.path.insert(0, str(ROOT))
 
 from src.llm import LLMClient              # noqa: E402
 from src.pipeline import validate_complaint  # noqa: E402
@@ -61,7 +61,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True, help="nombre de esta vuelta (para el historial)")
     ap.add_argument("--model", default="qwen3.5-9b-awq")
-    ap.add_argument("--base-url", default="http://192.168.10.100:9292")
+    ap.add_argument("--base-url", required=True, help="OpenAI-compatible base URL")
     ap.add_argument("--temperature", type=float, default=0.0)
     ap.add_argument("--max-tokens", type=int, default=2500)
     ap.add_argument("--workers", type=int, default=6)

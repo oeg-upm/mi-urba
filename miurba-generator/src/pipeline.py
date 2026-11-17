@@ -254,7 +254,7 @@ def hygiene_failures(user_text: str) -> list[str]:
     return fails
 
 
-def _judge_failure_kind(exc: Exception, response) -> str:
+def _judge_failure_kind(exc: Exception) -> str:
     """Classify why a judge call produced no usable verdict (for diagnosis)."""
     if isinstance(exc, json.JSONDecodeError) or isinstance(exc, ValueError):
         return "unparseable"
@@ -318,7 +318,7 @@ def _call_judge(client, messages, diagnostics: list, max_attempts: int = 2):
             last_exc = e
             diagnostics.append({
                 "attempt": attempt,
-                "kind": _judge_failure_kind(e, response),
+                "kind": _judge_failure_kind(e),
                 "error": str(e)[:200],
                 "raw": _judge_raw_snippet(client, response),
                 **_response_facts(response),
@@ -392,9 +392,9 @@ def validate_complaint(client: LLMClient, user_text: str, problems: list[dict]) 
         return is_valid, issues, False, data
     except Exception as e:
         logger.warning(f"Validation call failed: {e}, assuming INVALID (fail-closed)")
-        return False, [f"judge_error:{_judge_failure_kind(e, None)}"], True, {
+        return False, [f"judge_error:{_judge_failure_kind(e)}"], True, {
             "error": str(e)[:200],
-            "error_kind": _judge_failure_kind(e, None),
+            "error_kind": _judge_failure_kind(e),
             "_diagnostics": diagnostics,
         }
 

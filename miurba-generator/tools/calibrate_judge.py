@@ -19,10 +19,10 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2")
-EVAL = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "mi-urba/eval"))
+ROOT = Path(__file__).resolve().parent.parent
+EVAL = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval"))
 CORPUS = EVAL / "results/dataset-50k"
-SEVERITY = ROOT / "validacion-postfactum/gold1k_results.jsonl"
+SEVERITY = Path(os.environ.get("MIURBA_SEVERITY_FILE", EVAL / "gold1k_results.jsonl"))
 MODELS = ["gemma-3-12b-awq", "gpt-oss-20b", "olmo-3.1-32b-awq",
           "qwen3.6-27b-awq", "muse-glimmer-30b-awq"]
 
@@ -96,8 +96,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-per-class", type=int, default=20)
     ap.add_argument("--judge", action="append", default=[])
-    ap.add_argument("--base-url", default="http://192.168.10.100:9292")
-    ap.add_argument("--out", default=str(ROOT / "qwen4b-extractor-eval/.tmp/judge_calibration.json"))
+    ap.add_argument("--base-url", required=True, help="OpenAI-compatible base URL")
+    ap.add_argument("--out", default=str(EVAL / "judge_calibration.json"))
     args = ap.parse_args()
     judges = args.judge or ["mistral-small-3.2-24b"]
 

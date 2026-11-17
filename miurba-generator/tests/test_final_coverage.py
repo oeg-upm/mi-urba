@@ -1,7 +1,5 @@
-"""Tests added after the final re-audit (informe/reaudit_y_cobertura.md).
-
-Covers: R2 (string verdict), resume truncate pin, judge end-to-end with
-validation_log, real build_generation_prompt, and extract_json tolerance.
+"""Coverage for verdict parsing, resume truncation, judge logging, prompt
+rendering and extract_json tolerance.
 
 Run from miurba-generator/:  python -m pytest tests/ -v
 """
