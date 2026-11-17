@@ -140,13 +140,18 @@ stateDiagram-v2
 
 # 2. Generar quejas sintéticas
 cd miurba-generator
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-python cli.py generate                # usa config/config.yaml
+python cli.py generate        # usa config/config.yaml
 
 # 3. Extraer estructura de las quejas generadas: apunta raw_dir del
 #    config del extractor a la salida del generador y ejecuta
-#    python cli.py extract    # usa config/config.yaml
+cd ../miurba-extractor
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python cli.py extract         # usa config/config.yaml
 ```
 
 Salidas por defecto: `miurba-generator/data/<modelo>/raw/` en el generador y
@@ -157,8 +162,15 @@ Salidas por defecto: `miurba-generator/data/<modelo>/raw/` en el generador y
 Cada subproyecto tiene su propio compose:
 
 ```bash
-cd miurba-generator && mkdir -p data logs && docker compose run --rm miurba-generator generate --config /app/config/config.yaml
-cd miurba-extractor  && mkdir -p data logs && docker compose run --rm miurba-extractor  extract  --config /app/config/config.yaml
+cd miurba-generator
+mkdir -p data logs
+docker compose run --rm miurba-generator \
+  generate --config /app/config/config.yaml
+
+cd ../miurba-extractor
+mkdir -p data logs
+docker compose run --rm miurba-extractor \
+  extract --config /app/config/config.yaml
 ```
 
 Montan `./config` (configs), `../schemas` (contratos), `./data` y `./logs`;
