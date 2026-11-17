@@ -218,6 +218,10 @@ def cmd_generate(args):
               f"(load waits: {validator_client._stats['load_waits']})")
     print("=" * 60)
 
+    # Exit code reflects the outcome: 1 when the run produced nothing.
+    if sum(s["generated"] for s in all_stats) == 0:
+        sys.exit(1)
+
 
 def _merge(config, output_dir: str | None = None) -> dict:
     """Merge per-model outputs into <output_dir>/<raw_subdir>/."""

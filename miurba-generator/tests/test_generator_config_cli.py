@@ -111,7 +111,7 @@ def test_cli_accepts_only_config_and_verbose(config_file):
 
 
 def test_merge_command_merges_model_outputs(config_file, tmp_path, capsys):
-    """cmd_merge merges each model dir into the shared raw dir (no LLM)."""
+    """cmd_merge merges each model dir into the shared raw dir, deduplicated by id."""
     cfg = get_config(config_file)
     out = cfg["generation"]["default_output_dir"]
     for model, n in [("alpha", 2), ("beta", 3)]:
@@ -130,8 +130,12 @@ def test_merge_command_merges_model_outputs(config_file, tmp_path, capsys):
     cmd_merge(Args())
 
     lines = (Path(out) / "raw" / "complaints.jsonl").read_text().splitlines()
-    ids = [json.loads(l)["id"] for l in lines]
-    assert len(ids) == 5 and ids == sorted(ids)  # 2 + 3 merged, sorted by id
+    records = [json.loads(l) for l in lines]
+    ids = [r["id"] for r in records]
+    assert ids == ["Q0001", "Q0002", "Q0003"]  # overlapping ids collapsed
+    assert records[0]["user_text"] == "text alpha 0"  # first occurrence wins
+    for name in ("ground_truth.jsonl", "metadata.jsonl"):
+        assert len((Path(out) / "raw" / name).read_text().splitlines()) == 3
 
 
 def test_llm_client_receives_config_retry_policy(config_file):
