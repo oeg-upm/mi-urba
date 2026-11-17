@@ -36,6 +36,7 @@ def _build_text_part(complaint: dict) -> str:
     zones = list(cfg.get_location_zones().keys())
     risks = cfg.get_risks()
     urgencies = cfg.get_urgency_levels()
+    elements = cfg.get_affected_elements()
 
     cat_lines = []
     for cat, subs in categories.items():
@@ -44,11 +45,16 @@ def _build_text_part(complaint: dict) -> str:
         else:
             cat_lines.append(f"- {cat}: (cualquier otro problema)")
 
+    elem_lines = []
+    for element, subs in elements.items():
+        elem_lines.append(f"- {element}: {', '.join(subs)}" if subs else f"- {element}")
+
     system_msg = _render("extract_complaint", "system")
     user_text_part = _render(
         "extract_complaint", "user",
         input_text=input_text,
         cat_lines="\n".join(cat_lines),
+        elem_lines="\n".join(elem_lines),
         zones=", ".join(zones),
         risks=", ".join(risks),
         urgencies=", ".join(urgencies),

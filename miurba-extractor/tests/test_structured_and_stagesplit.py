@@ -80,6 +80,7 @@ def fake_taxonomy(monkeypatch):
         "location_zones": {"norte": []},
         "risks": ["riesgo_x"],
         "urgency_levels": ["alta"],
+        "affected_elements": {"muro": ["carga"]},
     })
 
 
