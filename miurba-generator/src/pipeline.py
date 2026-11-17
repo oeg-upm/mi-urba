@@ -17,6 +17,7 @@ import json
 import logging
 import os
 import random
+import sys
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -67,6 +68,40 @@ def _read_jsonl_ids(path: Path, key: str = "id") -> list[str]:
                 continue
             ids.append(str(record.get(key, "")))
     return ids
+
+
+def _write_text_atomic(path: Path, text: str) -> None:
+    """Write a text file through a temp file + atomic replace."""
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(text)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
+def _read_manifest(path: Path) -> dict:
+    """Read an existing campaign manifest, or start a new one."""
+    if path.exists():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                return data
+        except (OSError, json.JSONDecodeError):
+            logger.warning(f"manifest at {path} is unreadable, starting a new one")
+    return {}
+
+
+def _code_version() -> str:
+    """Git commit of the running code, when available."""
+    import subprocess
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=Path(__file__).resolve().parent, capture_output=True,
+            text=True, timeout=5).stdout.strip() or "unknown"
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
 
 
 def _write_jsonl_atomic(path: Path, records: list[dict]) -> None:
@@ -487,8 +522,11 @@ def generate_complaint(
     # check, (2) semantic judge. A candidate that fails either one is
     # regenerated from the same scenario; the record is written only if some
     # candidate passes both. If the budget is exhausted the record is
-    # DISCARDED (never written) and the resume pass retries it later with a
-    # fresh scenario. A judge that cannot be reached never counts as approval.
+    # DISCARDED (never written) and a later resume retries it. Note that with a
+    # fixed `seed` the retry samples the same scenario, because the stream is
+    # derived from (seed, record_id); approaching the record with a different id
+    # or without a seed is what changes it. A judge that cannot be reached never
+    # counts as approval.
     judge = validator_client
     if validate and judge is None:
         raise ValueError(
@@ -813,21 +851,29 @@ def generate_dataset(
     validation_counts = Counter(validation_log)
 
     # Campaign manifest: what a future reader needs to reproduce or audit the
-    # run without guessing (model, seed, prompts, config and counts).
-    manifest = {
+    # run without guessing (model, seed, prompts, config and counts). It keeps
+    # one entry per pass, so a resumed campaign shows how the corpus was built.
+    skipped_existing = len(existing_ids)
+    manifest_path = Path(output_dir) / "manifest.json"
+    manifest = _read_manifest(manifest_path)
+    manifest.update({
+        "code_version": _code_version(),
+        "python": sys.version.split()[0],
+        "sampling": {"seed": seed,
+                     "policy": "per-record Random(seed:record_id)" if seed is not None
+                     else "global RNG (not reproducible)",
+                     "reproduces": "scenario and persona, not the model text"},
+        "provenance": provenance or {},
+    })
+    manifest.setdefault("runs", []).append({
         "generated_at": _now_iso(),
         "plan": {"start_id": start_id, "num_records": num_records,
                  "resume": resume, "workers": num_workers},
-        "counts": {"generated": generated, "failed": failed},
-        "provenance": provenance or {},
-        "sampling": {"seed": seed,
-                     "policy": "per-record Random(seed:record_id)" if seed is not None
-                     else "global RNG (not reproducible)"},
-    }
-    manifest_path = Path(output_dir) / "manifest.json"
+        "counts": {"generated": generated - skipped_existing,
+                   "skipped_existing": skipped_existing, "failed": failed},
+    })
     try:
-        manifest_path.write_text(
-            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+        _write_text_atomic(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
     except OSError as e:  # a read-only output dir must not fail the run
         logger.warning(f"manifest not written to {manifest_path}: {e}")
 
@@ -911,6 +957,17 @@ def merge_outputs(
     _write_jsonl_atomic(complaints_path, merged[complaints_file])
     _write_jsonl_atomic(ground_truth_path, merged[ground_truth_file])
     _write_jsonl_atomic(metadata_path, merged[metadata_file])
+
+    # Carry the per-model manifests next to the merged corpus so the reader of
+    # `raw/` can still tell how each voice was produced.
+    manifests = {}
+    for model_name, model_path in present:
+        source = model_path.parent / "manifest.json"
+        if source.is_file():
+            manifests[model_name] = _read_manifest(source)
+    if manifests:
+        _write_text_atomic(raw_out / "manifest.json",
+                           json.dumps(manifests, indent=2, ensure_ascii=False))
 
     counts = {name: len(records) for name, records in merged.items()}
     if len(set(counts.values())) > 1:

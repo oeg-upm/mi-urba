@@ -91,7 +91,8 @@ def test_manifest_is_written(tmp_path, monkeypatch):
     assert manifest["sampling"]["seed"] == 99
     assert "per-record" in manifest["sampling"]["policy"]
     assert manifest["provenance"]["model"] == "m"
-    assert manifest["counts"]["generated"] == 2
+    assert manifest["runs"][-1]["counts"]["generated"] == 2
+    assert manifest["python"] and manifest["code_version"]
 
 
 def test_samplers_accept_an_explicit_stream():

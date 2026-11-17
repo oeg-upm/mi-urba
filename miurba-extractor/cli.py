@@ -94,7 +94,7 @@ def cmd_extract(args):
     client = LLMClient(
         base_url=model_cfg["base_url"],
         model=model_cfg["model"],
-        temperature=get_extraction_temperature(ext_cfg, model_cfg, config),
+        temperature=get_extraction_temperature(ext_cfg, model_cfg, config, model_name),
         timeout=ext_cfg["timeout"],
         max_retries=ext_cfg["max_retries"],
         retry_delay=ext_cfg["retry_delay"],

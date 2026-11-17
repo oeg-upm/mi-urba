@@ -63,14 +63,22 @@ def test_extraction_defaults_fill_missing_keys(config_file):
 
 
 def test_temperature_precedence(config_file):
-    """Explicit extraction.temperature wins; otherwise the model's is used."""
+    """extraction.temperature > models.<name>.temperature > default 0.2."""
     from src.config import get_extraction_temperature
     cfg = get_config(config_file)
-    model = get_extraction_model_params(None, cfg)[1]
+    model_key, model = get_extraction_model_params(None, cfg)
     # The fixture sets extraction.temperature = 0.2 explicitly.
-    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg) == 0.2
+    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg, model_key) == 0.2
+
     del cfg["extraction"]["temperature"]
-    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg) == 0.1
+    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg, model_key) == 0.1
+
+    del cfg["models"][model_key]["temperature"]
+    default = get_extraction_config(cfg)["temperature"]
+    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg, model_key) == default
+
+    cfg["extraction"]["temperature"] = None  # null means "inherit"
+    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg, model_key) == default
 
 
 def test_repo_config_extraction_section_fully_consumed():
