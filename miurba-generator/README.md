@@ -43,12 +43,22 @@ variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
 |---|---|
 | `<out>/<modelo>/raw/complaints.jsonl` | `id`, `user_text`, `timestamp` |
 | `<out>/<modelo>/raw/ground_truth.jsonl` | extracciones esperadas (`complaint_id`, `extractions`) |
-| `<out>/<modelo>/raw/metadata.jsonl` | `complaint_id`, persona, modifier, comunidad |
+| `<out>/<modelo>/raw/metadata.jsonl` | `complaint_id`, persona, modifier, comunidad, procedencia |
 | `<out>/<modelo>/raw/rejected.jsonl` | registros descartados con motivo y etapa (auditoría) |
 | `<out>/<modelo>/raw/conversations.jsonl` | transcripción completa por registro (auditoría) |
 
 `rejected.jsonl` y `conversations.jsonl` se escriben **por modelo** y no se
 fusionan en `raw/`: son material de auditoría, no parte del corpus.
+
+Cada registro se valida contra `schemas/complaint_schema.json`,
+`schemas/extraction_schema.json` y `schemas/metadata_schema.json` antes de
+escribirse; si no conforma, se descarta y queda en `rejected.jsonl` con el
+error del schema (`stage: contract`). El `timestamp` se normaliza a ISO 8601 y
+un valor ausente o no parseable implica descarte.
+
+`metadata.jsonl` incluye `provenance`: modelo (clave y id), semilla, hash del
+config efectivo, huellas SHA-256 de las plantillas de prompt empleadas y la
+marca de generación.
 
 ## Configuración
 
