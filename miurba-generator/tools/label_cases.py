@@ -143,6 +143,7 @@ def load_corpus(dataset: Path, generators: list[str]):
 
 
 def main():
+    global BASE_URL
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--llm-url", default=BASE_URL,
@@ -166,7 +167,6 @@ def main():
         ap.error("indica --generators (en la carpeta del dataset conviven otros experimentos)")
     if not args.llm_url:
         ap.error("indica --llm-url o define MIURBA_LLM_URL")
-    global BASE_URL
     BASE_URL = args.llm_url
 
     dataset = Path(args.dataset)
