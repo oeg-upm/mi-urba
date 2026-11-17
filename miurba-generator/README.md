@@ -43,7 +43,12 @@ variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
 |---|---|
 | `<out>/<modelo>/raw/complaints.jsonl` | `id`, `user_text`, `timestamp` |
 | `<out>/<modelo>/raw/ground_truth.jsonl` | extracciones esperadas (`complaint_id`, `extractions`) |
-| `<out>/<modelo>/raw/metadata.jsonl` | persona, modifier, comunidad |
+| `<out>/<modelo>/raw/metadata.jsonl` | `complaint_id`, persona, modifier, comunidad |
+| `<out>/<modelo>/raw/rejected.jsonl` | registros descartados con motivo y etapa (auditoría) |
+| `<out>/<modelo>/raw/conversations.jsonl` | transcripción completa por registro (auditoría) |
+
+`rejected.jsonl` y `conversations.jsonl` se escriben **por modelo** y no se
+fusionan en `raw/`: son material de auditoría, no parte del corpus.
 
 ## Configuración
 
@@ -99,8 +104,11 @@ endpoints:
 Con `validate: true`, tras generar cada texto un modelo juez comprueba que
 alinea con el escenario (categoría, subcategoría, urgencia, elementos,
 riesgos, ubicación). Si no alinea, regenera hasta `max_validation_retries`
-veces y conserva el último texto. El juez fallido o degradado se refleja en el
-resumen del run (`validation: ok/rejected/degraded`).
+veces; si se agota el presupuesto el registro **se descarta** (no se escribe
+nunca) y queda auditado en `rejected.jsonl` con el motivo. Una reanudación
+posterior lo reintenta con un escenario nuevo. El juez fallido o degradado se
+refleja en el resumen del run (`validation: ok/rejected/degraded`) y **nunca
+cuenta como aprobación** (fail-closed).
 
 ## Tests
 
