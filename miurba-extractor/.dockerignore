@@ -8,3 +8,5 @@ tests/
 *.md
 Dockerfile
 .dockerignore
+config/config.test*.yaml
+config/config.local.yaml

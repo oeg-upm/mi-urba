@@ -1,0 +1,21 @@
+# miurba-extractor — dockerized runs.
+#
+#   docker compose build
+#   docker compose run --rm miurba-extractor extract --config /app/config/config.yaml
+#
+# The compose file passes .env (OPENAI_API_*) via env_file and mounts your
+# local config/, the shared contracts (../schemas), data/ and logs/.
+# Point extraction.raw_dir at the generator's raw output (mount it if needed).
+# NOTE: create the host dirs first (docker creates them root-owned otherwise):
+#   mkdir -p data logs
+services:
+  miurba-extractor:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./config:/app/config:ro
+      - ../schemas:/schemas:ro
+      - ./data:/app/data
+      - ./logs:/app/logs

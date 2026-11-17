@@ -1,0 +1,46 @@
+# Example — quick-iteration smoke: ONE generator × 50 records, resume: false
+# (each pass starts fresh and overwrites the output dir).
+#
+#   python cli.py generate --config config/config-smoke.yaml
+taxonomy: ../../schemas/taxonomy.yaml
+
+logging:
+  level: INFO
+  file: null
+
+endpoints:
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
+
+models:
+  generator:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
+    temperature: 0.85
+    extra_params:
+      max_tokens: 2048
+  judge:
+    endpoint: openai
+    model: your-judge-model   # replace with a real model id (different family)
+    temperature: 0.1
+    extra_params:
+      max_tokens: 2500
+
+generation:
+  default_output_dir: data/smoke
+  batches:
+  - model: generator
+    count: 50
+  start_id: 1
+  seed: null
+  resume: false
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  validate: true
+  max_validation_retries: 2
+  validator: judge
+  model_load_wait: null
+  workers: 8

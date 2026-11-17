@@ -21,7 +21,7 @@ from src import sampling  # noqa: E402
 
 
 def _load_default_config():
-    cfg.load_config(PROJECT_ROOT.parent / "config.yaml")
+    cfg.load_config(PROJECT_ROOT / "config" / "config.yaml")
 
 
 def test_risks_never_mix_ninguno_with_concrete_risks():

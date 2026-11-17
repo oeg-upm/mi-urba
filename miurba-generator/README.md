@@ -7,13 +7,14 @@ persona, comunidad) y pide a un LLM el texto del vecino (`user_text`) y un
 
 ## Uso
 
-Todos los parámetros se leen del config compartido. Único argumento:
-`--config` (por defecto, `../config.yaml`). El nivel de log se controla con
+Todos los parámetros se leen de un config. Único argumento: `--config`
+(por defecto, `config/config.yaml`). El nivel de log se controla con
 `logging.level`.
 
 ```bash
-python cli.py generate --config ../config.yaml   # generar según el plan
-python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
+python cli.py generate                # genera según el plan de config/config.yaml
+python cli.py merge                   # fusiona salidas por modelo
+python cli.py generate --config config/config-smoke.yaml
 ```
 
 `generate` recorre el plan (`generation.batches` o `generation.models` +
@@ -21,12 +22,20 @@ python cli.py merge    --config ../config.yaml   # fusionar salidas por modelo
 `<default_output_dir>/<modelo>/` y fusiona todo al final en
 `<default_output_dir>/<paths.raw_subdir>/`.
 
-`configs/` contiene 5 configs de ejemplo (campaña de corpus, smoke multi-modelo,
-smoke de iteración rápida, variante paramétrica y solo-merge). Todas son
-autocontenidas y referencian la taxonomía con `taxonomy: taxonomy.yaml`; los
-endpoints LAN de llama-swap son ilustrativos. Se usan con
-`python cli.py generate --config configs/<f>.yaml` o vía
-`docker-compose-example.yaml`.
+### `config/`
+
+| Fichero | Uso |
+|---|---|
+| `config.yaml` | Default: endpoint genérico vía `OPENAI_API_*`, plan pequeño |
+| `config-smoke.yaml` | Iteración rápida: 1 generador × 50 con juez, resume: false |
+| `config-corpus.yaml` | Campaña de corpus: N generadores × M intentos, juez, resume |
+| `config-merge.yaml` | Solo `merge` (no genera) |
+
+Todas referencian la taxonomía compartida con
+`taxonomy: ../../schemas/taxonomy.yaml`. La configuración de ejemplo usa las
+variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
+`OPENAI_API_KEY` (en `miurba-generator/.env`, copia `.env.example`); los ids
+`your-*-model` de los ejemplos smoke/corpus son placeholders a sustituir.
 
 ## Salida
 
@@ -40,7 +49,7 @@ endpoints LAN de llama-swap son ilustrativos. Se usan con
 
 Secciones del config que consume. Obligatorias para ejecutar:
 `endpoints`, `models`, un plan en `generation` y el vocabulario de dominio
-de `taxonomy.yaml` (referenciado con `taxonomy:` en el config:
+de `schemas/taxonomy.yaml` (referenciado con `taxonomy:` en el config:
 `categories`, `affected_elements`, `location_zones`, `risks`,
 `urgency_levels`, `communities`, `personas`, `modifiers`, `modifier_prob`,
 `weights`, `urgency_weights`, `category_risks`, `category_elements`,
@@ -48,7 +57,7 @@ de `taxonomy.yaml` (referenciado con `taxonomy:` en el config:
 `element_subcategories`).
 Opcionales con defaults: `paths`, `logging` y el resto de
 claves de `generation`. Detalle y valores por defecto comentados en
-`config.yaml` y `taxonomy.yaml`.
+`config/config.yaml` y `schemas/taxonomy.yaml`.
 
 ### `generation:`
 
@@ -65,26 +74,24 @@ claves de `generation`. Detalle y valores por defecto comentados en
 | `workers` | Generación en paralelo | `1` |
 | `validate` | Validación en 2ª pasada (juez LLM) | `false` |
 | `max_validation_retries` | Regeneraciones si el juez rechaza | `3` |
-| `validator` | Modelo juez; `null` = el propio generador | `null` |
+| `validator` | Modelo juez (**obligatorio** si `validate: true`); tiene que ser distinto del generador | — |
 
 ### `models:` y `endpoints:`
 
 ```yaml
 models:
-  qwen3.5:
-    endpoint: llama_swap
-    model: qwen3.5-122b-a10b
+  generator:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
     temperature: 0.85
     extra_params:              # claves verbatim al payload (opcional)
       enable_thinking: false
 
 endpoints:
-  llama_swap:
-    base_url: http://llama-swap.local:9292
-    connection_backoff: true   # backoff generoso ante caídas (opcional)
-  neuralwatt:
-    base_url: https://api.neuralwatt.com/v1
-    api_key: ${NEURALWATT_API_KEY}   # secreto: resolver desde .env
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    api_key: ${OPENAI_API_KEY}        # secreto: resolver desde .env
+    connection_backoff: true          # backoff generoso ante caídas (opcional)
 ```
 
 ### Validación con juez (opcional)

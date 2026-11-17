@@ -1,0 +1,33 @@
+# Example — merge-only: fuses the per-model outputs of a campaign into the
+# shared raw dir (does NOT generate). The plan models must match the per-model
+# output dirs you want to merge.
+#
+#   python cli.py merge --config config/config-merge.yaml
+taxonomy: ../../schemas/taxonomy.yaml
+
+logging:
+  level: INFO
+  file: null
+
+endpoints:
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
+
+models:
+  generator-a:
+    endpoint: openai
+    model: your-generator-model-a
+    temperature: 0.85
+  generator-b:
+    endpoint: openai
+    model: your-generator-model-b
+    temperature: 0.85
+
+generation:
+  default_output_dir: data/corpus
+  models:
+  - generator-a
+  - generator-b
+  num_records: 0

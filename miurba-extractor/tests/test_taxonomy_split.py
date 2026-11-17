@@ -22,11 +22,24 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import src.config as sc  # noqa: E402
 
 
-def test_repo_config_loads_with_taxonomy():
-    cfg = sc.load_config(REPO_ROOT / "config.yaml")
+def test_repo_config_loads_with_taxonomy(monkeypatch):
+    for var in ("OPENAI_API_ENDPOINT", "OPENAI_API_MODEL", "OPENAI_API_KEY"):
+        monkeypatch.setenv(var, "dummy")
+    cfg = sc.load_config(PROJECT_ROOT / "config" / "config.yaml")
     for key in ("categories", "location_zones", "risks", "urgency_levels"):
         assert key in cfg, f"taxonomy key {key!r} missing after load"
     assert "taxonomy" not in cfg  # the reference key is consumed, not kept
+
+
+def test_all_example_configs_load(monkeypatch):
+    """Every example config in config/ must load with the real loader."""
+    for var in ("OPENAI_API_ENDPOINT", "OPENAI_API_MODEL", "OPENAI_API_KEY"):
+        monkeypatch.setenv(var, "dummy")
+    for p in sorted((PROJECT_ROOT / "config").glob("config*.yaml")):
+        if "test" in p.stem:
+            continue  # local untracked test configs are not part of the examples
+        cfg = sc.load_config(p)
+        assert all(k in cfg for k in sc.TAXONOMY_KEYS), p
 
 
 def test_stale_taxonomy_keys_fail_fast(tmp_path, monkeypatch):
@@ -64,6 +77,7 @@ def test_custom_taxonomy_path(tmp_path, monkeypatch):
 def test_missing_taxonomy_file_fails_fast(tmp_path, monkeypatch):
     (tmp_path / "config.yaml").write_text(yaml.safe_dump({"extraction": {}}))
     monkeypatch.setattr(sc, "DEFAULT_CONFIG_PATH", tmp_path / "config.yaml")
+    monkeypatch.setattr(sc, "DEFAULT_TAXONOMY_PATH", tmp_path / "no-taxonomy.yaml")
     sc._CONFIG = None
     try:
         with pytest.raises(FileNotFoundError, match="taxonomy"):

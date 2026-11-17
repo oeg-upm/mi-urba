@@ -1,0 +1,45 @@
+# miurba-generator — default config.
+# Configure via .env (gitignored): OPENAI_API_ENDPOINT, OPENAI_API_MODEL,
+# OPENAI_API_KEY. See .env.example.
+taxonomy: ../../schemas/taxonomy.yaml
+
+logging:
+  level: INFO
+  file: null
+
+endpoints:
+  openai:
+    base_url: ${OPENAI_API_ENDPOINT}
+    description: OpenAI-compatible endpoint
+    api_key: ${OPENAI_API_KEY}
+
+models:
+  generator:
+    endpoint: openai
+    model: ${OPENAI_API_MODEL}
+    temperature: 0.85
+
+generation:
+  default_output_dir: data
+  batches:
+  - model: generator
+    count: 10
+  start_id: 1
+  seed: null
+  resume: true
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5.0
+  validate: false
+  max_validation_retries: 3
+  validator: null
+  model_load_wait: null
+  workers: 1
+
+paths:
+  raw_subdir: raw
+  annotated_subdir: annotated
+  complaints_file: complaints.jsonl
+  extractions_file: extractions.jsonl
+  ground_truth_file: ground_truth.jsonl
+  metadata_file: metadata.jsonl

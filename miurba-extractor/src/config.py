@@ -1,17 +1,15 @@
 """
-Configuration loader — reads the SHARED config.yaml at the repo root
+Configuration loader — reads the extractor's config/ directory
 and provides typed access.
 
-The extractor shares a single config.yaml with the generator, located at
-the repository root (one level above this project folder). All
-configuration lives there; this module loads it once and exposes the
-parsed data. No hardcoded values elsewhere.
-
 Default path resolution (miurba-extractor/src/config.py):
-    __file__          -> .../miurba-extractor/src/config.py
-    parent            -> .../miurba-extractor/src
-    parent.parent     -> .../miurba-extractor
-    parent.parent.parent -> .../mi-urba  (repo root, where config.yaml lives)
+    __file__      -> .../miurba-extractor/src/config.py
+    parent.parent -> .../miurba-extractor
+    parent.parent / "config" / "config.yaml"  (default run config)
+
+The repo root holds only shared contracts: schemas/ (JSON Schemas and
+taxonomy.yaml). Each subproject owns its config/ directory with the default
+config and examples.
 """
 
 from __future__ import annotations
@@ -25,8 +23,15 @@ import yaml
 
 _CONFIG: dict | None = None
 
-# Shared config lives at the repo root, two levels up from this file.
-DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config.yaml"
+# Subproject root (miurba-extractor/) and repo root (mi-urba/).
+_SUBPROJECT_ROOT = Path(__file__).resolve().parent.parent
+_REPO_ROOT = _SUBPROJECT_ROOT.parent
+
+# Default run config: <subproject>/config/config.yaml
+DEFAULT_CONFIG_PATH = _SUBPROJECT_ROOT / "config" / "config.yaml"
+
+# Shared domain contracts live at the repo root: schemas/taxonomy.yaml
+DEFAULT_TAXONOMY_PATH = _REPO_ROOT / "schemas" / "taxonomy.yaml"
 
 
 _VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
@@ -42,26 +47,34 @@ TAXONOMY_KEYS = (
 )
 
 
-def _load_dotenv() -> None:
-    """Populate os.environ from the repo-root .env (existing vars win)."""
-    env_path = DEFAULT_CONFIG_PATH.parent / ".env"
-    if not env_path.exists():
-        return
-    for line in env_path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
+def _load_dotenv(config_path: Path | None = None) -> None:
+    """Populate os.environ from .env files (existing vars win).
+
+    Tried in order: the subproject root, next to the loaded config, and the
+    config's parent directory.
+    """
+    candidates = [_SUBPROJECT_ROOT / ".env"]
+    if config_path is not None:
+        candidates.append(config_path.parent / ".env")
+        candidates.append(config_path.parent.parent / ".env")
+    for env_path in dict.fromkeys(candidates):
+        if not env_path.exists():
             continue
-        if line.startswith("export "):
-            line = line[len("export "):]
-        key, _, value = line.partition("=")
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            if line.startswith("export "):
+                line = line[len("export "):]
+            key, _, value = line.partition("=")
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
 def _expand_vars(node: Any) -> Any:
     """Recursively expand ${VAR} references from the environment.
 
     Secrets (API keys) never live in config.yaml: reference them as
-    ${VAR_NAME} and define them in the environment or the repo-root .env.
+    ${VAR_NAME} and define them in the environment or the subproject's .env.
     Missing variables fail fast with a clear error.
     """
     if isinstance(node, dict):
@@ -74,22 +87,11 @@ def _expand_vars(node: Any) -> Any:
             if name not in os.environ:
                 raise ValueError(
                     f"config references ${{{name}}} but it is not defined "
-                    f"in the environment or the repo-root .env"
+                    f"in the environment or the subproject's .env"
                 )
             return os.environ[name]
         return _VAR_RE.sub(repl, node)
     return node
-
-
-def _deep_merge(base: dict, override: dict) -> dict:
-    """Recursively merge `override` on top of `base` (override wins)."""
-    out = dict(base)
-    for key, value in (override or {}).items():
-        if isinstance(value, dict) and isinstance(out.get(key), dict):
-            out[key] = _deep_merge(out[key], value)
-        else:
-            out[key] = value
-    return out
 
 
 def _load_taxonomy(cfg: dict, child: Path) -> None:
@@ -102,10 +104,21 @@ def _load_taxonomy(cfg: dict, child: Path) -> None:
             f"`taxonomy: <path>`"
         )
     ref = cfg.pop("taxonomy", None)
-    default = DEFAULT_CONFIG_PATH.parent / "taxonomy.yaml"
-    tax_path = Path(ref) if ref and Path(ref).is_absolute() else (
-        (child.parent / ref).resolve() if ref and (child.parent / ref).resolve().exists() else default
-    )
+    default = DEFAULT_TAXONOMY_PATH
+    if ref is None:
+        tax_path = default
+    elif Path(ref).is_absolute():
+        tax_path = Path(ref)
+    else:
+        resolved = (child.parent / ref).resolve()
+        if resolved.exists():
+            tax_path = resolved
+        else:
+            import warnings
+            warnings.warn(
+                f"taxonomy: {ref!r} not found at {resolved}; falling back to "
+                f"the default {default}", stacklevel=3)
+            tax_path = default
     if not tax_path.exists():
         raise FileNotFoundError(f"taxonomy file not found: {tax_path}")
     with open(tax_path, encoding="utf-8") as f:
@@ -116,14 +129,14 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     """Load and cache the YAML configuration, expanding ${VAR} references.
 
     Domain vocabulary is loaded from taxonomy.yaml (key `taxonomy:` in the
-    config, default `<repo root>/taxonomy.yaml`) and merged into the result;
+    config, default `<repo root>/schemas/taxonomy.yaml`) and merged into the result;
     declaring taxonomy keys directly in the config fails fast.
     """
     global _CONFIG
     if path is None:
         path = DEFAULT_CONFIG_PATH
     path = Path(path)
-    _load_dotenv()
+    _load_dotenv(path)
     with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f) or {}
     _load_taxonomy(cfg, path)
@@ -282,7 +295,7 @@ def get_extraction_config(cfg: dict | None = None) -> dict[str, Any]:
 
 def _load_schema(name: str) -> dict[str, Any]:
     import json as _json
-    schema_path = DEFAULT_CONFIG_PATH.parent / "schemas" / name
+    schema_path = _REPO_ROOT / "schemas" / name
     with open(schema_path, encoding="utf-8") as f:
         return _json.load(f)
 
