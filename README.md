@@ -19,6 +19,7 @@ mi-urba/
 ├── schemas/                     # contratos compartidos
 │   ├── complaint_schema.json
 │   ├── extraction_schema.json
+│   ├── metadata_schema.json
 │   └── taxonomy.yaml            # vocabulario de dominio (taxonomías, personas, pesos)
 ├── miurba-generator/
 │   ├── cli.py                   # generate, merge

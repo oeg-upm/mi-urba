@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://miurba.es/schemas/metadata",
+  "title": "Metadata",
+  "description": "Generation context and provenance of one synthetic complaint. Joined with complaints.jsonl by complaint_id.",
+  "type": "object",
+  "required": ["complaint_id", "persona", "community", "provenance"],
+  "properties": {
+    "complaint_id": {
+      "type": "string",
+      "pattern": "^Q[0-9]{4,}$",
+      "description": "Identifier of the complaint this metadata belongs to"
+    },
+    "persona": {
+      "type": ["string", "null"],
+      "description": "Persona id that conditioned the text (null if none)",
+      "enum": [
+        "abuela_veterana", "abuelo_ajetreado", "joven_profesional", "chica_millennial",
+        "madre_preocupada", "padre_activo", "estudiante_universitario", "pareja_mayor",
+        "vecino_conflictivo", "vecina_pasivo_agresiva", "vecino_ansioso", "vecino_formal",
+        "vecino_informal_amable", "vecino_primerizo", "vecino_tecnico",
+        "vecino_conspiranoico", "vecino_egoista", "vecino_cotilla", "vecino_voluntarioso",
+        "vecino_racional", "vecino_hipocondriaco", "vecino_sumiso",
+        "presidente_comunidad", "portero_encargado",
+        "propietario_ausente", "propietario_tacaño", "inquilino_reciente",
+        "inquilino_transeunte", "vecino_nocturno", "vecino_nuevo_dinero", "vecino_ecologista",
+        "vecino_inmobiliaria", "vecino_retirado_vocacional",
+        null
+      ]
+    },
+    "modifier": {
+      "type": ["string", "null"],
+      "description": "Style modifier composed with the persona (null when none applied)",
+      "enum": [
+        "semianalfabeto", "dictado_voz", "solo_mayusculas", "exceso_emojis",
+        "ultra_conciso", "redundante", "habla_andaluza", "habla_catalana",
+        "habla_gallega", "habla_canaria", "origen_latinoamericano", "origen_arabe",
+        "origen_chino", "origen_este_europa", "origen_extranjero",
+        "urgente", "enfado_acumulado", "culpable_oculto",
+        null
+      ]
+    },
+    "community": {
+      "type": "object",
+      "required": ["id", "name", "type", "num_viviendas", "year"],
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "type": {"type": "string"},
+        "num_viviendas": {"type": "integer", "minimum": 1},
+        "year": {"type": "integer", "minimum": 1800, "maximum": 2100},
+        "has_elevator": {"type": "boolean"},
+        "has_pool": {"type": "boolean"},
+        "has_garage": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Traceability of the record: which model, prompt and configuration produced it",
+      "required": ["model", "seed", "config_hash"],
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model key in models: that generated the text"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Model identifier sent to the server"
+        },
+        "seed": {
+          "type": ["integer", "null"],
+          "description": "Campaign base seed (null when non-deterministic)"
+        },
+        "config_hash": {
+          "type": "string",
+          "description": "SHA-256 of the effective config after the taxonomy merge"
+        },
+        "prompt_fingerprints": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "SHA-256 of each prompt template used, keyed by template name"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the record was produced"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
