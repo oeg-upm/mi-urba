@@ -121,6 +121,18 @@ def _filter_jsonl(path: Path, keep: set[str], key: str) -> int:
     return discarded
 
 
+def _record_rng(seed: int | None, record_id: str) -> "random.Random | None":
+    """Independent random stream per record, derived from the campaign seed.
+
+    Deriving the stream from (seed, id) makes the scenario of a record depend
+    only on the campaign seed and the record id: reproducible with any number of
+    workers, in any order, and stable across resume passes.
+    """
+    if seed is None:
+        return None
+    return random.Random(f"{seed}:{record_id}")
+
+
 def reconcile_outputs(raw_path: Path, ground_truth_path: Path,
                       metadata_path: Path) -> set[str]:
     """Keep only the records written to all three files; repair the rest.
@@ -365,15 +377,21 @@ def generate_complaint(
     reject_sink=None,
     conversation_sink=None,
     provenance: dict | None = None,
+    rng: random.Random | None = None,
 ) -> tuple[dict, dict, dict] | None:
     """
     Generate a single raw complaint record.
+
+    `rng` is the record's own random stream: when the campaign is seeded, every
+    record derives one from (seed, record_id), so the sampled scenario does not
+    depend on the order of the records, the number of workers or how many
+    retries earlier records consumed. None falls back to the global module RNG.
 
     Returns:
         Tuple of (complaint_dict, ground_truth, metadata) or None on failure.
     """
     if scenario is None:
-        scenario = sample_scenario()
+        scenario = sample_scenario(rng)
 
     # Provenance defaults: the CLI always passes the real values; direct callers
     # (tests, scripts) get a complete but empty record so the contract still holds.
@@ -386,17 +404,17 @@ def generate_complaint(
             "(generation.validator); the generator is never its own judge"
         )
 
-    community = sample_community()
-    persona = sample_persona()
-    modifier = sample_modifier()
+    community = sample_community(rng)
+    persona = sample_persona(rng)
+    modifier = sample_modifier(rng)
 
     # Multi-problem?
-    if should_be_multi_problem():
-        n_problems = random.choices([2, 3], weights=[0.75, 0.25], k=1)[0]
+    if should_be_multi_problem(rng):
+        n_problems = (rng or random).choices([2, 3], weights=[0.75, 0.25], k=1)[0]
     else:
         n_problems = 1
 
-    problems = [scenario] + [sample_scenario() for _ in range(n_problems - 1)]
+    problems = [scenario] + [sample_scenario(rng) for _ in range(n_problems - 1)]
 
     # Build prompt and call LLM (text only: user_text + timestamp)
     messages = build_generation_prompt(
@@ -656,6 +674,7 @@ def generate_dataset(
     validator_client: LLMClient | None = None,
     num_workers: int = 1,
     provenance: dict | None = None,
+    seed: int | None = None,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -738,6 +757,7 @@ def generate_dataset(
             reject_sink=_reject_sink,
             conversation_sink=_conversation_sink,
             provenance=provenance,
+            rng=_record_rng(seed, record_id),
         )
         if result is None:
             logger.warning(f"[{record_id}] Generation failed")
@@ -792,6 +812,25 @@ def generate_dataset(
     from collections import Counter
     validation_counts = Counter(validation_log)
 
+    # Campaign manifest: what a future reader needs to reproduce or audit the
+    # run without guessing (model, seed, prompts, config and counts).
+    manifest = {
+        "generated_at": _now_iso(),
+        "plan": {"start_id": start_id, "num_records": num_records,
+                 "resume": resume, "workers": num_workers},
+        "counts": {"generated": generated, "failed": failed},
+        "provenance": provenance or {},
+        "sampling": {"seed": seed,
+                     "policy": "per-record Random(seed:record_id)" if seed is not None
+                     else "global RNG (not reproducible)"},
+    }
+    manifest_path = Path(output_dir) / "manifest.json"
+    try:
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    except OSError as e:  # a read-only output dir must not fail the run
+        logger.warning(f"manifest not written to {manifest_path}: {e}")
+
     return {
         "generated": generated,
         "failed": failed,
@@ -800,6 +839,7 @@ def generate_dataset(
         "raw_path": str(raw_path),
         "ground_truth_path": str(ground_truth_path),
         "metadata_path": str(metadata_path),
+        "manifest_path": str(manifest_path),
         "validation": dict(validation_counts) if validate else None,
     }
 

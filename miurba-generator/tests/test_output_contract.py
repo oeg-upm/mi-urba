@@ -54,11 +54,11 @@ class StubClient:
 
 @pytest.fixture
 def env(monkeypatch):
-    monkeypatch.setattr(pl, "sample_scenario", lambda: dict(SCENARIO))
-    monkeypatch.setattr(pl, "should_be_multi_problem", lambda: False)
-    monkeypatch.setattr(pl, "sample_community", lambda: dict(COMMUNITY))
-    monkeypatch.setattr(pl, "sample_persona", lambda: None)
-    monkeypatch.setattr(pl, "sample_modifier", lambda: None)
+    monkeypatch.setattr(pl, "sample_scenario", lambda *a, **k: dict(SCENARIO))
+    monkeypatch.setattr(pl, "should_be_multi_problem", lambda *a, **k: False)
+    monkeypatch.setattr(pl, "sample_community", lambda *a, **k: dict(COMMUNITY))
+    monkeypatch.setattr(pl, "sample_persona", lambda *a, **k: None)
+    monkeypatch.setattr(pl, "sample_modifier", lambda *a, **k: None)
     monkeypatch.setattr(pl, "build_generation_prompt", lambda **kw: [
         {"role": "user", "content": "stub"}])
     return pl

@@ -63,7 +63,7 @@ comentados en `config/config.yaml`.
 | Clave | Función | Default |
 |---|---|---|
 | `model` | **Obligatorio.** Modelo extractor (clave de `models:`) | — |
-| `temperature` | Temperatura de extracción | `0.2` |
+| `temperature` | Temperatura de extracción; si no se declara, se usa la del modelo (`models.<nombre>.temperature`) | `0.2` |
 | `default_output_dir` | Base de rutas; `null` → `generation.default_output_dir` | `null` |
 | `raw_dir` / `annotated_dir` | Directorios explícitos | `null` → `<base>/<subdir de paths:>` |
 | `resume` | Saltar quejas ya extraídas y podar las extracciones cuyo `complaint_id` ya no existe en el corpus de entrada | `true` |

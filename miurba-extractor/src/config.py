@@ -170,6 +170,20 @@ def get_endpoint_url(name: str, cfg: dict | None = None) -> str:
     return cfg["endpoints"][name]["base_url"].rstrip("/")
 
 
+def get_extraction_temperature(ext_cfg: dict, model_cfg: dict,
+                               cfg: dict | None = None) -> float:
+    """Sampling temperature for extraction calls.
+
+    Precedence: an explicit `extraction.temperature` in the config wins;
+    otherwise the per-model `models.<name>.temperature` is used, so two models
+    can be configured with different temperatures in the same campaign.
+    """
+    cfg = cfg if cfg is not None else get_config()
+    if "temperature" in (cfg.get("extraction") or {}):
+        return ext_cfg["temperature"]
+    return model_cfg.get("temperature", ext_cfg["temperature"])
+
+
 def get_model_params(name: str, cfg: dict | None = None) -> dict[str, Any]:
     """Return (base_url, model_id, temperature, api_key) for a named model."""
     cfg = cfg or get_config()

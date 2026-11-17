@@ -178,13 +178,13 @@ def pipeline_env(monkeypatch, tmp_path):
     scenario = {"category": "cubierta", "subcategory": "tejas",
                 "location_zone": "exterior", "urgency": "alta",
                 "affected_elements": [], "risks": ["ninguno"]}
-    monkeypatch.setattr(p, "sample_scenario", lambda: dict(scenario))
-    monkeypatch.setattr(p, "should_be_multi_problem", lambda: False)
-    monkeypatch.setattr(p, "sample_community", lambda: {
+    monkeypatch.setattr(p, "sample_scenario", lambda *a, **k: dict(scenario))
+    monkeypatch.setattr(p, "should_be_multi_problem", lambda *a, **k: False)
+    monkeypatch.setattr(p, "sample_community", lambda *a, **k: {
         "id": "C001", "name": "X", "type": "bloque", "num_viviendas": 10, "year": 2000,
         "has_elevator": False, "has_pool": False, "has_garage": False})
-    monkeypatch.setattr(p, "sample_persona", lambda: None)
-    monkeypatch.setattr(p, "sample_modifier", lambda: None)
+    monkeypatch.setattr(p, "sample_persona", lambda *a, **k: None)
+    monkeypatch.setattr(p, "sample_modifier", lambda *a, **k: None)
     monkeypatch.setattr(p, "build_generation_prompt", lambda **kw: [
         {"role": "user", "content": "s"}])
     return p

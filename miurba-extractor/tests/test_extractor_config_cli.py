@@ -57,9 +57,20 @@ def test_extraction_defaults_fill_missing_keys(config_file):
         ("temperature", 0.2), ("default_output_dir", None),
         ("raw_dir", None), ("annotated_dir", None),
         ("resume", True), ("timeout", 300), ("max_retries", 3),
-        ("retry_delay", 5.0),
+        ("retry_delay", 5.0), ("constrain_vocabulary", False),
     ]:
         assert ext[key] == default, f"{key} should default to {default}"
+
+
+def test_temperature_precedence(config_file):
+    """Explicit extraction.temperature wins; otherwise the model's is used."""
+    from src.config import get_extraction_temperature
+    cfg = get_config(config_file)
+    model = get_extraction_model_params(None, cfg)[1]
+    # The fixture sets extraction.temperature = 0.2 explicitly.
+    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg) == 0.2
+    del cfg["extraction"]["temperature"]
+    assert get_extraction_temperature(get_extraction_config(cfg), model, cfg) == 0.1
 
 
 def test_repo_config_extraction_section_fully_consumed():
