@@ -70,7 +70,7 @@ flowchart TB
     PREP --> SAMPLE["Muestreo del escenario<br/>problema · urgencia · ubicación · riesgos<br/>elementos afectados coherentes"]
     SAMPLE --> VOICE["Perfil del vecino<br/>persona · estilo · posible 2º problema"]
     VOICE --> WRITE["Redacción LLM<br/>mensaje del vecino en estilo del perfil"]
-    WRITE --> QUALITY{ "Control de calidad" }
+    WRITE --> QUALITY{"Control de calidad"}
     QUALITY -->|"leaks o degeneración"| RETRY
     QUALITY -->|"juez lo rechaza"| RETRY["Regeneración con feedback<br/>mismo escenario · presupuesto limitado"]
     RETRY --> WRITE
@@ -98,7 +98,7 @@ flowchart TB
     PROMPT --> LLM["Extracción LLM<br/>JSON estructurado"]
     LLM -->|"modo estructurado del servidor"| LLM
     LLM --> NORM["Normalización<br/>ids · sinonimia del modelo"]
-    NORM --> VALID{ "Validación de contrato<br/>schema con enums de taxonomía" }
+    NORM --> VALID{"Validación de contrato<br/>schema con enums de taxonomía"}
     VALID -->|"conforme"| OUT["Extracciones<br/>categorías · elementos · ubicación<br/>riesgos · urgencia"]
     VALID -->|"inválido o caída"| FAIL["Registro descartado<br/>contabilizado como fallo"]
 
