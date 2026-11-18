@@ -66,7 +66,7 @@ comentados en `config/config.yaml`.
 | `temperature` | Temperatura de extracción | `0.2` |
 | `default_output_dir` | Base de rutas; `null` → `generation.default_output_dir` | `null` |
 | `raw_dir` / `annotated_dir` | Directorios explícitos | `null` → `<base>/<subdir de paths:>` |
-| `resume` | Saltar quejas ya extraídas | `true` |
+| `resume` | Saltar quejas ya extraídas y podar las extracciones cuyo `complaint_id` ya no existe en el corpus de entrada | `true` |
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
 | `model_load_wait` | Paciencia (s) con modelos en frío; `null` = off | `null` |
 | `workers` | Extracción en paralelo | `1` |
@@ -93,6 +93,25 @@ etiqueta que no exista en el vocabulario.
 
 Con `json_schema`, `cli.py` carga el schema y lo envía en cada petición.
 Recuerda: la validación final en local se aplica en todos los modos.
+
+## Rechazos y reanudación
+
+Los registros que fallan (JSON inválido, salida no conforme al schema, caída
+del modelo) se cuentan como fallidos y quedan auditados en `rejected.jsonl`,
+con su motivo. Un fallo inesperado en un registro no aborta la ejecución.
+
+Al reanudar, las extracciones cuyo `complaint_id` ya no existe en el corpus de
+entrada se descartan; si el corpus de entrada está vacío no se poda nada.
+
+Limitación conocida: la reanudación se basa en el identificador. Si un registro
+se regenera con otro texto manteniendo el mismo `id`, la extracción anterior se
+conserva y queda desalineada. El corpus no guarda una huella del texto de
+origen; hasta que la haya, regenerar el corpus exige vaciar `extractions.jsonl`
+(`resume: false`).
+
+Códigos de salida: `2` si falta el fichero de entrada, `1` si todos los
+registros pendientes fallaron, `0` en cualquier otro caso (incluida una
+reanudación en la que ya estaba todo extraído).
 
 ## Requisitos del endpoint
 

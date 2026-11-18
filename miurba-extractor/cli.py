@@ -131,7 +131,10 @@ def cmd_extract(args):
     )
 
     print(f"\n{'=' * 55}")
-    print(f"Extraction complete!")
+    if stats.get("input_missing"):
+        print("Input complaints file not found — nothing extracted.")
+    else:
+        print("Extraction complete!")
     print(f"  Extracted:  {stats['extracted']}")
     print(f"  Failed:     {stats['failed']}")
     print(f"  Skipped:    {stats['skipped']}")
@@ -142,6 +145,13 @@ def cmd_extract(args):
     if client._stats.get("errors") or client._stats.get("load_waits"):
         print(f"  ⚠ errors absorbed: {client._stats['errors']}  "
               f"(load waits: {client._stats['load_waits']})")
+
+    # Exit codes: 2 = input missing, 1 = every pending record failed, 0 otherwise
+    # (a fully resumed run produces nothing but is a success).
+    if stats.get("input_missing"):
+        sys.exit(2)
+    if stats["failed"] > 0 and stats["extracted"] == 0:
+        sys.exit(1)
 
 
 def main():

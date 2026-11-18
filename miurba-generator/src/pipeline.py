@@ -15,6 +15,7 @@ The LLM produces ONLY user_text + timestamp.
 
 import json
 import logging
+import os
 import random
 import re
 import threading
@@ -41,6 +42,106 @@ def _now_iso() -> str:
     """UTC timestamp for provenance records."""
     from datetime import datetime, timezone
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _read_jsonl_ids(path: Path, key: str = "id") -> list[str]:
+    """Read the ids of a JSONL file, tolerating truncated or corrupt lines.
+
+    A run killed mid-write can leave a partial line; a corrupt line must not
+    break the resume pass, it is skipped with a warning.
+    """
+    ids: list[str] = []
+    if not path.exists():
+        return ids
+    with open(path, encoding="utf-8") as f:
+        for number, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                logger.warning(f"{path.name}:{number} unreadable line, skipped")
+                continue
+            if not isinstance(record, dict):
+                logger.warning(f"{path.name}:{number} line is not a JSON object, skipped")
+                continue
+            ids.append(str(record.get(key, "")))
+    return ids
+
+
+def _write_jsonl_atomic(path: Path, records: list[dict]) -> None:
+    """Write a JSONL file through a temp file + atomic replace."""
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        for record in records:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
+def _filter_jsonl(path: Path, keep: set[str], key: str) -> int:
+    """Rewrite a JSONL file keeping only the given ids; return how many lines went.
+
+    Truncated or non-object lines are dropped too, and the file is always
+    rewritten when anything was discarded: a file left without its final
+    newline would make the next append glue a record onto the corrupt line.
+    """
+    if not path.exists():
+        return 0
+    kept: list[dict] = []
+    seen: set[str] = set()
+    discarded = 0
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                discarded += 1
+                logger.warning(f"{path.name}: unreadable line, dropped")
+                continue
+            if not isinstance(record, dict):
+                discarded += 1
+                logger.warning(f"{path.name}: line is not a JSON object, dropped")
+                continue
+            record_id = str(record.get(key, ""))
+            if record_id not in keep:
+                discarded += 1
+                continue
+            if record_id in seen:
+                discarded += 1
+                logger.warning(f"{path.name}: duplicate {key} {record_id}, dropped")
+                continue
+            seen.add(record_id)
+            kept.append(record)
+    if discarded:
+        _write_jsonl_atomic(path, kept)
+    return discarded
+
+
+def reconcile_outputs(raw_path: Path, ground_truth_path: Path,
+                      metadata_path: Path) -> set[str]:
+    """Keep only the records written to all three files; repair the rest.
+
+    `complaints`/`ground_truth`/`metadata` are three separate appends, so a
+    process killed between them leaves a record without ground truth. Those
+    ids are removed from every file so a later resume regenerates them.
+    """
+    complaint_ids = _read_jsonl_ids(raw_path, "id")
+    gt_ids = _read_jsonl_ids(ground_truth_path, "complaint_id")
+    meta_ids = _read_jsonl_ids(metadata_path, "complaint_id")
+    complete = set(complaint_ids) & set(gt_ids) & set(meta_ids)
+    dropped = {
+        "complaints": _filter_jsonl(raw_path, complete, "id"),
+        "ground_truth": _filter_jsonl(ground_truth_path, complete, "complaint_id"),
+        "metadata": _filter_jsonl(metadata_path, complete, "complaint_id"),
+    }
+    dropped = {k: v for k, v in dropped.items() if v}
+    if dropped:
+        logger.warning(f"Dropped incomplete records to keep the corpus consistent: {dropped}")
+    return complete
 
 
 def normalize_timestamp(value: str) -> str | None:
@@ -576,15 +677,15 @@ def generate_dataset(
                 f.write_text("")
                 logger.info(f"Start fresh: truncated {f}")
 
-    # Find already generated IDs for resume
-    existing_ids = set()
-    if resume and raw_path.exists():
-        with open(raw_path) as f:
-            for line in f:
-                if line.strip():
-                    rec = json.loads(line)
-                    existing_ids.add(rec.get("id", ""))
-        logger.info(f"Resuming: {len(existing_ids)} records already exist")
+    # Resume: only ids complete in all three files count as done. A record
+    # written to complaints but not to ground_truth/metadata (process killed
+    # between appends) is dropped from the files and regenerated, so the corpus
+    # never carries a half-written record.
+    existing_ids: set[str] = set()
+    if resume:
+        existing_ids = reconcile_outputs(raw_path, ground_truth_path, metadata_path)
+        if existing_ids:
+            logger.info(f"Resuming: {len(existing_ids)} complete records already exist")
 
     generated = 0
     failed = 0
@@ -611,6 +712,22 @@ def generate_dataset(
                 f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
     def _generate_and_write(record_id: str) -> bool:
+        """Generate one record and append it to the JSONL files (thread-safe).
+
+        Any unexpected failure is contained to the record: a malformed model
+        reply must never abort a campaign that already produced records.
+        """
+        try:
+            return _generate_and_write_unsafe(record_id)
+        except Exception as e:  # noqa: BLE001 - per-record isolation
+            logger.exception(f"[{record_id}] unexpected failure: {e}")
+            _reject_sink({"id": record_id, "stage": "pipeline",
+                          "reason": "unexpected_error", "detail": str(e)[:500],
+                          "attempts": 0, "scenario": [], "last_text": "",
+                          "timestamp": ""})
+            return False
+
+    def _generate_and_write_unsafe(record_id: str) -> bool:
         """Generate one record and append it to the JSONL files (thread-safe)."""
         result = generate_complaint(
             client, record_id,
@@ -699,64 +816,80 @@ def merge_outputs(
 ) -> dict:
     """
     Merge per-model output directories into final <output_dir>/<raw_subdir>/.
+
+    Records are deduplicated by id (first occurrence wins) so a re-plan that
+    reassigns id ranges cannot silently duplicate the corpus, and the result is
+    written atomically: a failed merge never truncates a previous good merge.
     """
     raw_out = Path(output_dir) / raw_subdir
-    raw_out.mkdir(parents=True, exist_ok=True)
+    model_dirs = [(d, Path(output_dir) / d / raw_subdir) for d in (batch_dirs or [])]
+    present = [(name, path) for name, path in model_dirs if path.is_dir()]
+    if not present:
+        raise FileNotFoundError(
+            f"merge: no model output found under {output_dir} "
+            f"(looked for {', '.join(n for n, _ in model_dirs) or 'no model'})"
+        )
+    missing = [name for name, path in model_dirs if not path.is_dir()]
+    if missing:
+        logger.warning(f"merge: model directories not found, skipped: {', '.join(missing)}")
 
-    merged_complaints = []
-    merged_ground_truth = []
-    merged_metadata = []
+    merged: dict[str, list[dict]] = {
+        complaints_file: [], ground_truth_file: [], metadata_file: []}
+    seen: dict[str, set[str]] = {name: set() for name in merged}
+    key_of = {complaints_file: "id", ground_truth_file: "complaint_id",
+              metadata_file: "complaint_id"}
 
-    for model_dir in (batch_dirs or []):
-        model_path = Path(output_dir) / model_dir / raw_subdir
-
-        for fname, merged in [
-            (complaints_file, merged_complaints),
-            (ground_truth_file, merged_ground_truth),
-            (metadata_file, merged_metadata),
-        ]:
+    for _model_name, model_path in present:
+        for fname in merged:
             fpath = model_path / fname
-            if fpath.exists():
-                with open(fpath, encoding="utf-8") as f:
-                    for line in f:
-                        if line.strip():
-                            merged.append(json.loads(line))
+            if not fpath.exists():
+                continue
+            key = key_of[fname]
+            for line in fpath.read_text(encoding="utf-8").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    logger.warning(f"merge: unreadable line in {fpath}, skipped")
+                    continue
+                record_id = str(record.get(key, ""))
+                if record_id in seen[fname]:
+                    logger.warning(f"merge: duplicate {key} {record_id} in {fpath}, skipped")
+                    continue
+                seen[fname].add(record_id)
+                merged[fname].append(record)
 
-    def _id_num(rec: dict) -> int:
-        try:
-            return int(rec.get("id", rec.get("complaint_id", "Q0")).lstrip("Q"))
-        except (ValueError, AttributeError):
-            return 0
-
-    merged_complaints.sort(key=_id_num)
-    merged_ground_truth.sort(key=_id_num)
-    merged_metadata.sort(key=_id_num)
+    for fname in merged:
+        merged[fname].sort(key=_id_num)
 
     complaints_path = raw_out / complaints_file
     ground_truth_path = raw_out / ground_truth_file
     metadata_path = raw_out / metadata_file
 
-    with open(complaints_path, "w", encoding="utf-8") as f:
-        for c in merged_complaints:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    raw_out.mkdir(parents=True, exist_ok=True)
+    _write_jsonl_atomic(complaints_path, merged[complaints_file])
+    _write_jsonl_atomic(ground_truth_path, merged[ground_truth_file])
+    _write_jsonl_atomic(metadata_path, merged[metadata_file])
 
-    with open(ground_truth_path, "w", encoding="utf-8") as f:
-        for g in merged_ground_truth:
-            f.write(json.dumps(g, ensure_ascii=False) + "\n")
-
-    with open(metadata_path, "w", encoding="utf-8") as f:
-        for m in merged_metadata:
-            f.write(json.dumps(m, ensure_ascii=False) + "\n")
-
-    logger.info(f"Merged {len(merged_complaints)} complaints → {complaints_path}")
-    logger.info(f"Merged {len(merged_ground_truth)} ground_truth → {ground_truth_path}")
-    logger.info(f"Merged {len(merged_metadata)} metadata → {metadata_path}")
+    counts = {name: len(records) for name, records in merged.items()}
+    if len(set(counts.values())) > 1:
+        logger.error(f"merge: the three files disagree in length: {counts}")
+    else:
+        logger.info(f"Merged {counts[complaints_file]} records → {complaints_path}")
 
     return {
-        "complaints": len(merged_complaints),
-        "ground_truth": len(merged_ground_truth),
-        "metadata": len(merged_metadata),
+        "complaints": counts[complaints_file],
+        "ground_truth": counts[ground_truth_file],
+        "metadata": counts[metadata_file],
         "complaints_path": str(complaints_path),
         "ground_truth_path": str(ground_truth_path),
         "metadata_path": str(metadata_path),
     }
+
+
+def _id_num(rec: dict) -> int:
+    try:
+        return int(str(rec.get("id", rec.get("complaint_id", "Q0"))).lstrip("Q"))
+    except (ValueError, AttributeError):
+        return 0

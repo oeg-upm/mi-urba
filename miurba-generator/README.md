@@ -50,6 +50,11 @@ variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
 `rejected.jsonl` y `conversations.jsonl` se escriben **por modelo** y no se
 fusionan en `raw/`: son material de auditoría, no parte del corpus.
 
+`merge` deduplica por identificador (gana la primera aparición), escribe de
+forma atómica (un merge fallido no trunca el corpus anterior), avisa si los tres
+ficheros difieren en longitud y termina con código `2` si no encuentra ningún
+directorio de modelo que fusionar.
+
 Cada registro se valida contra `schemas/complaint_schema.json`,
 `schemas/extraction_schema.json` y `schemas/metadata_schema.json` antes de
 escribirse; si no conforma, se descarta y queda en `rejected.jsonl` con el
@@ -83,7 +88,7 @@ claves de `generation`. Detalle y valores por defecto comentados en
 | `models` + `num_records` | Plan alternativo: lista de modelos | `null` |
 | `start_id` | Primer ID (secuencial en el plan) | `1` |
 | `seed` | Semilla de muestreo. Determinista solo con `workers: 1` | `null` |
-| `resume` | Saltar registros ya generados | `true` |
+| `resume` | Saltar los registros ya completos. Un registro presente en `complaints` pero no en `ground_truth`/`metadata` (escritura interrumpida) se elimina de los tres ficheros y se regenera | `true` |
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
 | `model_load_wait` | Paciencia (s) con modelos en frío; `null` = off | `null` |
 | `workers` | Generación en paralelo | `1` |
