@@ -3,10 +3,13 @@
 miUrba — Generador de datasets sintéticos de quejas vecinales.
 
 Genera quejas/incidencias sintéticas reportadas por vecinos de una
-comunidad de vecinos. Produce tres ficheros JSONL por cada ejecución:
+comunidad de vecinos. Produce tres ficheros JSONL de corpus por ejecución y
+dos de auditoría:
   - complaints.jsonl  (el texto del vecino, timestamp)
   - ground_truth.jsonl  (extracciones esperadas)
   - metadata.jsonl      (persona, modifier, community)
+  - rejected.jsonl      (registros descartados, con etapa y motivo)
+  - conversations.jsonl (transcripción por registro)
 
 La extracción estructurada de estas quejas es una tarea independiente
 que corresponde al proyecto `miurba-extractor`.

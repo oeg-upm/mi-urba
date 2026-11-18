@@ -7,6 +7,8 @@ dataset of raw complaints:
   - complaints.jsonl   (id, user_text, timestamp)
   - ground_truth.jsonl  (complaint_id, extractions)
   - metadata.jsonl      (complaint_id, persona, modifier, community)
+  - rejected.jsonl      (discarded records with stage and reason)
+  - conversations.jsonl (per-record generation transcript)
 
 The LLM produces ONLY user_text + timestamp.
 """

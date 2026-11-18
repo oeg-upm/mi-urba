@@ -312,7 +312,8 @@ _DEFAULT_GENERATION = {
     "retry_delay": 5.0,
     # 2-stage validation: after generating, a judge LLM checks that the text
     # aligns with the scenario; the generation is retried up to
-    # max_validation_retries times on mismatch (last text is kept).
+    # max_validation_retries times on mismatch and the record is discarded
+    # (audited in rejected.jsonl) when the budget is exhausted.
     "validate": False,
     "max_validation_retries": 3,
     # Judge model (key in models:) for validation. REQUIRED when validate is
