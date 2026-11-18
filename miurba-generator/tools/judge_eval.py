@@ -10,7 +10,8 @@ Cada vuelta evalúa el prompt ACTUAL del juez (prompts/validate_record.md) con e
 modelo indicado, sobre los mismos casos, y añade una línea al marcador.
 
 Uso:
-  python tools/judge_eval.py --judge gemma4-12b-awq --tag v11-gemma4
+  python tools/judge_eval.py --judge gemma4-12b-awq --tag v11-gemma4 \
+      --base-url http://host:9292
 """
 import argparse
 import json
@@ -22,8 +23,8 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-sys.path.insert(0, str(ROOT / "miurba-generator"))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 from src.llm import LLMClient              # noqa: E402
 from src.pipeline import validate_complaint  # noqa: E402
 
@@ -76,9 +77,6 @@ def _resolve_cases(args):
     return load_gold()
 
 
-_PRISTINE_LOAD_TEMPLATE = None
-
-
 def install_prompt_override(directory: str) -> None:
     """Sirve un validate_record.md alternativo sin tocar el pipeline.
 
@@ -91,12 +89,12 @@ def install_prompt_override(directory: str) -> None:
 
     variant = Path(directory)
     if not variant.is_absolute():
-        variant = ROOT / "miurba-generator" / variant
+        variant = ROOT / variant
     source = variant / "validate_record.md"
     if not source.exists():
         raise SystemExit(f"no hay validate_record.md en {variant}")
 
-    staging = ROOT / "miurba-generator" / ".tmp" / "prompt_variant"
+    staging = ROOT / ".tmp" / "prompt_variant"
     if staging.exists():
         shutil.rmtree(staging)
     shutil.copytree(pl.PROMPTS_DIR, staging)
@@ -166,7 +164,7 @@ def to_flat(extractions: list[dict]) -> list[dict]:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--judge", required=True)
-    ap.add_argument("--base-url", default="http://192.168.10.100:9292")
+    ap.add_argument("--base-url", required=True, help="OpenAI-compatible base URL")
     ap.add_argument("--temperature", type=float, default=0.0)
     ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--workers", type=int, default=6)

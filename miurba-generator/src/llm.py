@@ -111,8 +111,6 @@ class LLMClient:
                 return data
 
             except (requests.RequestException, json.JSONDecodeError) as e:
-                self._stats["errors"] += 1
-
                 # 5xx within the model-load window: the swapping gateway is
                 # still loading the model — poll without consuming retries.
                 is_load_error = (
@@ -130,6 +128,7 @@ class LLMClient:
 
                 attempt += 1
                 last_error = e
+                self._stats["errors"] += 1
                 logger.warning(
                     f"API call failed (attempt {attempt}/{self.max_retries}): {e}"
                 )

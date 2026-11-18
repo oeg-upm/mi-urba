@@ -7,7 +7,10 @@ data_test/
 test_results.json
 tests/
 *.md
+!prompts/*.md
 Dockerfile
 .dockerignore
+.env
+.env*
 config/config.test*.yaml
 config/config.local.yaml

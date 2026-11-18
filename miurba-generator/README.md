@@ -96,6 +96,7 @@ claves de `generation`. Detalle y valores por defecto comentados en
 | `validate` | Validación en 2ª pasada (juez LLM) | `false` |
 | `max_validation_retries` | Regeneraciones si el juez rechaza | `3` |
 | `validator` | Modelo juez (**obligatorio** si `validate: true`); tiene que ser distinto del generador | — |
+| `allow_self_judge` | Permite que el juez sea el propio generador del lote (experimento explícito; se avisa en el resumen del run) | `false` |
 
 ### `models:` y `endpoints:`
 

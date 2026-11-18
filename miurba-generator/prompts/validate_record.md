@@ -49,7 +49,7 @@ EVIDENCIA: una sola frase del texto, copiada LITERALMENTE, de 15 palabras como m
 - Si el defecto es que algo FALTA en el texto, no hay frase que lo pruebe: pon el 'no' en 'elementos_escenario' o 'riesgos_escenario' y deja 'evidencia' con la frase del texto mas cercana al tema, sin presentarla como prueba.
 - Sin comillas dobles ni simples dentro del valor (rompen el JSON).
 - Sin razonamiento, sin dudas, sin comentarios: si necesitas pensar, no lo escribas.
-- Si de verdad no hay nada que citar, deja el campo vacio.""
+- Si de verdad no hay nada que citar, deja el campo vacio.
 
 {{examples_block}}
 

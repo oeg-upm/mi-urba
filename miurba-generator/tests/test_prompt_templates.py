@@ -1,10 +1,8 @@
 """Prompt templates: byte-exact rendering and loader behaviour.
 
-The golden fixture (tests/fixtures/prompt_golden.json) was captured before the
-templates were moved out of the code; these tests guarantee that externalising
-them did not change a single character of what the model receives.
-`prompt_golden.v1.json` is the pre-templates baseline kept for reference; the
-prompts changed on purpose when the worked examples were added.
+The golden fixture (tests/fixtures/prompt_golden.json) is regenerated with
+`tools/dump_prompt_golden.py` whenever a prompt changes on purpose; these tests
+fail when the rendered output drifts from it without a deliberate update.
 """
 import json
 from pathlib import Path

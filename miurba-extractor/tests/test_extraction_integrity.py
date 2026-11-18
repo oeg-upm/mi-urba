@@ -102,6 +102,22 @@ def test_stale_extractions_are_dropped_on_resume(tmp_path):
     assert client.calls == 0
 
 
+def test_empty_input_keeps_existing_extractions(tmp_path, caplog):
+    """An empty input corpus must not prune a valid extractions file."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "complaints.jsonl").write_text("", encoding="utf-8")
+    ann = tmp_path / "annotated"
+    ann.mkdir()
+    previous = json.dumps({"complaint_id": "Q0001", "extractions": []}) + "\n"
+    (ann / "extractions.jsonl").write_text(previous, encoding="utf-8")
+
+    stats = _run(tmp_path, Stub(payload=json.dumps({"extractions": []})), resume=True)
+    assert stats["total"] == 0
+    assert (ann / "extractions.jsonl").read_text(encoding="utf-8") == previous
+    assert "Input corpus is empty" in caplog.text
+
+
 def test_corrupt_lines_in_input_are_skipped(tmp_path):
     raw = tmp_path / "raw"
     raw.mkdir()

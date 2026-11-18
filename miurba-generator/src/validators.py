@@ -28,15 +28,15 @@ def validate_taxonomy(cfg: dict) -> None:
                 f"categories[{cat!r}] has no subcategories; declare at least one"
             )
 
-    for section, required in (
-        ("category_elements", True),
-        ("category_zones", True),
-        ("category_risks", True),
-        ("urgency_weights", True),
+    for section in (
+        "category_elements",
+        "category_zones",
+        "category_risks",
+        "urgency_weights",
     ):
         mapping = cfg.get(section) or {}
         for cat in categories:
-            if cat not in mapping or (required and not mapping[cat]):
+            if cat not in mapping or not mapping[cat]:
                 problems.append(f"{section} has no entry for category {cat!r}")
 
     elements = cfg.get("affected_elements") or {}
@@ -156,5 +156,5 @@ def validate_element_subcategories(config: dict, table: dict | None = None) -> N
 
     if problems:
         raise ValueError(
-            "inconsistent element_subcategories.yaml:\n  - " + "\n  - ".join(problems)
+            "inconsistent element_subcategories table in taxonomy.yaml:\n  - " + "\n  - ".join(problems)
         )

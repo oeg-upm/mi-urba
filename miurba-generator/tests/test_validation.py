@@ -187,7 +187,7 @@ def test_generation_accepted_when_judge_valid(fake_env):
     assert gen.calls == 1 and judge.calls == 1
 
 
-def test_regenerates_on_invalid_verdict_keeps_last(fake_env):
+def test_regenerates_until_a_candidate_is_accepted(fake_env):
     pl = fake_env
     gen = _gen_client(["Q999_1.png esto es un texto contaminado con nombre de archivo interno y más contenido para superar el límite de longitud establecido", CLEAN_TEXT])
     judge = JudgeClient([{"valid": False, "issues": ["urgency"]},

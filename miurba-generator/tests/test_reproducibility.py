@@ -50,21 +50,51 @@ def test_scenario_is_independent_of_processing_order():
     assert forward == backward
 
 
-def test_scenario_is_independent_of_workers(tmp_path):
-    """Same seed and ids produce the same scenarios with 1 or 4 workers."""
-    scenarios = {}
+def test_scenario_is_independent_of_workers(tmp_path, monkeypatch):
+    """The same seed and ids give the same scenarios with 1 and with 8 workers.
 
-    def scenario_for(workers):
-        out = {}
-        ids = [f"Q{i:04d}" for i in range(1, 9)]
-        for rid in ids:
-            rng = pl._record_rng(11, rid)
-            out[rid] = pl.sample_scenario(rng)
-        return out
+    Drives two real dataset runs with a stub client and compares the sampled
+    scenario (ground truth) and profile of every record.
+    """
 
-    one = scenario_for(1)
-    four = scenario_for(4)
-    assert one == four
+    def fake(client, record_id, **kwargs):
+        scenario = sampling.sample_scenario(kwargs.get("rng"))
+        community = sampling.sample_community(kwargs.get("rng"))
+        persona = sampling.sample_persona(kwargs.get("rng"))
+        return (
+            {"id": record_id, "user_text": "texto limpio de prueba",
+             "timestamp": "2024-03-15T11:23:47+00:00"},
+            {"complaint_id": record_id,
+             "extractions": [{"category": {"principal": scenario["category"],
+                                            "subcategory": scenario["subcategory"]},
+                              "affected_elements": scenario["affected_elements"],
+                              "location": {"zone": scenario["location_zone"], "detail": ""},
+                              "risks": scenario["risks"],
+                              "urgency": scenario["urgency"]}]},
+            {"complaint_id": record_id, "persona": persona["id"] if persona else None,
+             "modifier": None, "community": community,
+             "provenance": {"model": "m", "seed": 11, "config_hash": "h"}},
+        )
+
+    monkeypatch.setattr(pl, "generate_complaint", fake)
+
+    class Stub:
+        stats = {"tokens_in": 0, "tokens_out": 0}
+
+    def run(workers, name):
+        out = tmp_path / name
+        pl.generate_dataset(client=Stub(), num_records=8, start_id=1,
+                            output_dir=str(out), num_workers=workers, seed=11,
+                            resume=False)
+        gt = {json.loads(l)["complaint_id"]: json.loads(l)
+              for l in (out / "raw" / "ground_truth.jsonl").read_text().splitlines()}
+        md = {json.loads(l)["complaint_id"]: json.loads(l)
+              for l in (out / "raw" / "metadata.jsonl").read_text().splitlines()}
+        return {rid: {"scenario": gt[rid]["extractions"],
+                      "persona": md[rid]["persona"],
+                      "community": md[rid]["community"]} for rid in gt}
+
+    assert run(1, "one") == run(8, "eight")
 
 
 def test_no_seed_uses_global_rng():

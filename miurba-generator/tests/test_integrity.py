@@ -102,6 +102,30 @@ def test_merge_without_model_dirs_fails(tmp_path):
         pl.merge_outputs(str(tmp_path), ["missing"], raw_subdir="raw")
 
 
+def test_cmd_merge_exits_2_when_there_is_nothing_to_merge(tmp_path, monkeypatch, capsys):
+    """The CLI reports the empty case without a traceback."""
+    import yaml
+    from cli import cmd_merge
+
+    config = {
+        "endpoints": {"e": {"base_url": "http://x"}},
+        "models": {"m": {"endpoint": "e", "model": "m"}},
+        "generation": {"default_output_dir": str(tmp_path / "out"),
+                       "batches": [{"model": "m", "count": 1}]},
+    }
+    path = tmp_path / "config.yaml"
+    path.write_text(yaml.safe_dump(config), encoding="utf-8")
+
+    class Args:
+        pass
+
+    Args.config = str(path)
+    with pytest.raises(SystemExit) as excinfo:
+        cmd_merge(Args())
+    assert excinfo.value.code == 2
+    assert "Nothing to merge" in capsys.readouterr().out
+
+
 def test_merge_is_atomic_and_leaves_no_temp_files(tmp_path):
     for model, ids in (("alpha", ["Q0001"]), ("beta", ["Q0002"])):
         _write(tmp_path / model / "raw" / "complaints.jsonl", [{"id": i} for i in ids])

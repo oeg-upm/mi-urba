@@ -26,7 +26,8 @@ def format_affected_elements(p: dict) -> str:
     elems = p.get("affected_elements") or []
     if not elems:
         return ""
-    strs = [f"la {_natural(e['principal'])} ({_natural(e['subcategory'])})" for e in elems]
+    strs = [f"{_natural(e['principal'])} ({_natural(e['subcategory'])})"
+            for e in elems]
     return f"\n     Elementos dañados además: {', '.join(strs)}"
 
 

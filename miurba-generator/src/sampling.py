@@ -50,7 +50,8 @@ def _require_mapping(mapping: dict, category: str, section: str) -> list:
 def _allowed_elements(category: str, subcategory: str) -> dict[str, list[str]]:
     """Elements (and their subcategories) compatible with this problem.
 
-    Uses the coherence table element_subcategories.yaml: category-level baseline
+    Uses the coherence table in taxonomy.yaml (`element_subcategories`):
+    category-level baseline
     under "*" plus optional per-subcategory overrides. No silent fallback: a
     missing category is a configuration error.
     """
@@ -58,7 +59,7 @@ def _allowed_elements(category: str, subcategory: str) -> dict[str, list[str]]:
     elements_cfg = cfg.get_affected_elements()
     if category not in table:
         raise ValueError(
-            f"category {category!r} has no entry in element_subcategories.yaml"
+            f"category {category!r} has no entry in taxonomy.yaml (element_subcategories)"
         )
     branch = table[category]
     allowed = branch.get(subcategory) or branch.get("*")
@@ -66,7 +67,8 @@ def _allowed_elements(category: str, subcategory: str) -> dict[str, list[str]]:
         return {el: list(subs) for el, subs in elements_cfg.items()}
     if not allowed:
         raise ValueError(
-            f"no element mapping for {category}/{subcategory} in element_subcategories.yaml"
+            f"no element mapping for {category}/{subcategory} in taxonomy.yaml "
+            f"(element_subcategories)"
         )
     out: dict[str, list[str]] = {}
     for el, subs in allowed.items():

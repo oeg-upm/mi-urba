@@ -98,16 +98,23 @@ def test_plan_empty_raises(config_file):
 
 # ── CLI wiring ────────────────────────────────────────────────
 
-def test_cli_accepts_only_config_and_verbose(config_file):
-    """Config-only contract: --config and -v are the only global flags."""
-    import argparse
-    from cli import main  # noqa: F401
-    parser = argparse.ArgumentParser()
-    common = parser.add_argument_group()
-    common.add_argument("--config", default=None)
-    common.add_argument("-v", "--verbose", action="store_true")
-    args = parser.parse_args(["--config", str(config_file)])
-    assert args.config == str(config_file)
+def test_cli_exposes_only_config_flag(config_file, monkeypatch):
+    """The real parser accepts `generate --config <path>` and nothing else."""
+    import cli
+
+    captured = {}
+
+    def fake_cmd_generate(args):
+        captured["config"] = args.config
+
+    monkeypatch.setattr(cli, "cmd_generate", fake_cmd_generate)
+    monkeypatch.setattr(sys, "argv", ["cli.py", "generate", "--config", str(config_file)])
+    cli.main()
+    assert captured["config"] == str(config_file)
+
+    monkeypatch.setattr(sys, "argv", ["cli.py", "generate", "-v"])
+    with pytest.raises(SystemExit):
+        cli.main()  # -v is not a flag of this CLI
 
 
 def test_merge_command_merges_model_outputs(config_file, tmp_path, capsys):

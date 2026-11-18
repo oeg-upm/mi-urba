@@ -21,7 +21,7 @@ import random
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
+ROOT = Path(__file__).resolve().parent.parent
 EVAL = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval"))
 DEFAULT_RUNS = ["smoke-5x100", "smoke-5x100-t025", "smoke-5x100-t050"]
 MODELS = ["gemma-3-12b-awq", "olmo-3.1-32b-awq", "qwen3.6-27b-awq",

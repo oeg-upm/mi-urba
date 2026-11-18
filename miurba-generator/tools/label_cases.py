@@ -23,6 +23,7 @@ escribe en el repo ni en las salidas.
 """
 import argparse
 import json
+import os
 import random
 import sys
 import threading
@@ -31,12 +32,12 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.request import Request, urlopen
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-sys.path.insert(0, str(ROOT / "miurba-generator"))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 from src.prompt_loader import render  # noqa: E402
 
 KEY_PATH = Path.home() / ".pi" / "agent/local-llm.key"
-BASE_URL = "http://192.168.10.1:4000/v1/chat/completions"
+BASE_URL = os.environ.get("MIURBA_LLM_URL", "")
 
 
 def api_key() -> str:
@@ -142,8 +143,11 @@ def load_corpus(dataset: Path, generators: list[str]):
 
 
 def main():
+    global BASE_URL
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", required=True)
+    ap.add_argument("--llm-url", default=BASE_URL,
+                    help="Chat-completions URL (or set MIURBA_LLM_URL)")
     ap.add_argument("--generators", nargs="*", default=[])
     ap.add_argument("--target", type=int, default=0)
     ap.add_argument("--per-generator", type=int, default=0)
@@ -161,6 +165,9 @@ def main():
         ap.error("indica --target o --per-generator")
     if not args.generators:
         ap.error("indica --generators (en la carpeta del dataset conviven otros experimentos)")
+    if not args.llm_url:
+        ap.error("indica --llm-url o define MIURBA_LLM_URL")
+    BASE_URL = args.llm_url
 
     dataset = Path(args.dataset)
     if not dataset.is_absolute():
@@ -252,7 +259,8 @@ def main():
             log(f"accepted\t{case_id}\t{gen_model}\ttotal={accepted}/{total}"
                 f"\tmodelo={accepted_per_model[gen_model]}/"
                 f"{quota[gen_model] if quota else '-'}")
-            print(f"[{accepted}/{total}] {case_id} ({gen_model}) 6/6 apto  "
+            print(f"[{accepted}/{total}] {case_id} ({gen_model}) "
+                  f"{len(votes)}/{len(votes)} apto  "
                   f"{accepted_per_model[gen_model]}/{quota[gen_model] if quota else '-'}",
                   flush=True)
         else:
