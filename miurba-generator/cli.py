@@ -140,6 +140,10 @@ def cmd_generate(args):
     id_offset = gen_cfg["start_id"] - 1
 
     for model_name, count in plan:
+        if gen_cfg.get("validate") and gen_cfg.get("validator") == model_name:
+            raise ValueError(
+                f"generation.validator={model_name!r} is the generator of this batch: "
+                f"a model must not judge its own output")
         model_cfg = get_model_params(model_name, config)
         model_dir = f"{output_dir}/{model_name}"
 

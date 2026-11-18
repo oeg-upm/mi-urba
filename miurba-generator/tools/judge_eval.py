@@ -10,7 +10,8 @@ Cada vuelta evalúa el prompt ACTUAL del juez (prompts/validate_record.md) con e
 modelo indicado, sobre los mismos casos, y añade una línea al marcador.
 
 Uso:
-  python tools/judge_eval.py --judge gemma4-12b-awq --tag v11-gemma4
+  python tools/judge_eval.py --judge gemma4-12b-awq --tag v11-gemma4 \
+      --base-url http://host:9292
 """
 import argparse
 import json

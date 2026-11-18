@@ -6,6 +6,7 @@ data/
 data_test/
 tests/
 *.md
+!prompts/*.md
 Dockerfile
 .dockerignore
 .env

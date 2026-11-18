@@ -54,7 +54,8 @@ def test_model_load_wait_5xx_does_not_consume_retries(monkeypatch):
     client = LLMClient(base_url="http://x", model_load_wait=900, max_retries=3)
     data = client.chat([{"role": "user", "content": "hi"}])  # must not raise
     assert data["choices"][0]["message"]["content"] == "{}"
-    assert client._stats["errors"] == 2  # counted as errors but no attempts
+    assert client._stats["errors"] == 0  # load waits are not errors
+    assert client._stats["load_waits"] == 2  # counted as waiting, no attempts
 
 
 def test_no_model_load_wait_5xx_consumes_retries(monkeypatch):
@@ -212,13 +213,33 @@ def test_sequential_still_works_after_refactor(pipeline_env, tmp_path):
     assert stats["generated"] == 3
 
 
-def test_resume_counts_as_generated(pipeline_env, tmp_path):
+def test_resume_counts_complete_records_as_done(pipeline_env, tmp_path):
     pl = pipeline_env
     raw = tmp_path / "raw" / "complaints.jsonl"
     raw.parent.mkdir(parents=True)
     raw.write_text(json.dumps({"id": "Q0001", "user_text": "x"}) + "\n")
+    # Q0001 is only in complaints, so it is incomplete: reconcile drops it and
+    # both records are generated from scratch.
     stats = pl.generate_dataset(
         StubClient(None), num_records=2, start_id=1,
         output_dir=str(tmp_path), resume=True, num_workers=2,
+        seed=1,
     )
-    assert stats["generated"] == 2  # Q0001 skipped+counted, Q0002 generated
+    assert stats["generated"] == 2
+    assert len((tmp_path / "raw" / "complaints.jsonl").read_text().splitlines()) == 2
+
+
+def test_resume_skips_records_complete_in_all_three_files(pipeline_env, tmp_path):
+    pl = pipeline_env
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir(parents=True)
+    for name, key in (("complaints.jsonl", "id"), ("ground_truth.jsonl", "complaint_id"),
+                      ("metadata.jsonl", "complaint_id")):
+        (raw_dir / name).write_text(json.dumps({key: "Q0001"}) + "\n")
+    client = StubClient(None)
+    stats = pl.generate_dataset(
+        client, num_records=1, start_id=1, output_dir=str(tmp_path),
+        resume=True, num_workers=1, seed=1,
+    )
+    assert stats["generated"] == 1  # the existing complete record
+    assert client.calls == 0  # nothing regenerated

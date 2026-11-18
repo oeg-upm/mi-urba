@@ -71,7 +71,6 @@ def pick(sev, n_per_class, seed=7):
     good = defaultdict(list)
     bad = defaultdict(list)
     for cid, s in sev.items():
-        model = cid and None
         if s in ("S0", "S1"):
             good[cid] = s
         elif s in ("S2", "S3"):

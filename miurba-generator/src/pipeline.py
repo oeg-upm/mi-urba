@@ -151,7 +151,15 @@ def _filter_jsonl(path: Path, keep: set[str], key: str) -> int:
                 continue
             seen.add(record_id)
             kept.append(record)
-    if discarded:
+    # Rewrite when anything was dropped *or* when the file does not end with a
+    # newline: a tail cut exactly after a valid object still parses, and the
+    # next append would glue a record onto it.
+    needs_newline = False
+    if path.stat().st_size:
+        with open(path, "rb") as f:
+            f.seek(-1, os.SEEK_END)
+            needs_newline = f.read(1) != b"\n"
+    if discarded or needs_newline:
         _write_jsonl_atomic(path, kept)
     return discarded
 
@@ -856,6 +864,10 @@ def generate_dataset(
     skipped_existing = len(existing_ids)
     manifest_path = Path(output_dir) / "manifest.json"
     manifest = _read_manifest(manifest_path)
+    if not resume:
+        # A fresh campaign truncates the corpus, so previous passes describe
+        # records that no longer exist.
+        manifest["runs"] = []
     manifest.update({
         "code_version": _code_version(),
         "python": sys.version.split()[0],
@@ -869,7 +881,7 @@ def generate_dataset(
         "generated_at": _now_iso(),
         "plan": {"start_id": start_id, "num_records": num_records,
                  "resume": resume, "workers": num_workers},
-        "counts": {"generated": generated - skipped_existing,
+        "counts": {"generated": max(0, generated - skipped_existing),
                    "skipped_existing": skipped_existing, "failed": failed},
     })
     try:
@@ -954,9 +966,21 @@ def merge_outputs(
     metadata_path = raw_out / metadata_file
 
     raw_out.mkdir(parents=True, exist_ok=True)
-    _write_jsonl_atomic(complaints_path, merged[complaints_file])
-    _write_jsonl_atomic(ground_truth_path, merged[ground_truth_file])
-    _write_jsonl_atomic(metadata_path, merged[metadata_file])
+    # Stage the three files first and only then swap them in, so a failure while
+    # writing leaves the previous corpus untouched.
+    staged = []
+    for target, records in ((complaints_path, merged[complaints_file]),
+                            (ground_truth_path, merged[ground_truth_file]),
+                            (metadata_path, merged[metadata_file])):
+        tmp = target.with_name(target.name + ".staged")
+        with open(tmp, "w", encoding="utf-8") as f:
+            for record in records:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+        staged.append((tmp, target))
+    for tmp, target in staged:
+        os.replace(tmp, target)
 
     # Carry the per-model manifests next to the merged corpus so the reader of
     # `raw/` can still tell how each voice was produced.
@@ -974,6 +998,14 @@ def merge_outputs(
         logger.error(f"merge: the three files disagree in length: {counts}")
     else:
         logger.info(f"Merged {counts[complaints_file]} records → {complaints_path}")
+
+    # Lengths can match while the ids differ (a record from one model paired with
+    # another model's ground truth); compare the id sets too.
+    complaint_set = seen[complaints_file]
+    aligned = all(seen[name] == complaint_set
+                  for name in (ground_truth_file, metadata_file))
+    if not aligned:
+        logger.error("merge: the three files do not describe the same identifiers")
 
     return {
         "complaints": counts[complaints_file],

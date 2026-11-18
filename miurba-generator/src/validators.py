@@ -156,5 +156,5 @@ def validate_element_subcategories(config: dict, table: dict | None = None) -> N
 
     if problems:
         raise ValueError(
-            "inconsistent element_subcategories.yaml:\n  - " + "\n  - ".join(problems)
+            "inconsistent element_subcategories table in taxonomy.yaml:\n  - " + "\n  - ".join(problems)
         )
