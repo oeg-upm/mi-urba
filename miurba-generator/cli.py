@@ -141,9 +141,12 @@ def cmd_generate(args):
 
     for model_name, count in plan:
         if gen_cfg.get("validate") and gen_cfg.get("validator") == model_name:
-            raise ValueError(
-                f"generation.validator={model_name!r} is the generator of this batch: "
-                f"a model must not judge its own output")
+            if not gen_cfg.get("allow_self_judge"):
+                raise ValueError(
+                    f"generation.validator={model_name!r} is the generator of this batch: "
+                    f"a model should not judge its own output "
+                    f"(set generation.allow_self_judge: true to override)")
+            print(f"  ⚠ self-judging enabled: {model_name!r} validates its own output")
         model_cfg = get_model_params(model_name, config)
         model_dir = f"{output_dir}/{model_name}"
 

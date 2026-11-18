@@ -320,6 +320,10 @@ _DEFAULT_GENERATION = {
     # true: startup fails fast if it is missing, so the generator is never
     # used as its own judge. Recommended: a model from another family.
     "validator": None,
+    # Allow the validator to be the generator of the same batch. Off by default:
+    # a model judging its own output shares its blind spots. Only for experiments
+    # that explicitly want to measure that (it is reported in the run summary).
+    "allow_self_judge": False,
     # Patience (seconds) with cold models: 5xx within this window are treated
     # as "model loading" and do not consume retries. null = disabled.
     "model_load_wait": None,
