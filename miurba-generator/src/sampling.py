@@ -1,12 +1,20 @@
 """
 Scenario sampling — picks problem parameters from taxonomies and weights.
 
-All data comes from config.yaml. This module only contains sampling logic.
+All data comes from config.yaml. Every sampler accepts an optional
+`random.Random` so a record can be sampled from its own derived stream: that
+is what makes a seeded campaign reproducible independently of the order of
+records, the number of workers or how many retries happened before.
 """
 
 import random
 
 from . import config as cfg
+
+
+def _rng(rng: random.Random | None) -> random.Random:
+    """Return the given stream or the global one (non-deterministic mode)."""
+    return rng if rng is not None else random
 
 
 # ── Persona weights (derived from config at import time) ─────────
@@ -17,11 +25,11 @@ def _persona_weights() -> dict[str, float]:
     return {pid: p["weight"] for pid, p in personas.items()}
 
 
-def weighted_sample(choices: dict[str, float]) -> str:
+def weighted_sample(choices: dict[str, float], rng: random.Random | None = None) -> str:
     """Sample a key from a dict weighted by its values."""
     keys = list(choices.keys())
     weights = [choices[k] for k in keys]
-    return random.choices(keys, weights=weights, k=1)[0]
+    return _rng(rng).choices(keys, weights=weights, k=1)[0]
 
 
 # ── Sampling functions ──────────────────────────────────────────
@@ -76,7 +84,8 @@ def _allowed_elements(category: str, subcategory: str) -> dict[str, list[str]]:
     return out
 
 
-def sample_affected_elements(category: str, subcategory: str) -> list[dict]:
+def sample_affected_elements(category: str, subcategory: str,
+                             rng: random.Random | None = None) -> list[dict]:
     """Sample 1-3 affected elements coherent with the given problem.
 
     Both the element and its subcategory come from the coherence table, so the
@@ -85,29 +94,31 @@ def sample_affected_elements(category: str, subcategory: str) -> list[dict]:
     """
     allowed = _allowed_elements(category, subcategory)
     principals = list(allowed)
-    n = random.choices([1, 2, 3], weights=[0.50, 0.35, 0.15], k=1)[0]
+    r = _rng(rng)
+    n = r.choices([1, 2, 3], weights=[0.50, 0.35, 0.15], k=1)[0]
     n = min(n, len(principals))
-    chosen = random.sample(principals, n)
-    return [{"principal": el, "subcategory": random.choice(allowed[el])} for el in chosen]
+    chosen = r.sample(principals, n)
+    return [{"principal": el, "subcategory": r.choice(allowed[el])} for el in chosen]
 
 
-def sample_location(category: str) -> dict:
+def sample_location(category: str, rng: random.Random | None = None) -> dict:
     """Sample a location zone and detail relevant to the problem category."""
     zones_cfg = cfg.get_location_zones()
     category_zones = cfg.get_config().get("category_zones", {})
     zones = _require_mapping(category_zones, category, "category_zones")
-    zone = random.choice(zones)
+    zone = _rng(rng).choice(zones)
     if zone not in zones_cfg:
         raise ValueError(
             f"category_zones[{category!r}] references unknown zone {zone!r}; "
             f"declare it in location_zones"
         )
     details = zones_cfg[zone]
-    detail = random.choice(details) if details else ""
+    detail = _rng(rng).choice(details) if details else ""
     return {"zone": zone, "detail": detail}
 
 
-def sample_risks(category: str, urgency: str) -> list[str]:
+def sample_risks(category: str, urgency: str,
+                 rng: random.Random | None = None) -> list[str]:
     """Sample relevant risks based on category and urgency.
 
     'ninguno' is never sampled alongside a concrete risk: it is the exclusive
@@ -119,26 +130,27 @@ def sample_risks(category: str, urgency: str) -> list[str]:
     category_risks = cfg.get_config().get("category_risks", {})
     possible = [r for r in _require_mapping(category_risks, category, "category_risks")
                 if r != "ninguno"]
-    n = random.choices([0, 1, 2], weights=[0.20, 0.60, 0.20], k=1)[0]
+    r = _rng(rng)
+    n = r.choices([0, 1, 2], weights=[0.20, 0.60, 0.20], k=1)[0]
     n = min(n, len(possible))
     if n == 0:
         return ["ninguno"]
-    return random.sample(possible, n)
+    return r.sample(possible, n)
 
 
-def sample_urgency(category: str) -> str:
+def sample_urgency(category: str, rng: random.Random | None = None) -> str:
     """Sample urgency level weighted by category."""
     urgency_weights = cfg.get_config().get("urgency_weights", {})
     weights = _require_mapping(urgency_weights, category, "urgency_weights")
-    return weighted_sample(weights)
+    return weighted_sample(weights, rng)
 
 
-def sample_scenario() -> dict:
+def sample_scenario(rng: random.Random | None = None) -> dict:
     """Sample a complete problem scenario from config."""
     weights = cfg.get_weights()
     categories = cfg.get_categories()
 
-    category = weighted_sample(weights["category"])
+    category = weighted_sample(weights["category"], rng)
     if category not in categories:
         raise ValueError(
             f"weights.category references unknown category {category!r}; "
@@ -149,12 +161,12 @@ def sample_scenario() -> dict:
         raise ValueError(
             f"category {category!r} has no subcategories; declare at least one in categories"
         )
-    subcategory = random.choice(subcategories)
+    subcategory = _rng(rng).choice(subcategories)
 
-    urgency = sample_urgency(category)
-    location = sample_location(category)
-    risks = sample_risks(category, urgency)
-    affected_elements = sample_affected_elements(category, subcategory)
+    urgency = sample_urgency(category, rng)
+    location = sample_location(category, rng)
+    risks = sample_risks(category, urgency, rng)
+    affected_elements = sample_affected_elements(category, subcategory, rng)
 
     return {
         "category": category,
@@ -167,22 +179,22 @@ def sample_scenario() -> dict:
     }
 
 
-def sample_community() -> dict:
+def sample_community(rng: random.Random | None = None) -> dict:
     """Sample a community uniformly."""
     communities = cfg.get_communities()
-    return random.choice(communities)
+    return _rng(rng).choice(communities)
 
 
-def should_be_multi_problem() -> bool:
+def should_be_multi_problem(rng: random.Random | None = None) -> bool:
     """Decide if this complaint has multiple problems."""
     prob = cfg.get_weights()["multi_problem"]
-    return random.random() < prob
+    return _rng(rng).random() < prob
 
 
-def sample_persona() -> dict:
+def sample_persona(rng: random.Random | None = None) -> dict:
     """Sample a neighbor persona from config."""
     personas = cfg.get_config().get("personas", {})
-    pid = weighted_sample(_persona_weights())
+    pid = weighted_sample(_persona_weights(), rng)
     persona = personas[pid]
     return {
         "id": pid,
@@ -192,7 +204,7 @@ def sample_persona() -> dict:
     }
 
 
-def sample_modifier() -> dict | None:
+def sample_modifier(rng: random.Random | None = None) -> dict | None:
     """Optionally sample a style modifier to compose with a persona.
 
     Returns None if no modifier is applied (based on modifier_prob).
@@ -201,7 +213,7 @@ def sample_modifier() -> dict | None:
     config = cfg.get_config()
     modifier_prob = config.get("modifier_prob", 0.30)
 
-    if random.random() >= modifier_prob:
+    if _rng(rng).random() >= modifier_prob:
         return None
 
     modifiers = config.get("modifiers", {})
@@ -210,7 +222,7 @@ def sample_modifier() -> dict | None:
 
     # Sample modifier by its own probability
     mod_weights = {mid: m["prob"] for mid, m in modifiers.items()}
-    mid = weighted_sample(mod_weights)
+    mid = weighted_sample(mod_weights, rng)
     mod = modifiers[mid]
     return {
         "id": mid,

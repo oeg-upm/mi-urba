@@ -43,7 +43,6 @@ El comando `merge` repite solo la fusión.
 
 import argparse
 import logging
-import random
 import sys
 from pathlib import Path
 
@@ -122,8 +121,8 @@ def cmd_generate(args):
             extra_params=v_cfg.get("extra_params", {}),
         )
 
-    if gen_cfg["seed"] is not None:
-        random.seed(gen_cfg["seed"])
+    # Sampling determinism comes from a per-record stream derived from
+    # (seed, record id), so no global seeding is needed here.
 
     print("miUrba — Generation (config-only)")
     print("=" * 60)
@@ -178,6 +177,7 @@ def cmd_generate(args):
             max_validation_retries=gen_cfg["max_validation_retries"],
             validator_client=validator_client,
             num_workers=gen_cfg["workers"],
+            seed=gen_cfg["seed"],
             provenance={
                 "model": model_name,
                 "model_id": model_cfg["model"],

@@ -47,6 +47,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from src.config import (get_logging_config,
                         get_config, get_extraction_config, get_paths,
                         get_extraction_model_params,
+                        get_extraction_temperature,
                         get_extraction_json_schema)
 from src.llm import LLMClient
 from src.pipeline import extract_dataset
@@ -93,7 +94,7 @@ def cmd_extract(args):
     client = LLMClient(
         base_url=model_cfg["base_url"],
         model=model_cfg["model"],
-        temperature=ext_cfg["temperature"],
+        temperature=get_extraction_temperature(ext_cfg, model_cfg, config, model_name),
         timeout=ext_cfg["timeout"],
         max_retries=ext_cfg["max_retries"],
         retry_delay=ext_cfg["retry_delay"],

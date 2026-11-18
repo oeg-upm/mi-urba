@@ -170,6 +170,27 @@ def get_endpoint_url(name: str, cfg: dict | None = None) -> str:
     return cfg["endpoints"][name]["base_url"].rstrip("/")
 
 
+def get_extraction_temperature(ext_cfg: dict, model_cfg: dict,
+                               cfg: dict | None = None,
+                               model_name: str | None = None) -> float:
+    """Sampling temperature for extraction calls.
+
+    Precedence, resolved against the raw YAML so a missing value really means
+    "not configured": explicit `extraction.temperature` > `models.<name>.temperature`
+    > the `extraction.temperature` default (`0.2`). A `null` value means
+    "inherit", not "send null".
+    """
+    cfg = cfg if cfg is not None else get_config()
+    explicit = (cfg.get("extraction") or {}).get("temperature")
+    if explicit is not None:
+        return explicit
+    if model_name is not None:
+        model_temperature = (cfg.get("models") or {}).get(model_name, {}).get("temperature")
+        if model_temperature is not None:
+            return model_temperature
+    return ext_cfg["temperature"]
+
+
 def get_model_params(name: str, cfg: dict | None = None) -> dict[str, Any]:
     """Return (base_url, model_id, temperature, api_key) for a named model."""
     cfg = cfg or get_config()
@@ -288,10 +309,16 @@ _DEFAULT_EXTRACTION = {
 
 
 def get_extraction_config(cfg: dict | None = None) -> dict[str, Any]:
-    """Return the `extraction:` section with defaults for missing keys."""
+    """Return the `extraction:` section with defaults for missing keys.
+
+    A `null` value means "use the default" for `temperature`, so writing
+    `temperature: null` in a config does not send `null` to the server.
+    """
     cfg = cfg or get_config()
     ext = dict(_DEFAULT_EXTRACTION)
     ext.update(cfg.get("extraction", {}))
+    if ext.get("temperature") is None:
+        ext["temperature"] = _DEFAULT_EXTRACTION["temperature"]
     return ext
 
 

@@ -30,13 +30,13 @@ def env(monkeypatch):
     scenario = {"category": "cubierta", "subcategory": "tejas",
                 "location_zone": "exterior", "location_detail": "azotea",
                 "urgency": "alta", "affected_elements": [], "risks": ["ninguno"]}
-    monkeypatch.setattr(pl, "sample_scenario", lambda: dict(scenario))
-    monkeypatch.setattr(pl, "should_be_multi_problem", lambda: False)
-    monkeypatch.setattr(pl, "sample_community", lambda: {
+    monkeypatch.setattr(pl, "sample_scenario", lambda *a, **k: dict(scenario))
+    monkeypatch.setattr(pl, "should_be_multi_problem", lambda *a, **k: False)
+    monkeypatch.setattr(pl, "sample_community", lambda *a, **k: {
         "id": "C001", "name": "X", "type": "bloque", "num_viviendas": 10, "year": 2000,
         "has_elevator": False, "has_pool": False, "has_garage": False})
-    monkeypatch.setattr(pl, "sample_persona", lambda: None)
-    monkeypatch.setattr(pl, "sample_modifier", lambda: None)
+    monkeypatch.setattr(pl, "sample_persona", lambda *a, **k: None)
+    monkeypatch.setattr(pl, "sample_modifier", lambda *a, **k: None)
     monkeypatch.setattr(pl, "build_generation_prompt", lambda **kw: [
         {"role": "user", "content": "s"}])
     return pl

@@ -46,6 +46,7 @@ variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
 | `<out>/<modelo>/raw/metadata.jsonl` | `complaint_id`, persona, modifier, comunidad, procedencia |
 | `<out>/<modelo>/raw/rejected.jsonl` | registros descartados con motivo y etapa (auditoría) |
 | `<out>/<modelo>/raw/conversations.jsonl` | transcripción completa por registro (auditoría) |
+| `<out>/<modelo>/manifest.json` | manifiesto de la campaña: versiones, semilla y política de muestreo, procedencia y una entrada por pasada con sus recuentos |
 
 `rejected.jsonl` y `conversations.jsonl` se escriben **por modelo** y no se
 fusionan en `raw/`: son material de auditoría, no parte del corpus.
@@ -87,7 +88,7 @@ claves de `generation`. Detalle y valores por defecto comentados en
 | `batches` | Plan `[{model, count}, ...]` | `[]` |
 | `models` + `num_records` | Plan alternativo: lista de modelos | `null` |
 | `start_id` | Primer ID (secuencial en el plan) | `1` |
-| `seed` | Semilla de muestreo. Determinista solo con `workers: 1` | `null` |
+| `seed` | Semilla de muestreo. Cada registro deriva su propio flujo de `Random(seed:id)`: el escenario no depende del orden, de `workers` ni de los reintentos. Reproduce escenario y perfil, **no** el texto del modelo | `null` |
 | `resume` | Saltar los registros ya completos. Un registro presente en `complaints` pero no en `ground_truth`/`metadata` (escritura interrumpida) se elimina de los tres ficheros y se regenera | `true` |
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
 | `model_load_wait` | Paciencia (s) con modelos en frío; `null` = off | `null` |
@@ -121,9 +122,11 @@ alinea con el escenario (categoría, subcategoría, urgencia, elementos,
 riesgos, ubicación). Si no alinea, regenera hasta `max_validation_retries`
 veces; si se agota el presupuesto el registro **se descarta** (no se escribe
 nunca) y queda auditado en `rejected.jsonl` con el motivo. Una reanudación
-posterior lo reintenta con un escenario nuevo. El juez fallido o degradado se
-refleja en el resumen del run (`validation: ok/rejected/degraded`) y **nunca
-cuenta como aprobación** (fail-closed).
+posterior lo reintenta; con `seed` fijada el reintento reproduce el mismo
+escenario (el flujo se deriva de `seed:id`), así que para cambiar el escenario
+hay que cambiar el identificador o generar sin semilla. El juez fallido o
+degradado se refleja en el resumen del run (`validation: ok/rejected/degraded`)
+y **nunca cuenta como aprobación** (fail-closed).
 
 ## Tests
 
