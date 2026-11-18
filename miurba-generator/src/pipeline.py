@@ -22,6 +22,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from . import config as cfg
+from . import contracts
 from .llm import LLMClient
 from .prompt_loader import render as _render_prompt
 from .prompts import build_generation_prompt, build_validation_prompt
@@ -34,6 +35,37 @@ from .sampling import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _now_iso() -> str:
+    """UTC timestamp for provenance records."""
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def normalize_timestamp(value: str) -> str | None:
+    """Return the timestamp as canonical ISO 8601, or None if unparseable.
+
+    Models emit offsets as `+0000`, `+00:00` or `Z`, so the value is normalised
+    before parsing (this also keeps the code valid on Python 3.10, where
+    `fromisoformat` accepts neither `Z` nor `+0000`). A naive value is assumed
+    to be UTC; a record whose timestamp cannot be parsed is rejected, because
+    the corpus contract requires a real date-time.
+    """
+    from datetime import datetime, timezone
+    if not isinstance(value, str) or not value.strip():
+        return None
+    text = value.strip()
+    if text.endswith(("Z", "z")):
+        text = text[:-1] + "+00:00"
+    text = re.sub(r"([+-]\d{2})(\d{2})$", r"\1:\2", text)
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.isoformat()
 
 
 # ── Validation (2-stage) ──────────────────────────────────────────────
@@ -231,7 +263,8 @@ def generate_complaint(
     validation_log: list | None = None,
     reject_sink=None,
     conversation_sink=None,
-) -> tuple[dict, dict] | None:
+    provenance: dict | None = None,
+) -> tuple[dict, dict, dict] | None:
     """
     Generate a single raw complaint record.
 
@@ -241,6 +274,11 @@ def generate_complaint(
     if scenario is None:
         scenario = sample_scenario()
 
+    # Provenance defaults: the CLI always passes the real values; direct callers
+    # (tests, scripts) get a complete but empty record so the contract still holds.
+    provenance = {"model": "", "model_id": "", "seed": None,
+                  "config_hash": "", "prompt_fingerprints": {},
+                  **(provenance or {})}
     if validate and validator_client is None:
         raise ValueError(
             "validate=True requires an explicit judge client "
@@ -304,7 +342,7 @@ def generate_complaint(
         return None
 
     user_text = data.get("user_text", "")
-    timestamp = data.get("timestamp", "")
+    timestamp = normalize_timestamp(data.get("timestamp", "")) or ""
 
     if not user_text:
         logger.warning(f"[{record_id}] No user_text in LLM output")
@@ -313,6 +351,16 @@ def generate_complaint(
                          "reason": "no_user_text", "detail": "JSON without user_text",
                          "attempts": 1, "scenario": problems,
                          "last_text": str(data)[:2000], "timestamp": ""})
+        return None
+
+    if not timestamp:
+        logger.warning(f"[{record_id}] Missing or unparseable timestamp")
+        if reject_sink is not None:
+            reject_sink({"id": record_id, "stage": "contract",
+                         "reason": "schema_violation",
+                         "detail": "timestamp: missing or unparseable date-time",
+                         "attempts": 1, "scenario": problems,
+                         "last_text": user_text, "timestamp": ""})
         return None
 
     # Single acceptance gate. The FIRST generation and EVERY regeneration are
@@ -404,7 +452,7 @@ def generate_complaint(
                 logger.warning(f"[{record_id}] regeneration produced no user_text")
                 break
             user_text = regen_text
-            timestamp = data.get("timestamp", timestamp)
+            timestamp = normalize_timestamp(data.get("timestamp", "")) or timestamp
         except (RuntimeError, json.JSONDecodeError) as e:
             logger.error(f"[{record_id}] regeneration LLM call failed: {e}")
             break
@@ -461,7 +509,26 @@ def generate_complaint(
         "persona": persona["id"] if persona else None,
         "modifier": modifier["id"] if modifier else None,
         "community": community,
+        "provenance": {**provenance, "generated_at": _now_iso()},
     }
+
+    # Output contract: a record that does not conform to the published schemas
+    # is rejected (and audited) instead of entering the corpus.
+    violations = contracts.validate_record(complaint, ground_truth, metadata)
+    if violations:
+        logger.error(f"[{record_id}] contract violations: {'; '.join(violations)}")
+        if reject_sink is not None:
+            reject_sink({
+                "id": record_id,
+                "stage": "contract",
+                "reason": "schema_violation",
+                "detail": "; ".join(violations)[:2000],
+                "attempts": len(transcript),
+                "scenario": problems,
+                "last_text": user_text,
+                "timestamp": timestamp,
+            })
+        return None
 
     if conversation_sink is not None:
         conversation_sink({"id": record_id, "accepted": True, "scenario": problems,
@@ -487,6 +554,7 @@ def generate_dataset(
     max_validation_retries: int = 3,
     validator_client: LLMClient | None = None,
     num_workers: int = 1,
+    provenance: dict | None = None,
 ) -> dict:
     """
     Generate raw complaint dataset.
@@ -552,6 +620,7 @@ def generate_dataset(
             validation_log=validation_log,
             reject_sink=_reject_sink,
             conversation_sink=_conversation_sink,
+            provenance=provenance,
         )
         if result is None:
             logger.warning(f"[{record_id}] Generation failed")

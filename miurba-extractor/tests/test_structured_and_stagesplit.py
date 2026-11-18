@@ -80,6 +80,7 @@ def fake_taxonomy(monkeypatch):
         "location_zones": {"norte": []},
         "risks": ["riesgo_x"],
         "urgency_levels": ["alta"],
+        "affected_elements": {"muro": ["carga"]},
     })
 
 
@@ -94,11 +95,7 @@ def reset_config_cache():
 
 @pytest.fixture
 def fixture_cfg(tmp_path):
-    """Minimal config with a custom taxonomy + copied schema files."""
-    schemas_src = PROJECT_ROOT.parent / "schemas"
-    (tmp_path / "schemas").mkdir()
-    for f in ("extraction_schema.json",):
-        (tmp_path / "schemas" / f).write_text((schemas_src / f).read_text(encoding="utf-8"))
+    """Minimal config with a custom taxonomy."""
     cfg = {
         "taxonomy": "taxonomy.yaml",
     }
@@ -109,6 +106,7 @@ def fixture_cfg(tmp_path):
         "urgency_levels": ["alta", "baja"],
         "location_zones": {"norte": [], "sur": []},
         "categories": {"cubierta": ["tejas"]},
+        "affected_elements": {"muro": ["carga"], "suelo": ["solera"]},
     }, allow_unicode=True), encoding="utf-8")
     return p
 
@@ -124,6 +122,45 @@ def test_enum_sync_values(fixture_cfg, monkeypatch):
     props = defs["problemExtraction"]["properties"]
     assert props["affected_elements"]["maxItems"] == 5
     assert props["risks"]["maxItems"] == 5
+
+
+def test_vocabulary_is_free_by_default(fixture_cfg, monkeypatch):
+    """Open mode: category/elements accept any string, no taxonomy constraint."""
+    from src.config import get_config
+    monkeypatch.setattr("src.config.DEFAULT_CONFIG_PATH", fixture_cfg)
+    schema = get_extraction_json_schema(get_config(fixture_cfg))
+    props = schema["$defs"]["problemExtraction"]["properties"]
+    assert "oneOf" not in props["category"]
+    assert "oneOf" not in props["affected_elements"]["items"]
+
+
+def test_constrain_vocabulary_builds_taxonomy_oneof(fixture_cfg, monkeypatch):
+    """Closed mode: every label must exist in the taxonomy."""
+    import jsonschema
+    from src.config import get_config
+    monkeypatch.setattr("src.config.DEFAULT_CONFIG_PATH", fixture_cfg)
+    cfg = get_config(fixture_cfg)
+    cfg["extraction"] = {"model": "m", "constrain_vocabulary": True}
+    schema = get_extraction_json_schema(cfg)
+    jsonschema.Draft202012Validator.check_schema(schema)
+    props = schema["$defs"]["problemExtraction"]["properties"]
+    assert len(props["category"]["oneOf"]) == 1  # only 'cubierta'
+    assert len(props["affected_elements"]["items"]["oneOf"]) == 2
+
+    def valid(category, elements):
+        record = {"complaint_id": "Q0001", "extractions": [{
+            "category": category, "affected_elements": elements,
+            "location": {"zone": "norte", "detail": ""},
+            "risks": ["riesgo_x"], "urgency": "alta"}]}
+        return jsonschema.Draft202012Validator(schema).is_valid(record)
+
+    assert valid({"principal": "cubierta", "subcategory": "tejas"}, [])
+    assert not valid({"principal": "cubierta", "subcategory": "otra"}, [])
+    assert not valid({"principal": "inventada", "subcategory": "tejas"}, [])
+    assert valid({"principal": "cubierta", "subcategory": "tejas"},
+                 [{"principal": "muro", "subcategory": "carga"}])
+    assert not valid({"principal": "cubierta", "subcategory": "tejas"},
+                     [{"principal": "muro", "subcategory": "solera"}])
 
 
 # ── Stub client ───────────────────────────────────────────────

@@ -13,6 +13,9 @@ Extrae la información estructurada de la queja.
 CATEGORÍAS VÁLIDAS (principal → subcategorías):
 {{cat_lines}}
 
+ELEMENTOS AFECTADOS VÁLIDOS (principal → subcategorías):
+{{elem_lines}}
+
 ZONAS VÁLIDAS: {{zones}}
 RIESGOS VÁLIDOS: {{risks}}
 URGENCIAS VÁLIDAS: {{urgencies}}

@@ -33,7 +33,7 @@ def env(monkeypatch):
     monkeypatch.setattr(pl, "sample_scenario", lambda: dict(scenario))
     monkeypatch.setattr(pl, "should_be_multi_problem", lambda: False)
     monkeypatch.setattr(pl, "sample_community", lambda: {
-        "name": "X", "type": "bloque", "num_viviendas": 10, "year": 2000,
+        "id": "C001", "name": "X", "type": "bloque", "num_viviendas": 10, "year": 2000,
         "has_elevator": False, "has_pool": False, "has_garage": False})
     monkeypatch.setattr(pl, "sample_persona", lambda: None)
     monkeypatch.setattr(pl, "sample_modifier", lambda: None)
@@ -51,7 +51,7 @@ class GenClient:
         self.calls += 1
         return {"choices": [{"message": {"content": json.dumps(
             {"user_text": self._texts[min(self.calls - 1, len(self._texts) - 1)],
-             "timestamp": "t"})}}]}
+             "timestamp": "2024-03-15T11:23:47+00:00"})}}]}
 
     def extract_content(self, response):
         return response["choices"][0]["message"]["content"]

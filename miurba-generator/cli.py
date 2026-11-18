@@ -52,6 +52,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from src.config import (get_config, get_generation_config, get_model_params,
                         get_paths, get_logging_config)
+from src import contracts, prompt_loader
 from src.llm import LLMClient
 from src.pipeline import generate_dataset, merge_outputs
 
@@ -84,6 +85,7 @@ def cmd_generate(args):
     validate_taxonomy(config)
     validate_element_subcategories(config)
     validate_expression_sections()
+    contracts.check_schemas()
 
     plan = _generation_plan(gen_cfg)
     output_dir = gen_cfg["default_output_dir"]
@@ -176,6 +178,13 @@ def cmd_generate(args):
             max_validation_retries=gen_cfg["max_validation_retries"],
             validator_client=validator_client,
             num_workers=gen_cfg["workers"],
+            provenance={
+                "model": model_name,
+                "model_id": model_cfg["model"],
+                "seed": gen_cfg["seed"],
+                "config_hash": contracts.config_hash(config),
+                "prompt_fingerprints": prompt_loader.fingerprint_all(),
+            },
         )
 
         stats["model"] = model_name

@@ -181,7 +181,7 @@ def pipeline_env(monkeypatch, tmp_path):
     monkeypatch.setattr(p, "sample_scenario", lambda: dict(scenario))
     monkeypatch.setattr(p, "should_be_multi_problem", lambda: False)
     monkeypatch.setattr(p, "sample_community", lambda: {
-        "name": "X", "type": "bloque", "num_viviendas": 10, "year": 2000,
+        "id": "C001", "name": "X", "type": "bloque", "num_viviendas": 10, "year": 2000,
         "has_elevator": False, "has_pool": False, "has_garage": False})
     monkeypatch.setattr(p, "sample_persona", lambda: None)
     monkeypatch.setattr(p, "sample_modifier", lambda: None)

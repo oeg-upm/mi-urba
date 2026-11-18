@@ -96,7 +96,7 @@ def build_generation_prompt(
     # JSON template — only user_text and timestamp
     json_template = {
         "user_text": "<lo que escribe/dice el vecino>",
-        "timestamp": "<ISO8601 realista>",
+        "timestamp": "<ISO8601 con zona, p. ej. 2024-03-15T11:23:47+01:00>",
     }
 
     # Persona conditioning

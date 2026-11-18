@@ -2,53 +2,24 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://miurba.es/schemas/complaint",
   "title": "Complaint",
-  "description": "Unstructured input from a user reporting issues or suggestions about their residential community maintenance.",
+  "description": "Unstructured input from a user reporting issues or suggestions about their residential community maintenance. Generation context lives in metadata_schema.json.",
   "type": "object",
   "required": ["id", "user_text", "timestamp"],
   "properties": {
     "id": {
       "type": "string",
-      "description": "Unique complaint identifier"
+      "pattern": "^Q[0-9]{4,}$",
+      "description": "Unique complaint identifier (Q<number>)"
     },
     "user_text": {
       "type": "string",
+      "minLength": 1,
       "description": "Free-form text from the user describing the issue(s)"
     },
     "timestamp": {
       "type": "string",
       "format": "date-time",
-      "description": "Date and time when the complaint was received"
-    },
-    "community_ref": {
-      "type": "string",
-      "description": "Reference to the residential community"
-    },
-    "persona": {
-      "type": "string",
-      "description": "Persona ID that conditioned the generation (for synthetic data only)",
-      "enum": [
-        "abuela_veterana", "abuelo_ajetreado", "joven_profesional", "chica_millennial",
-        "madre_preocupada", "padre_activo", "estudiante_universitario", "pareja_mayor",
-        "vecino_conflictivo", "vecina_pasivo_agresiva", "vecino_ansioso", "vecino_formal",
-        "vecino_informal_amable", "vecino_primerizo", "vecino_tecnico",
-        "vecino_conspiranoico", "vecino_egoista", "vecino_cotilla", "vecino_voluntarioso",
-        "vecino_racional", "vecino_hipocondriaco", "vecino_sumiso",
-        "presidente_comunidad", "portero_encargado",
-        "propietario_ausente", "propietario_tacaño", "inquilino_reciente",
-        "inquilino_transeunte", "vecino_nocturno", "vecino_nuevo_dinero", "vecino_ecologista",
-        "vecino_inmobiliaria", "vecino_retirado_vocacional"
-      ]
-    },
-    "modifier": {
-      "type": ["string", "null"],
-      "description": "Style modifier composed with persona (for synthetic data only)",
-      "enum": [
-        "semianalfabeto", "dictado_voz", "solo_mayusculas", "exceso_emojis",
-        "ultra_conciso", "redundante", "habla_andaluza", "habla_catalana",
-        "habla_gallega", "habla_canaria", "origen_latinoamericano", "origen_arabe",
-        "origen_chino", "origen_este_europa", "origen_extranjero",
-        "urgente", "enfado_acumulado", "culpable_oculto"
-      ]
+      "description": "Date and time when the complaint was received (ISO 8601)"
     }
   },
   "additionalProperties": false

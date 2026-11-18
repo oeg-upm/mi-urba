@@ -46,7 +46,7 @@ ESTILO FLEXIBLE (libertad creativa):
    - Contexto adicional: el vecino puede añadir detalles sobre su vida, la comunidad o el historial del problema.
    - Si el vecino se identifica, inventa un nombre y apellidos realistas en español. NUNCA uses placeholders como '[Nombre del vecino]', '[sin especificar]' o similares.
    - Escribe EXCLUSIVAMENTE en español. No mezcles palabras sueltas de otros idiomas. Revisa la ortografía antes de finalizar.
-2. El timestamp debe ser realista.
+2. El timestamp debe ser realista y en formato ISO 8601 con zona horaria, por ejemplo "2024-03-15T11:23:47+01:00" (no valen fechas escritas en prosa ni formatos locales).
 
 RESPONDE SOLO con JSON en este formato:
 {{json_template}}

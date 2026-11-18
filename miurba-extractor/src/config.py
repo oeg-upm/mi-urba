@@ -280,6 +280,10 @@ _DEFAULT_EXTRACTION = {
     "model_load_wait": None,
     # Concurrent extraction workers (1 = sequential, current behaviour).
     "workers": 1,
+    # Restrict category/subcategory and affected elements to the taxonomy
+    # vocabulary (closed mode). When false the classification is free-form
+    # (open mode): values are still validated as strings, not as enum members.
+    "constrain_vocabulary": False,
 }
 
 
@@ -323,4 +327,39 @@ def get_extraction_json_schema(cfg: dict | None = None) -> dict[str, Any]:
     problem = schema["$defs"]["problemExtraction"]["properties"]
     problem["affected_elements"]["maxItems"] = 5
     problem["risks"]["maxItems"] = 5
+
+    if get_extraction_config(cfg).get("constrain_vocabulary"):
+        _constrain_to_taxonomy(schema, cfg)
     return schema
+
+
+def _constrain_to_taxonomy(schema: dict, cfg: dict) -> None:
+    """Restrict category and affected elements to the taxonomy vocabulary.
+
+    Closed mode: every emitted label must exist in the taxonomy. Implemented
+    as `oneOf` blocks (one per principal value) because the subcategory is only
+    valid in combination with its own principal.
+    """
+    categories = get_categories(cfg)
+    elements = get_affected_elements(cfg)
+
+    schema["$defs"]["problemExtraction"]["properties"]["category"] = {
+        "oneOf": [
+            {"properties": {"principal": {"const": cat},
+                            "subcategory": {"enum": list(subs)}},
+             "required": ["principal", "subcategory"],
+             "additionalProperties": False}
+            for cat, subs in categories.items()
+        ],
+        "description": "Category and subcategory from the taxonomy",
+    }
+    schema["$defs"]["problemExtraction"]["properties"]["affected_elements"]["items"] = {
+        "oneOf": [
+            {"properties": {"principal": {"const": el},
+                            "subcategory": {"enum": list(subs)}},
+             "required": ["principal", "subcategory"],
+             "additionalProperties": False}
+            for el, subs in elements.items()
+        ],
+        "description": "Affected element from the taxonomy",
+    }
