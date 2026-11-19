@@ -18,8 +18,8 @@ Los modelos que razonan gastan presupuesto antes de escribir: con max_tokens baj
 devuelven contenido vacío con finish_reason='length'. Por eso el presupuesto es
 amplio y hay reintento con el doble de margen.
 
-La clave se lee en tiempo de ejecución de ~/.pi/agent/local-llm.key y nunca se
-escribe en el repo ni en las salidas.
+La clave se pasa con --key-file y nunca se escribe en el repo ni en las salidas.
+El endpoint se pasa con --base-url.
 """
 import argparse
 import json
@@ -31,16 +31,13 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.request import Request, urlopen
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-sys.path.insert(0, str(ROOT / "miurba-generator"))
+SUBPROJECT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SUBPROJECT))
 from src.prompt_loader import render  # noqa: E402
 
-KEY_PATH = Path.home() / ".pi" / "agent/local-llm.key"
-BASE_URL = "http://192.168.10.1:4000/v1/chat/completions"
 
-
-def api_key() -> str:
-    return KEY_PATH.read_text(encoding="utf-8").strip()
+def read_key(path: str) -> str:
+    return Path(path).read_text(encoding="utf-8").strip()
 
 
 def render_scenario(extractions: list[dict]) -> str:
@@ -61,7 +58,7 @@ def render_scenario(extractions: list[dict]) -> str:
 
 
 def call(model: str, messages: list[dict], temperature: float, max_tokens: int,
-         timeout: int = 300) -> dict:
+         base_url: str, key: str, timeout: int = 300) -> dict:
     """Una petición al endpoint. Devuelve veredicto + metadatos para el log."""
     payload = {"model": model, "messages": messages, "temperature": temperature,
                "max_tokens": max_tokens}
@@ -70,9 +67,9 @@ def call(model: str, messages: list[dict], temperature: float, max_tokens: int,
             "finish_reason": None, "completion_tokens": None,
             "reasoning_tokens": None, "content_len": None}
     try:
-        req = Request(BASE_URL, json.dumps(payload).encode(),
+        req = Request(base_url, json.dumps(payload).encode(),
                       {"Content-Type": "application/json",
-                       "Authorization": f"Bearer {api_key()}"})
+                       "Authorization": f"Bearer {key}"})
         data = json.load(urlopen(req, timeout=timeout))
         choice = data["choices"][0]
         content = (choice["message"].get("content") or "").strip()
@@ -97,11 +94,12 @@ def call(model: str, messages: list[dict], temperature: float, max_tokens: int,
 
 
 def ask_with_retries(model: str, messages: list[dict], temperature: float,
-                     max_tokens: int, attempts: int, log) -> dict:
+                     max_tokens: int, attempts: int, log, base_url: str,
+                     key: str) -> dict:
     """Reintenta cuando la respuesta viene vacía, truncada o con error de parseo."""
     last = None
     for attempt in range(1, attempts + 1):
-        result = call(model, messages, temperature, max_tokens)
+        result = call(model, messages, temperature, max_tokens, base_url, key)
         result["attempt"] = attempt
         log(f"request\t{model}\tattempt={attempt}\tfinish={result['finish_reason']}"
             f"\ttokens={result['completion_tokens']}\treasoning={result['reasoning_tokens']}"
@@ -143,6 +141,10 @@ def load_corpus(dataset: Path, generators: list[str]):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--base-url", required=True,
+                    help="endpoint OpenAI-compatible del panel (LiteLLM o similar)")
+    ap.add_argument("--key-file", required=True,
+                    help="fichero con la API key del panel")
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--generators", nargs="*", default=[])
     ap.add_argument("--target", type=int, default=0)
@@ -157,6 +159,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--seed", type=int, default=7)
     args = ap.parse_args()
+    key = read_key(args.key_file)
     if not args.target and not args.per_generator:
         ap.error("indica --target o --per-generator")
     if not args.generators:
@@ -231,7 +234,8 @@ def main():
             results = list(pool.map(
                 lambda j: (j[0], j[1],
                            ask_with_retries(j[0], messages, args.temperature,
-                                            args.max_tokens, args.attempts, log)),
+                                            args.max_tokens, args.attempts, log,
+                                            args.base_url, key)),
                 jobs))
         n_requests += len(results)
         for model, rep, v in results:
