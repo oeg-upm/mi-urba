@@ -30,14 +30,20 @@ P2 = {"category": "cubierta", "subcategory": "goteras", "location_zone": "exteri
 PERSONA = {"profile": "Inquilino transeúnte", "style": "mensajes cortos y directos"}
 MODIFIER = {"description": "Escribe con prisa", "style_override": "frases telegráficas"}
 
-out = {
-    "generation_simple": build_generation_prompt("Q0001", [P1], COMMUNITY),
-    "generation_multi": build_generation_prompt("Q0002", [P1, P2], COMMUNITY,
-                                                persona=PERSONA, modifier=MODIFIER),
-    "validation": build_validation_prompt("Texto de prueba de la queja.", [P1, P2]),
-}
 
-path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "tests/fixtures/prompt_golden.json"
-path.parent.mkdir(parents=True, exist_ok=True)
-path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-print(f"golden escrito en {path} ({len(out)} prompts)")
+def main() -> None:
+    out = {
+        "generation_simple": build_generation_prompt("Q0001", [P1], COMMUNITY),
+        "generation_multi": build_generation_prompt("Q0002", [P1, P2], COMMUNITY,
+                                                    persona=PERSONA, modifier=MODIFIER),
+        "validation": build_validation_prompt("Texto de prueba de la queja.", [P1, P2]),
+    }
+
+    path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "tests/fixtures/prompt_golden.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"golden escrito en {path} ({len(out)} prompts)")
+
+
+if __name__ == "__main__":
+    main()

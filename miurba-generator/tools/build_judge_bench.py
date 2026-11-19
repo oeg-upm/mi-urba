@@ -4,7 +4,7 @@
 Input: the raw outputs of previous campaigns (conversations.jsonl holds every
 candidate text the judge saw, with the scenario that was requested).
 
-Output (under $MIURBA_EVAL_DIR/judge_bench/, default `eval/judge_bench/`):
+Output (under <eval-dir>/judge_bench/, default `<repo>/eval/judge_bench/`):
   cases.jsonl      one case per line: {case_id, model, scenario, text}. NOTHING
                    about the judge verdict is included: annotators must be blind.
   labels_hidden.jsonl  the judge's own verdict and the campaign it came from, keyed
@@ -16,24 +16,23 @@ judge accepted and texts it rejected, so both error rates can be measured.
 """
 import argparse
 import json
-import os
 import random
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-EVAL = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval"))
+REPO = Path(__file__).resolve().parents[2]
+DEFAULT_EVAL = REPO / "eval"
 DEFAULT_RUNS = ["smoke-5x100", "smoke-5x100-t025", "smoke-5x100-t050"]
 MODELS = ["gemma-3-12b-awq", "olmo-3.1-32b-awq", "qwen3.6-27b-awq",
           "muse-glimmer-30b-awq", "gpt-oss-20b"]
 
 
-def load_turns(runs):
+def load_turns(runs, eval_dir):
     """Collect (model, scenario, text, accepted, campaign) for every judge input."""
     pool = []
     for run in runs:
         for model in MODELS:
-            path = EVAL / "results" / run / model / "raw/conversations.jsonl"
+            path = eval_dir / "results" / run / model / "raw/conversations.jsonl"
             if not path.exists():
                 continue
             for line in open(path, encoding="utf-8"):
@@ -60,10 +59,16 @@ def main():
     ap.add_argument("--per-model", type=int, default=200)
     ap.add_argument("--batch-size", type=int, default=100)
     ap.add_argument("--seed", type=int, default=2026)
+    ap.add_argument("--eval-dir", default=str(DEFAULT_EVAL),
+                    help="raiz de los datos de evaluacion (campanas y banco)")
     args = ap.parse_args()
 
+    eval_dir = Path(args.eval_dir)
+    if not (eval_dir / "results").is_dir():
+        raise SystemExit(f"--eval-dir no contiene results/: {eval_dir}")
+
     rnd = random.Random(args.seed)
-    pool = load_turns(args.runs)
+    pool = load_turns(args.runs, eval_dir)
     by_model = defaultdict(lambda: {"ok": [], "bad": []})
     seen = set()
     for case in pool:
@@ -83,7 +88,7 @@ def main():
                 cases.append(case)
     rnd.shuffle(cases)
 
-    out_dir = EVAL / "judge_bench"
+    out_dir = eval_dir / "judge_bench"
     (out_dir / "batches").mkdir(parents=True, exist_ok=True)
     with open(out_dir / "cases.jsonl", "w", encoding="utf-8") as fc, \
          open(out_dir / "labels_hidden.jsonl", "w", encoding="utf-8") as fh:
@@ -102,9 +107,10 @@ def main():
         old.unlink()
     chunks = [cases[i:i + args.batch_size] for i in range(0, len(cases), args.batch_size)]
     for n, chunk in enumerate(chunks, 1):
+        base = (n - 1) * args.batch_size
         with open(batch_dir / f"batch_{n:02d}.jsonl", "w", encoding="utf-8") as f:
             for offset, case in enumerate(chunk):
-                case_id = f"C{cases.index(case) + 1:04d}"
+                case_id = f"C{base + offset + 1:04d}"
                 f.write(json.dumps({"case_id": case_id, "model": case["model"],
                                     "scenario": case["scenario"], "text": case["text"]},
                                    ensure_ascii=False) + "\n")

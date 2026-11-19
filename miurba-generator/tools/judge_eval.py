@@ -14,7 +14,6 @@ Uso:
 """
 import argparse
 import json
-import os
 import random
 import sys
 import threading
@@ -22,35 +21,34 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-ROOT = Path("/backup/pc1/data/miUrba2/mi-urba")
-sys.path.insert(0, str(ROOT / "miurba-generator"))
+SUBPROJECT = Path(__file__).resolve().parents[1]
+DEFAULT_EVAL = SUBPROJECT.parent / "eval"
+sys.path.insert(0, str(SUBPROJECT))
 from src.llm import LLMClient              # noqa: E402
 from src.pipeline import validate_complaint  # noqa: E402
 
-GOLD = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval")) / "judge_bench/gold_100"
-BIG = Path(os.environ.get("MIURBA_EVAL_DIR", ROOT / "eval")) / "judge_bench"
 
+def load_gold_big(bench_dir, annotators, aptos_limit: int = 270,
+                  only_consensus: bool = True):
+    """Banco grande (948 casos) con las anotaciones del panel.
 
-def load_gold_big(aptos_limit: int = 270, only_consensus: bool = True):
-    """Banco grande (948 casos) con las anotaciones de deepseek y glm.
-
-    Etiqueta = acuerdo de los dos anotadores: APTO si ambos lo aceptan, defecto
-    si ambos lo rechazan. Los 61 casos en que discrepan se descartan. Se
+    Etiqueta = acuerdo de los anotadores pedidos: APTO si todos lo aceptan,
+    defecto si todos lo rechazan. Los casos en que discrepan se descartan. Se
     descartan tambien los escenarios imposibles ('ninguno' junto a otro riesgo).
     Devuelve (casos, excluidos) en el mismo formato que load_gold.
     """
     labels: dict[str, dict] = {}
-    for path in sorted((BIG / "labels").glob("*_batch_*.jsonl")):
-        family = "deepseek" if "deepseek" in path.name else "glm"
-        for line in open(path, encoding="utf-8"):
-            r = json.loads(line)
-            labels.setdefault(r["case_id"], {})[family] = r
+    for family in annotators:
+        for path in sorted((bench_dir / "labels").glob(f"{family}_batch_*.jsonl")):
+            for line in open(path, encoding="utf-8"):
+                r = json.loads(line)
+                labels.setdefault(r["case_id"], {})[family] = r
 
     cases, aptos, defects, excluded = [], [], [], []
-    for line in open(BIG / "cases.jsonl", encoding="utf-8"):
+    for line in open(bench_dir / "cases.jsonl", encoding="utf-8"):
         r = json.loads(line)
         votes = labels.get(r["case_id"], {})
-        if only_consensus and len(votes) < 2:
+        if only_consensus and len(votes) < len(annotators):
             continue
         verdicts = {v["apto"] for v in votes.values()}
         if len(verdicts) != 1:
@@ -69,11 +67,12 @@ def load_gold_big(aptos_limit: int = 270, only_consensus: bool = True):
 
 def _resolve_cases(args):
     """Carga el gold pedido: 'small' (panel de 100) o 'big' (948 anotados)."""
+    bench = args.eval_dir / "judge_bench"
     if args.gold == "big":
-        cases, excluded = load_gold_big(args.aptos_limit)
+        cases, excluded = load_gold_big(bench, args.annotators, args.aptos_limit)
         load_gold.excluded = excluded
         return cases
-    return load_gold()
+    return load_gold(bench / "gold_100")
 
 
 _PRISTINE_LOAD_TEMPLATE = None
@@ -91,12 +90,12 @@ def install_prompt_override(directory: str) -> None:
 
     variant = Path(directory)
     if not variant.is_absolute():
-        variant = ROOT / "miurba-generator" / variant
+        variant = SUBPROJECT / variant
     source = variant / "validate_record.md"
     if not source.exists():
         raise SystemExit(f"no hay validate_record.md en {variant}")
 
-    staging = ROOT / "miurba-generator" / ".tmp" / "prompt_variant"
+    staging = SUBPROJECT / ".tmp" / "prompt_variant"
     if staging.exists():
         shutil.rmtree(staging)
     shutil.copytree(pl.PROMPTS_DIR, staging)
@@ -107,7 +106,7 @@ def install_prompt_override(directory: str) -> None:
     print(f"prompt alternativo: {source} -> {staging}")
 
 
-def load_gold():
+def load_gold(gold_dir):
     """Devuelve lista de (case_id, generador, scenario_plano, text, gold_bool).
 
     Descarta los casos cuyo escenario es imposible: 'ninguno' conviviendo con un
@@ -116,10 +115,10 @@ def load_gold():
     generaba esta corregido en src/sampling.py desde el commit 4bdb7ac.
     """
     raw = []
-    for line in open(GOLD / "accepted.jsonl", encoding="utf-8"):
+    for line in open(gold_dir / "accepted.jsonl", encoding="utf-8"):
         r = json.loads(line)
         raw.append((r["case_id"], r["generador"], r["scenario"], r["text"], True))
-    for line in open(GOLD / "rejected.jsonl", encoding="utf-8"):
+    for line in open(gold_dir / "rejected.jsonl", encoding="utf-8"):
         r = json.loads(line)
         against = sum(1 for v in r["votos"] if v["apto"] is False)
         if against >= 4:
@@ -166,7 +165,13 @@ def to_flat(extractions: list[dict]) -> list[dict]:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--judge", required=True)
-    ap.add_argument("--base-url", default="http://192.168.10.100:9292")
+    ap.add_argument("--base-url", required=True, help="endpoint OpenAI-compatible del juez")
+    ap.add_argument("--eval-dir", default=str(DEFAULT_EVAL),
+                    help="raiz de los datos de evaluacion (judge_bench, results)")
+    ap.add_argument("--annotators", nargs="*", default=["deepseek", "glm"],
+                    help="familias de anotadores a exigir para el banco grande")
+    ap.add_argument("--dump-verdicts", action="store_true",
+                    help="escribe tambien un jsonl con el veredicto por caso")
     ap.add_argument("--temperature", type=float, default=0.0)
     ap.add_argument("--max-tokens", type=int, default=4000)
     ap.add_argument("--workers", type=int, default=6)
@@ -176,13 +181,17 @@ def main():
     ap.add_argument("--stratified", type=int, default=0,
                     help="todos los defectos + N aptos, para cribar variantes barato")
     ap.add_argument("--gold", choices=("small", "big"), default="small",
-                    help="small: panel de 130 casos; big: 948 casos anotados por deepseek+glm")
+                    help="small: panel de 103 casos (93 aptos / 10 defectuosos); "
+                         "big: 948 anotados, ~531 tras exigir consenso")
     ap.add_argument("--aptos-limit", type=int, default=270,
                     help="cuantos casos aptos del banco grande usar (los defectos van todos)")
     ap.add_argument("--tag", required=True)
     ap.add_argument("--prompt-dir", default=None,
                     help="carpeta con un validate_record.md alternativo (variantes de prompt)")
     args = ap.parse_args()
+    args.eval_dir = Path(args.eval_dir)
+    if not args.eval_dir.is_dir():
+        raise SystemExit(f"--eval-dir no existe: {args.eval_dir}")
 
     if args.prompt_dir:
         install_prompt_override(args.prompt_dir)
@@ -245,6 +254,8 @@ def main():
     tn = sum(1 for r in rows if r["gold"] and r["judge"])
     fp = sum(1 for r in rows if r["gold"] and not r["judge"])
     n = len(rows)
+    if n == 0:
+        raise SystemExit(f"0 casos evaluados: revisa --eval-dir y --annotators {args.annotators}")
     prec = tp / (tp + fp) if tp + fp else 0.0
     rec = tp / (tp + fn) if tp + fn else 0.0
 
@@ -258,6 +269,7 @@ def main():
 
     summary = {"tag": args.tag, "judge": args.judge, "temperature": args.temperature,
                "votes": args.votes, "prompt_dir": args.prompt_dir, "gold": args.gold,
+               "annotators": args.annotators,
                "n": n, "n_positivos": tn + fp, "n_negativos": tp + fn,
                "excluidos_ninguno_mal_usado": getattr(load_gold, "excluded", []),
                "accuracy": round((tp + tn) / n, 4),
@@ -272,9 +284,15 @@ def main():
                "por_generador": by_gen,
                "desacuerdos": [r for r in rows if r["gold"] != r["judge"]]}
 
-    out = GOLD / "results" / f"{args.tag}.json"
+    out = args.eval_dir / "judge_bench/gold_100/results" / f"{args.tag}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    if args.dump_verdicts:
+        verdicts = out.with_suffix(".verdicts.jsonl")
+        with open(verdicts, "w", encoding="utf-8") as fh:
+            for row in rows:
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+        print(f"   veredictos -> {verdicts}")
 
     print(f"\n== {args.tag} · juez {args.judge} (T={args.temperature}, {args.votes} voto(s)) "
           f"sobre {n} casos ({tn + fp} aptos / {tp + fn} defectuosos del panel)")
