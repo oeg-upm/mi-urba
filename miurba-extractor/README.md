@@ -64,7 +64,7 @@ comentados en `config/config.yaml`.
 |---|---|---|
 | `model` | **Obligatorio.** Modelo extractor (clave de `models:`) | — |
 | `temperature` | Temperatura de extracción | `0.2` |
-| `default_output_dir` | Base de rutas; `null` → `generation.default_output_dir` | `null` |
+| `default_output_dir` | Base de rutas; `null` → subdirectorios de `paths:` del propio extractor | `null` |
 | `raw_dir` / `annotated_dir` | Directorios explícitos | `null` → `<base>/<subdir de paths:>` |
 | `resume` | Saltar quejas ya extraídas | `true` |
 | `timeout`, `max_retries`, `retry_delay` | Cliente LLM | `300`, `3`, `5.0` |
