@@ -194,8 +194,14 @@ Ejecuta `pytest` **dentro** de cada subproyecto (los paquetes `src` son
 independientes y colisionan si se lanzan desde la raíz):
 
 ```bash
-cd miurba-generator && python -m pytest tests/
-cd miurba-extractor && python -m pytest tests/
+# desde la raíz del repo
+cd miurba-generator
+pip install -r requirements-dev.txt
+python -m pytest tests/
+
+cd ../miurba-extractor
+pip install -r requirements-dev.txt
+python -m pytest tests/
 ```
 
 No requieren red.

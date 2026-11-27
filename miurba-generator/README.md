@@ -43,7 +43,7 @@ variables genéricas `OPENAI_API_ENDPOINT`, `OPENAI_API_MODEL` y
 |---|---|
 | `<out>/<modelo>/raw/complaints.jsonl` | `id`, `user_text`, `timestamp` |
 | `<out>/<modelo>/raw/ground_truth.jsonl` | extracciones esperadas (`complaint_id`, `extractions`) |
-| `<out>/<modelo>/raw/metadata.jsonl` | `complaint_id`, persona, modifier, comunidad |
+| `<out>/<modelo>/raw/metadata.jsonl` | `complaint_id`, `persona`, `modifier`, `community` |
 | `<out>/<modelo>/raw/rejected.jsonl` | registros descartados con motivo y etapa (auditoría) |
 | `<out>/<modelo>/raw/conversations.jsonl` | transcripción completa por registro (auditoría) |
 
